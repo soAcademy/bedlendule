@@ -6,8 +6,8 @@ const Nav = () => {
         <div className="w-11/12 p-2 text-xl text-slate-400">
           <FaAlignJustify />
         </div>
-        <div>
-          <img className="h-[40px] rounded-full" src="dog.jpg" />
+        <div className=" float-left  fixed top-[-50%] right-0">
+          <img className="h-[100px] rounded-full " src="Memind2.png" />
         </div>
       </div>
     </>
