@@ -17,7 +17,7 @@ const Home = () => {
       location: "Home office",
     },
   ];
-  const [date, setDate] = useState(1);
+  const [date, setDate] = useState();
   const [month, seTMonth] = useState("March 2023");
   const [bookingColor, seTBookingColor] = useState("");
   const [schedule, setSchdeule] = useState(patient);
@@ -52,7 +52,7 @@ const Home = () => {
     { month: "November 2023" },
     { month: "December 2023" },
   ];
-  const colorPalletes = ["#b3e5aa"];
+  const colorPalletes = "#C5E1A5";
   return (
     <>
       <Nav className="cursor-pointer" />
@@ -86,13 +86,16 @@ const Home = () => {
                 ))}
               </div>
               <div className=" grid grid-cols-7 gap-4 pb-1 text-slate-500">
-                {newNumber.map((r) => (
+                {newNumber.map((r, idx) => (
                   <button
-                    className="h-[30px] w-[30px] rounded-full text-center hover:bg-teal-200"
-                    style={{ backgroundColor: bookingColor }}
+                    className={`h-[30px] w-[30px] rounded-full text-center duration-150 hover:bg-[#C5E1A5]
+                      ${
+                        idx - 1 === date
+                          ? `bg-[${colorPalletes}] text-white`
+                          : ""
+                      }`}
                     onClick={() => {
                       setDate(r);
-                      seTBookingColor(colorPalletes);
                     }}
                   >
                     {r}
@@ -114,7 +117,7 @@ const Home = () => {
 
             <div className="mx-auto my-7 flex w-[90%] gap-2 text-white">
               <button
-                className="w-1/2 rounded-lg bg-[#99B47B] py-3 text-center shadow-lg hover:bg-[#99b47bc8] active:bg-[#9cb482] "
+                className="w-1/2 rounded-lg bg-[#99B47B] py-3 text-center shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482] "
                 onClick={() => {
                   setPage("createrequest");
                 }}
@@ -122,7 +125,7 @@ const Home = () => {
                 CREATE REQUEST
               </button>
               <button
-                className="w-1/2 rounded-lg bg-[#99B47B] py-3 text-center shadow-lg hover:bg-[#99b47bc8] active:bg-[#9cb482]"
+                className="w-1/2 rounded-lg bg-[#99B47B] py-3 text-center shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]"
                 onClick={() => []}
               >
                 REQUEST

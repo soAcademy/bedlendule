@@ -7,7 +7,7 @@ const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
     <>
       <div className="min-h-11/12 relative mx-auto mt-[70px] w-[95%] rounded-lg bg-white p-6 font-kanit shadow-xl">
         <MdClose
-          className="absolute right-4 text-2xl text-slate-400"
+          className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
           onClick={() => setPage("main")}
         />
         <p className="pt-4 text-center text-3xl font-bold text-slate-500">
@@ -16,7 +16,7 @@ const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
         <div className="flex">
           <button
             onClick={() => setConfirmPopupToggle(true)}
-            className="mx-auto rounded-md bg-[#99B47B] p-2 px-4 text-xs text-white"
+            className="mx-auto rounded-md bg-[#99B47B] p-2 px-4 text-xs text-white duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]"
           >
             CREATE REQUEST
           </button>
