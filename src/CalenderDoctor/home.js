@@ -23,7 +23,7 @@ const Home = () => {
   const [bookingColor, seTBookingColor] = useState("");
   const [schedule, setSchdeule] = useState(patient);
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
-  const [page, setPage] = useState("main");
+  const [page, setPage] = useState("post");
 
   const number = [...Array(32).keys()].slice(1);
   console.log(number);
@@ -161,7 +161,7 @@ const Home = () => {
         />
       )}
 
-      {page ==="Post" && <Post/>}
+      {page ==="post" && <Post/>}
     </>
   );
 };
