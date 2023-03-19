@@ -3,6 +3,10 @@ import { FaRegCheckCircle, FaHome } from "react-icons/fa";
 import axios from "axios";
 import Nav from "./Component/Nav";
 import Request from "./Component/Request";
+import "primereact/resources/themes/saga-green/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
+import { Calendar } from "primereact/calendar";
 
 const Home = () => {
   const patient = [
@@ -17,92 +21,88 @@ const Home = () => {
       location: "Home office",
     },
   ];
-  const [date, setDate] = useState();
-  const [month, seTMonth] = useState("March 2023");
-  const [bookingColor, seTBookingColor] = useState("");
-  const [schedule, setSchdeule] = useState(patient);
+  const dateTemplate = (date) => {
+    if (
+      timeSlots?.findIndex(
+        (timeslot) => new Date(timeslot.startTime).getDate() === date.day
+      ) !== -1 && date.day >= new Date().getDate()
+    ) {
+      return date.day === new Date().getDate() ? (
+        <div
+          style={{
+            backgroundColor: "#99B47B",
+            color: "#ffffff",
+            borderRadius: "50%",
+            width: "4em",
+            height: "4em",
+            lineHeight: "4em",
+            padding: 0,
+            textAlign: "center",
+          }}
+        >
+          {date.day}
+        </div>
+      ) : (
+        <div
+          style={{
+            backgroundColor: "#C5E1A5",
+            color: "#ffffff",
+            borderRadius: "50%",
+            width: "3em",
+            height: "3em",
+            lineHeight: "3em",
+            padding: 0,
+            textAlign: "center",
+          }}
+        >
+          {date.day}
+        </div>
+      );
+    } else {
+      return date.day;
+    }
+  };
+  const [date, setDate] = useState(null);
+  const [schedule, setSchedule] = useState(patient);
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
   const [page, setPage] = useState("main");
+  const [timeSlots, setTimeSlots] = useState([]);
+  useEffect(() => {
+    var config = {
+      method: "post",
+      url: "http://localhost:5555/bedlendule/getAllTimeSlots",
+      headers: {},
+    };
 
-  const number = [...Array(32).keys()].slice(1);
-  console.log(number);
-  const newNumber = [...number, [], []].sort((a, b) => a - b);
-  console.log(">>>>>>", newNumber);
-  console.log(month);
-  const mondayLists = [
-    { day: "S" },
-    { day: "M" },
-    { day: "T" },
-    { day: "W" },
-    { day: "T" },
-    { day: "F" },
-    { day: "S" },
-  ];
-  const listOfMonths = [
-    { month: "January 2023" },
-    { month: "Febuary 2023" },
-    { month: "March 2023" },
-    { month: "April 2023" },
-    { month: "May 2023" },
-    { month: "June 2023" },
-    { month: "July 2023" },
-    { month: "August 2023" },
-    { month: "September 2023" },
-    { month: "October 2023" },
-    { month: "November 2023" },
-    { month: "December 2023" },
-  ];
-  const colorPalletes = "#C5E1A5";
+    axios(config)
+      .then(function async(response) {
+        setTimeSlots(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
   return (
     <>
       <Nav className="cursor-pointer" />
       {page === "main" && (
         <div className="my-auto mt-[70px] h-screen font-kanit">
           <div className="mt-10 h-full">
-            <div className="mx-5 mt-10 mb-2 rounded-lg  px-10 shadow-xl ">
-              <div className="flex text-slate-500">
-                <div className="w-[250px] rounded-lg  p-2">
-                  {" "}
-                  <select
-                    value={month}
-                    onChange={(e) => seTMonth(e.target.value)}
-                  >
-                    {listOfMonths.map((r, idx) => (
-                      <option
-                        className="rounded-lg"
-                        onClick={() => seTMonth(r.month)}
-                      >
-                        {r.month}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <button className="px-2 text-sm"> &lt; </button>
-                <button className="pl-1 text-sm"> &gt; </button>
-              </div>
-              <div className="grid grid-cols-7 gap-6 pl-3 text-slate-300">
-                {mondayLists.map((r) => (
-                  <div className="w-[30px] ">{r.day}</div>
-                ))}
-              </div>
-              <div className=" grid grid-cols-7 gap-4 pb-1 text-slate-500">
-                {newNumber.map((r, idx) => (
-                  <button
-                    className={`h-[30px] w-[30px] rounded-full text-center duration-150 hover:bg-[#C5E1A5]
-                      ${
-                        idx - 1 === date
-                          ? `bg-[${colorPalletes}] text-white`
-                          : ""
-                      }`}
-                    onClick={() => {
-                      setDate(r);
-                    }}
-                  >
-                    {r}
-                  </button>
-                ))}
-              </div>
-
+            <div className="flex w-full flex-col items-center justify-center">
+              <Calendar
+                className="z-0 w-10/12"
+                value={date}
+                onChange={(e) => {
+                  console.log(date);
+                  setDate(e.value);
+                }}
+                minDate={new Date()}
+                inline
+                showTime
+                dateTemplate={dateTemplate}
+                yearNavigator
+                yearRange="2010:2030"
+              />
               <div className="flex p-2 text-sm">
                 <div className="mx-auto my-3 flex">
                   <div className="mx-2 rounded-lg bg-[#C5E1A5] px-4 py-1 text-white shadow-lg ">
