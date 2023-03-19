@@ -93,12 +93,12 @@ const Home = () => {
                 className="z-0 w-10/12"
                 value={date}
                 onChange={(e) => {
-                  console.log(date);
-                  setDate(e.value);
+                  console.log(e.value.toISOString());
+                  setDate(e.value.toISOString());
                 }}
                 minDate={new Date()}
                 inline
-                showTime
+                // showTime
                 dateTemplate={dateTemplate}
                 yearNavigator
                 yearRange="2010:2030"
