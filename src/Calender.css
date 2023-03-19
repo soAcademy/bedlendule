@@ -1,0 +1,9 @@
+.custom-select {
+  height: 20px;
+  appearance: none;
+  background-image: url('../public/clock.png');
+  background-repeat: no-repeat;
+  background-position: right center;
+  padding-right: 2px; /* add some padding to make space for the arrow icon */
+}
+
