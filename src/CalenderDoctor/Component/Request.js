@@ -29,6 +29,8 @@ const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
         ${!confirmPopupToggle ? "scale-0" : "scale-1"}`}
         >
           <ConfirmPopup
+            title={"CREATE REQUEST"}
+            description={"Do you want to create request?"}
             setConfirmPopupToggle={setConfirmPopupToggle}
             confirmPopupToggle={confirmPopupToggle}
           />

@@ -12,8 +12,8 @@ const ConfirmPopup = ({
       ${confirmPopupToggle ? "scale-1" : "translate-y-1/4 scale-0"}`}
       >
         <div>
-          <p className="text-2xl font-bold text-[#4C4E64DE] ">Create Request</p>
-          <p className="text-[#4C4E64AD]">Do you want to create a request</p>
+          <p className="text-2xl font-bold text-[#4C4E64DE] ">{title}</p>
+          <p className="text-[#4C4E64AD]">{description}</p>
         </div>
         <div className="mt-4 flex flex-col space-y-2">
           <button className="text-md mx-auto w-24 rounded-md bg-[#99B47B] py-1 text-white hover:bg-[#99b47bc8] active:bg-[#9cb482]">
