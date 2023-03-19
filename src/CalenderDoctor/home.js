@@ -3,6 +3,7 @@ import { FaRegCheckCircle, FaHome } from "react-icons/fa";
 import axios from "axios";
 import Nav from "./Component/Nav";
 import Request from "./Component/Request";
+import Post from "./Component/Post";
 
 const Home = () => {
   const patient = [
@@ -159,6 +160,8 @@ const Home = () => {
           confirmPopupToggle={confirmPopupToggle}
         />
       )}
+
+      {page ==="Post" && <Post/>}
     </>
   );
 };
