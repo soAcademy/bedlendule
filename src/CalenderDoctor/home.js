@@ -1,87 +1,30 @@
 import { useState, useEffect } from "react";
 import { FaRegCheckCircle, FaHome } from "react-icons/fa";
-import axios from "axios";
-import Nav from "./Component/Nav";
-import Request from "./Component/Request";
+import Nav from "./Components/Nav";
+import Request from "./Components/Request";
 import "primereact/resources/themes/saga-green/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import { Calendar } from "primereact/calendar";
+import useUserCalendarProps from "./Hooks/useUserCalendarProps";
+const patient = [
+  {
+    name: "Bond Rungot",
+    time: "19/02/2023 (8am - 9am)",
+    location: "Tu hospital",
+  },
+  {
+    name: "Thanapon Bunchot",
+    time: "20/02/2023 (8am - 9am)",
+    location: "Home office",
+  },
+];
 
 const Home = () => {
-  const patient = [
-    {
-      name: "Bond Rungot",
-      time: "19/02/2023 (8am - 9am)",
-      location: "Tu hospital",
-    },
-    {
-      name: "Thanapon Bunchot",
-      time: "20/02/2023 (8am - 9am)",
-      location: "Home office",
-    },
-  ];
-  const dateTemplate = (date) => {
-    if (
-      timeSlots?.findIndex(
-        (timeslot) => new Date(timeslot.startTime).getDate() === date.day
-      ) !== -1 && date.day >= new Date().getDate()
-    ) {
-      return date.day === new Date().getDate() ? (
-        <div
-          style={{
-            backgroundColor: "#99B47B",
-            color: "#ffffff",
-            borderRadius: "50%",
-            width: "4em",
-            height: "4em",
-            lineHeight: "4em",
-            padding: 0,
-            textAlign: "center",
-          }}
-        >
-          {date.day}
-        </div>
-      ) : (
-        <div
-          style={{
-            backgroundColor: "#C5E1A5",
-            color: "#ffffff",
-            borderRadius: "50%",
-            width: "3em",
-            height: "3em",
-            lineHeight: "3em",
-            padding: 0,
-            textAlign: "center",
-          }}
-        >
-          {date.day}
-        </div>
-      );
-    } else {
-      return date.day;
-    }
-  };
-  const [date, setDate] = useState(null);
   const [schedule, setSchedule] = useState(patient);
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
   const [page, setPage] = useState("main");
-  const [timeSlots, setTimeSlots] = useState([]);
-  useEffect(() => {
-    var config = {
-      method: "post",
-      url: "http://localhost:5555/bedlendule/getAllTimeSlots",
-      headers: {},
-    };
-
-    axios(config)
-      .then(function async(response) {
-        setTimeSlots(response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, []);
+  const { date, setDate, dateTemplate } = useUserCalendarProps();
   return (
     <>
       <Nav className="cursor-pointer" />
@@ -98,7 +41,6 @@ const Home = () => {
                 }}
                 minDate={new Date()}
                 inline
-                // showTime
                 dateTemplate={dateTemplate}
                 yearNavigator
                 yearRange="2010:2030"
