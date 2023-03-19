@@ -1,28 +1,41 @@
-import "../../Calender.css";
+import ConfirmPopup from "./ConfirmPopup";
+import { MdClose } from "react-icons/md";
 
-const Request = () => {
+const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
+  console.log("requestl");
   return (
     <>
-      <div className="mx-auto h-screen w-[90%] rounded-lg bg-red-400 font-kanit shadow-lg ">
-        <div className="text-center text-2xl font-bold text-slate-500">
+      <div className="min-h-11/12 relative mx-auto mt-[70px] w-[95%] rounded-lg bg-white p-6 font-kanit shadow-xl">
+        <MdClose
+          className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
+          onClick={() => setPage("main")}
+        />
+        <p className="pt-4 text-center text-3xl font-bold text-slate-500">
           CREATE REQUEST
-        </div>
-        <div className="mt-5 flex text-center w-full my-auto bg-blue-500 p-2  ">
-          <div className=" bg-blue-200 mx-auto my-auto py-4 px-2 border-2 rounded-lg">20/03/2023</div>
-          <div className=" bg-blue-300 border-2 my-auto py-4 ">
-            <select>
-              <option>15.00</option>
-              <option>16.00</option>
-            </select>
-          </div>
-          <div className=" bg-blue-300 border-2 my-auto py-4">
-            <select>
-              <option>16.00</option>
-              <option>17.00</option>
-            </select>
-          </div>
+        </p>
+        <div className="flex">
+          <button
+            onClick={() => setConfirmPopupToggle(true)}
+            className="mx-auto rounded-md bg-[#99B47B] p-2 px-4 text-xs text-white duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]"
+          >
+            CREATE REQUEST
+          </button>
         </div>
       </div>
+      {
+        <div
+          className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
+        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
+        ${!confirmPopupToggle ? "scale-0" : "scale-1"}`}
+        >
+          <ConfirmPopup
+            title={"CREATE REQUEST"}
+            description={"Do you want to create request?"}
+            setConfirmPopupToggle={setConfirmPopupToggle}
+            confirmPopupToggle={confirmPopupToggle}
+          />
+        </div>
+      }
     </>
   );
 };
