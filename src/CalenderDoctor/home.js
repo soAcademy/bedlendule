@@ -11,7 +11,7 @@ import DoctorSchedule from "./Pages/DoctorSchedule";
 const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
   const [page, setPage] = useState("landing");
-  const [type, setType] = useState("doctor");
+  const [type, setType] = useState("doctors");
 
   return (
     <div className="h-full font-kanit">
