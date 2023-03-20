@@ -1,40 +1,98 @@
-import ConfirmPopup from "./ConfirmPopup";
-import { MdClose } from "react-icons/md";
+import { useState, useEffect } from "react";
+import { FaClock } from "react-icons/fa";
+import { AiOutlineSchedule } from "react-icons/ai";
+const Request = ({ setPage }) => {
+  const timeRange = [
+    "00:00",
+    "01:00",
+    "02:00",
+    "03:00",
+    "04:00",
+    "05:00",
+    "06:00",
+    "07:00",
+    "08:00",
+    "09:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+    "19:00",
+    "20:00",
+    "21:00",
+    "22:00",
+    "23:00",
+    "24:00",
+  ];
 
-const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
+  console.log(">>>>",Number(timeRange[13].slice(0,2)));
+  const [fromTime, setFromTime] = useState("15:00");
+  const [toTime, setToTime] = useState("16:00");
   return (
     <>
-      <div className="min-h-11/12 relative mx-auto mt-[70px] w-[95%] rounded-lg bg-white p-6 font-kanit shadow-xl">
-        <MdClose
-          className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
-          onClick={() => setPage("patientSchedule")}
-        />
-        <p className="pt-4 text-center text-3xl font-bold text-slate-500">
-          CREATE REQUEST
-        </p>
-        <div className="flex">
-          <button
-            onClick={() => setConfirmPopupToggle(true)}
-            className="mx-auto rounded-md bg-[#99B47B] p-2 px-4 text-xs text-white duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]"
-          >
-            CREATE REQUEST
-          </button>
+      <div className=" mx-auto mt-[70px] mb-5 h-screen w-[90%] rounded-lg bg-slate-100 shadow-lg">
+        <div
+          className=" px-2  text-right text-xl text-slate-500"
+          onClick={() => setPage("landing")}
+        >
+          x
+        </div>
+        <div className="flex text-center  text-3xl ">
+          <div className="w-full font-bold text-slate-500">REQUEST</div>
+        </div>
+        <div className=" mx-auto my-4 flex gap-3  text-center text-slate-400 ">
+          <div className="mx-auto flex gap-4">
+            <div className="relative flex  gap-2 rounded-lg border-2 border-slate-500 py-3 px-2">
+              <div className="absolute top-[-15px] bg-white px-1">DATE</div>
+              20/03/2023
+              <AiOutlineSchedule className="my-auto text-xl " />
+            </div>
+            
+            <div className="relative">
+              <div className="absolute top-[-12px] ml-4 px-2 bg-white">From</div>
+            <select
+              className="flex gap-2  rounded-lg border-2 border-slate-500 py-3 px-2 "
+              value={fromTime}
+              onChange={(e) => {
+                // console.log(e.target.value);
+                setFromTime(e.target.value)}}
+            >
+              
+              {timeRange
+                ?.filter((time) => time !== toTime)
+                ?.map((r) => (
+                  <option value={r}>{r}</option>
+                ))}
+
+              <FaClock className="my-auto" />
+            </select>
+            </div>
+            <div className="relative">
+            <div className="absolute top-[-12px] ml-4 px-2 bg-white">To</div>
+            <select
+              className="flex gap-2  rounded-lg border-2 border-slate-500 py-3 px-2"
+              value={toTime}
+              onChange={(e) => {
+                // console.log(e.target.value);
+                setToTime(e.target.value)}}
+            >
+              {timeRange
+                ?.filter((time,idx) => time !== fromTime &&  (time.slice(0,2) > fromTime.slice(0,2)))
+                ?.map((r) => (
+                  <option value={r}>{r}</option>
+                ))}
+
+              <FaClock className="my-auto" />
+            </select>
+            </div>
+          </div>
         </div>
       </div>
-      {
-        <div
-          className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
-        ${!confirmPopupToggle ? "scale-0" : "scale-1"}`}
-        >
-          <ConfirmPopup
-            title={"CREATE REQUEST"}
-            description={"Do you want to create request?"}
-            setConfirmPopupToggle={setConfirmPopupToggle}
-            confirmPopupToggle={confirmPopupToggle}
-          />
-        </div>
-      }
     </>
   );
 };
