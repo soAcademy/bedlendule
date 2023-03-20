@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Calendar } from "primereact/calendar";
 import { FaHome } from "react-icons/fa";
-import usePatientCalendarProps from '../Hooks/usePatientCalendarProps';
+import usePatientCalendarProps from "../Hooks/usePatientCalendarProps";
 
-
-const UserSchedule = ({setPage}) => {  
+const UserSchedule = ({ setPage }) => {
   const patient = [
     {
       name: "Bond Rungot",
@@ -32,8 +31,6 @@ const UserSchedule = ({setPage}) => {
           minDate={new Date()}
           inline
           dateTemplate={dateTemplate}
-          yearNavigator
-          yearRange="2010:2030"
         />
         <div className="flex p-2 text-sm">
           <div className="mx-auto my-3 flex">
@@ -82,7 +79,7 @@ const UserSchedule = ({setPage}) => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default UserSchedule
+export default UserSchedule;

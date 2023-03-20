@@ -5,11 +5,12 @@ const useDoctorCalendarProps = () => {
   const [openRequests, setOpenRequests] = useState([]);
 
   const dateTemplate = (date) => {
+    const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
+    // console.log("date", date, _date, _date.getTime(), new Date().getTime());
+    // console.log("openRequests", openRequests);
     if (
-      openRequests?.findIndex(
-        (request) => request.doctorTimeslot === null
-      ) !== -1 &&
-      date >= new Date()
+      openRequests.includes(_date.toLocaleDateString()) &&
+      _date.getTime() >= new Date().getTime()
     ) {
       return date.day === new Date().getDate() ? (
         <div
@@ -56,7 +57,11 @@ const useDoctorCalendarProps = () => {
 
     axios(config)
       .then(function async(response) {
-        setOpenRequests(response.data);
+        setOpenRequests(
+          response.data.map((e) =>
+            new Date(e.startTime).toLocaleDateString("en", { timeZone: "UTC" })
+          )
+        );
       })
       .catch(function (error) {
         console.log(error);

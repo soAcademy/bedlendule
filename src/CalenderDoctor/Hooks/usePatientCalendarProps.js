@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
 const usePatientCalendarProps = () => {
   const [date, setDate] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
-
   const dateTemplate = (date) => {
+    const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
     if (
-      timeSlots?.findIndex(
-        (timeslot) => new Date(timeslot.startTime).getDate() === date.day
-      ) !== -1 &&
+      timeSlots?.includes(_date.toLocaleDateString()) &&
       date.day >= new Date().getDate()
     ) {
       return date.day === new Date().getDate() ? (
@@ -46,7 +45,6 @@ const usePatientCalendarProps = () => {
       return date.day;
     }
   };
-
   useEffect(() => {
     var config = {
       method: "post",
@@ -56,7 +54,12 @@ const usePatientCalendarProps = () => {
 
     axios(config)
       .then(function async(response) {
-        setTimeSlots(response.data);
+        console.log("response.data", response.data);
+        setTimeSlots(
+          response.data.map((e) =>
+            new Date(e.startTime).toLocaleDateString("en", { timeZone: "UTC" })
+          )
+        );
       })
       .catch(function (error) {
         console.log(error);

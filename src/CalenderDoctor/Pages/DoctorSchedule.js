@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Calendar } from "primereact/calendar";
 import { FaHome } from "react-icons/fa";
 import useDoctorCalendarProps from '../Hooks/useDoctorCalendarProps';
-
-
 const DoctorSchedule = ({setPage}) => {  
   const patient = [
     {
@@ -31,9 +29,8 @@ const DoctorSchedule = ({setPage}) => {
           }}
           minDate={new Date()}
           inline
+          locale="en"
           dateTemplate={dateTemplate}
-          yearNavigator
-          yearRange="2010:2030"
         />
         <div className="flex p-2 text-sm">
           <div className="mx-auto my-3 flex">
