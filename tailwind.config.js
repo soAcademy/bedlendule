@@ -4,9 +4,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        kanit: ['Kanit']
-      }
+        kanit: ["Kanit"],
+      },
+      colors: {
+        primary: "#36B32D",
+        secondary: "#E8A897 ",
+      },
     },
   },
   plugins: [],
-}
+};
