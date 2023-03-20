@@ -1,107 +1,32 @@
 import { useState, useEffect } from "react";
-import { FaRegCheckCircle, FaHome } from "react-icons/fa";
 import Nav from "./Components/Nav";
 import Request from "./Components/Request";
 import "primereact/resources/themes/saga-green/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import { Calendar } from "primereact/calendar";
-import useUserCalendarProps from "./Hooks/useUserCalendarProps";
-const patient = [
-  {
-    name: "Bond Rungot",
-    time: "19/02/2023 (8am - 9am)",
-    location: "Tu hospital",
-  },
-  {
-    name: "Thanapon Bunchot",
-    time: "20/02/2023 (8am - 9am)",
-    location: "Home office",
-  },
-];
+import Landing from "./Pages/Landing";
+import UserSchedule from "./Pages/PatientSchedule";
+import DoctorSchedule from "./Pages/DoctorSchedule";
 
 const Home = () => {
-  const [schedule, setSchedule] = useState(patient);
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
-  const [page, setPage] = useState("main");
-  const { date, setDate, dateTemplate } = useUserCalendarProps();
+  const [page, setPage] = useState("landing");
+  const [type, setType] = useState("patient");
+
   return (
-    <>
+    <div className="h-full font-kanit">
       <Nav className="cursor-pointer" />
-      {page === "main" && (
-        <div className="my-auto mt-[70px] h-screen font-kanit">
-          <div className="mt-10 h-full">
-            <div className="flex w-full flex-col items-center justify-center">
-              <Calendar
-                className="z-0 w-10/12"
-                value={date}
-                onChange={(e) => {
-                  console.log(e.value.toISOString());
-                  setDate(e.value.toISOString());
-                }}
-                minDate={new Date()}
-                inline
-                dateTemplate={dateTemplate}
-                yearNavigator
-                yearRange="2010:2030"
-              />
-              <div className="flex p-2 text-sm">
-                <div className="mx-auto my-3 flex">
-                  <div className="mx-2 rounded-lg bg-[#C5E1A5] px-4 py-1 text-white shadow-lg ">
-                    DOCTOR
-                  </div>
-                  <div className="mx-2 gap-2 rounded-lg bg-[#E1A5BB] px-4 py-1 text-white shadow-lg">
-                    NO DOCTOR
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mx-auto my-7 flex w-[90%] gap-2 text-white">
-              <button
-                className="w-1/2 rounded-lg bg-[#99B47B] py-3 text-center shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482] "
-                onClick={() => {
-                  setPage("createrequest");
-                }}
-              >
-                CREATE REQUEST
-              </button>
-              <button
-                className="w-1/2 rounded-lg bg-[#99B47B] py-3 text-center shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]"
-                onClick={() => []}
-              >
-                REQUEST
-              </button>
-            </div>
-            <div>
-              <div className="pl-4 font-bold">INCOMING SCHEDULE</div>
-
-              {schedule.map((schedule) => (
-                <div className="mx-5 my-4 flex w-[90%] rounded-lg border-2 border-sky-500 bg-slate-200 p-2 text-blue-400">
-                  <div className="w-2/3">
-                    <div className="font-bold">{schedule.name}</div>
-                    <div className="text-sm">{schedule.time}</div>
-                  </div>
-                  <div className=" flex text-center ">
-                    <div className="my-auto  text-center">
-                      <FaHome className="text-blue-500" />
-                    </div>
-                    <div className="  my-auto">{schedule.location}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-      {page === "createrequest" && (
+      {page === "landing" && <Landing setPage={setPage} type={type}/>}
+      {page === "patientSchedule" && <UserSchedule setPage={setPage} />}
+      {page === "doctorSchedule" && <DoctorSchedule setPage={setPage} />}
+      {page === "createRequest" && (
         <Request
           setPage={setPage}
           setConfirmPopupToggle={setConfirmPopupToggle}
           confirmPopupToggle={confirmPopupToggle}
         />
       )}
-    </>
+    </div>
   );
 };
 export default Home;

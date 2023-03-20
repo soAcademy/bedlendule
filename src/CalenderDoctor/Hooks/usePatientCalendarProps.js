@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-const useUserCalendarProps = () => {
+const usePatientCalendarProps = () => {
   const [date, setDate] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
 
@@ -65,4 +65,4 @@ const useUserCalendarProps = () => {
   return { date, setDate, timeSlots, setTimeSlots, dateTemplate };
 };
 
-export default useUserCalendarProps;
+export default usePatientCalendarProps;

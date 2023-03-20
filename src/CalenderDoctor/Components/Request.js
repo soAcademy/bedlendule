@@ -2,13 +2,12 @@ import ConfirmPopup from "./ConfirmPopup";
 import { MdClose } from "react-icons/md";
 
 const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
-  console.log("requestl");
   return (
     <>
       <div className="min-h-11/12 relative mx-auto mt-[70px] w-[95%] rounded-lg bg-white p-6 font-kanit shadow-xl">
         <MdClose
           className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
-          onClick={() => setPage("main")}
+          onClick={() => setPage("patientSchedule")}
         />
         <p className="pt-4 text-center text-3xl font-bold text-slate-500">
           CREATE REQUEST
