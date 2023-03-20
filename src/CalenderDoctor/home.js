@@ -11,8 +11,8 @@ import Request from "./Components/Request";
 
 const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
-  const [page, setPage] = useState("request");  //อย่าลืมเปลี่ยนกลับเป็น landing
-  const [type, setType] = useState("patient"); 
+  const [page, setPage] = useState("landing");
+  const [type, setType] = useState("doctor");
 
   return (
     <div className="h-full font-kanit">
