@@ -8,6 +8,7 @@ import Landing from "./Pages/Landing";
 import UserSchedule from "./Pages/PatientSchedule";
 import DoctorSchedule from "./Pages/DoctorSchedule";
 import Request from "./Components/Request";
+import { BsArrowLeft } from "react-icons/bs";
 
 const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
@@ -28,6 +29,14 @@ const Home = () => {
         />
       )}
       {page === "request" && <Request setPage={setPage} />}
+      {page === "setting" && (
+        <button
+          onClick={() => setPage("landing")}
+          className="fixed top-20 right-5 rounded-lg border-2 p-4 shadow-xl hover:bg-slate-50 active:bg-slate-100"
+        >
+          <BsArrowLeft />
+        </button>
+      )}
     </div>
   );
 };
