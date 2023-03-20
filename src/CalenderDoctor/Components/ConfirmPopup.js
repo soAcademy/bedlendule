@@ -3,6 +3,7 @@ const ConfirmPopup = ({
   description,
   setConfirmPopupToggle,
   confirmPopupToggle,
+  setPage,
 }) => {
   return (
     <>
@@ -16,7 +17,10 @@ const ConfirmPopup = ({
           <p className="text-[#4C4E64AD]">{description}</p>
         </div>
         <div className="mt-4 flex flex-col space-y-2">
-          <button className="text-md mx-auto w-24 rounded-md bg-[#99B47B] py-1 text-white duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]">
+          <button
+            className="text-md mx-auto w-24 rounded-md bg-[#99B47B] py-1 text-white duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]"
+            onClick={() => setPage("request")}
+          >
             CONFIRM
           </button>
           <button

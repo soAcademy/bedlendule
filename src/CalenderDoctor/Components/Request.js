@@ -1,26 +1,25 @@
 import { Calendar } from "primereact/calendar";
 import { useState, useEffect } from "react";
-import { FaClock } from "react-icons/fa";
-import { AiOutlineSchedule } from "react-icons/ai";
-const Request = ({ setPage }) => {
+
+const Request = ({ page, setPage }) => {
   const [fromTime, setFromTime] = useState("15:00");
   const [toTime, setToTime] = useState("16:00");
   const [date, setDate] = useState("20/03/2023");
   const [contact, setContact] = useState("093-xxx-xxxx");
-  const [hourRate,setHourRate] = useState(1000);
-  const [text,setText] = useState("")
+  const [hourRate, setHourRate] = useState(1000);
+  const [text, setText] = useState("");
   console.log("fromtime", fromTime);
   console.log("totime", toTime);
   console.log("date", date);
   console.log("contact", contact);
-  console.log("hourRate",hourRate);
+  console.log("hourRate", hourRate);
   console.log("text", text);
   return (
     <>
-      <div className=" mx-auto mt-[70px] mb-5 pb-5 w-[90%]  rounded-lg shadow-xl  ">
+      <div className=" mx-auto mt-[70px] mb-5 w-[90%] rounded-lg  pb-5 shadow-xl  ">
         <div
           className=" px-2  text-right text-xl text-slate-500"
-          onClick={() => setPage("landing")}
+          onClick={() => setPage("patientSchedule")}
         >
           x
         </div>
@@ -74,7 +73,7 @@ const Request = ({ setPage }) => {
           <textarea
             className="mx-auto h-[180px] w-[90%] rounded-lg border-2 border-slate-500 p-2"
             placeholder="What happen?"
-            onChange={(e)=>setText(e.target.value)}
+            onChange={(e) => setText(e.target.value)}
             value={text}
           ></textarea>
         </div>
@@ -88,20 +87,20 @@ const Request = ({ setPage }) => {
             </button>
           </div>
         </div>
-        <div className="mx-auto  space-x-4 w-full">
-          <div className="mx-auto  p-2 space-x-4 flex">
-          <input
-            className="h-[40px] w-1/2 rounded-lg border-2 border-slate-500 "
-            placeholder="   Contact"
-            onChange={(e) => setContact(e.target.value)}
-            type="number"
-          />
-          <input
-            className="h-[40px] w-1/2 rounded-lg border-2 border-slate-500 "
-            placeholder="   Hour rate"
-            onChange={(e) => setHourRate(e.target.value)}
-            type="number"
-          />
+        <div className="mx-auto  w-full space-x-4">
+          <div className="mx-auto  flex space-x-4 p-2">
+            <input
+              className="h-[40px] w-1/2 rounded-lg border-2 border-slate-500 "
+              placeholder="   Contact"
+              onChange={(e) => setContact(e.target.value)}
+              type="number"
+            />
+            <input
+              className="h-[40px] w-1/2 rounded-lg border-2 border-slate-500 "
+              placeholder="   Hour rate"
+              onChange={(e) => setHourRate(e.target.value)}
+              type="number"
+            />
           </div>
         </div>
       </div>

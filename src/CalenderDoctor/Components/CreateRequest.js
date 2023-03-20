@@ -32,6 +32,7 @@ const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
             description={"Do you want to create request?"}
             setConfirmPopupToggle={setConfirmPopupToggle}
             confirmPopupToggle={confirmPopupToggle}
+            setPage={setPage}
           />
         </div>
       }
