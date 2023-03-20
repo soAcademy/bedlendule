@@ -11,7 +11,7 @@ import Request from "./Components/Request";
 
 const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
-  const [page, setPage] = useState("landing");
+  const [page, setPage] = useState("request");  // อย่าลืมเปลี่ยนเป็น landing 
   const [type, setType] = useState("doctor");
 
   return (
