@@ -11,13 +11,13 @@ import Request from "./Components/Request";
 
 const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
-  const [page, setPage] = useState("request");  // อย่าลืมเปลี่ยนเป็น landing 
-  const [type, setType] = useState("doctor");
+  const [page, setPage] = useState("landing");
+  const [type, setType] = useState("patient"); //อย่าลืมเปลี่ยนเป็น doctor
 
   return (
     <div className="h-full font-kanit">
       <Nav className="cursor-pointer" />
-      {page === "landing" && <Landing setPage={setPage} type={type}/>}
+      {page === "landing" && <Landing setPage={setPage} type={type} />}
       {page === "patientSchedule" && <UserSchedule setPage={setPage} />}
       {page === "doctorSchedule" && <DoctorSchedule setPage={setPage} />}
       {page === "createRequest" && (
@@ -27,7 +27,7 @@ const Home = () => {
           confirmPopupToggle={confirmPopupToggle}
         />
       )}
-      {page === "request" &&<Request setPage={setPage}/>}
+      {page === "request" && <Request setPage={setPage} />}
     </div>
   );
 };
