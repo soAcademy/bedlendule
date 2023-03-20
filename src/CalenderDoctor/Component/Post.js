@@ -26,6 +26,18 @@ const Post = () => {
       duration: 1 / 2,
       cost: 900,
     },
+    {
+      gender: "Female",
+      illness: "Broken heart",
+      issue: "Broken heart",
+      heal: "Need help",
+      time: "15/Mar/2023",
+      location: "Offline",
+      cause:
+        "I don’t see value in myself anymore. No one I can talk to and I need help. I don’t want to live but I don’t want to die either. It is so tiring dealing with people don’t understand me.",
+      duration: 2,
+      cost: 1800,
+    },
   ];
   return (
     <>
@@ -69,13 +81,18 @@ const Post = () => {
               </div>
             </div>
 
-            <button className="float-left my-2 w-[150px] rounded-lg bg-teal-400 px-1 py-2 font-bold text-white shadow-lg">
+            <button className="float-left my-2 w-[150px] rounded-lg bg-teal-400 px-1 py-2 font-bold text-white shadow-lg hover:bg-blue-300">
               CONTACT
             </button>
           </div>
         ))}
 
-        {/* <button className="h-[150px] rounded-full bg-teal-500 fixed right-4 bottom-5">+</button> */}
+        <button
+          className="fixed right-4 bottom-5 mb-10 h-[50px] w-[50px] rounded-full bg-green-300 text-2xl font-bold text-white hover:bg-blue-300"
+          onClick={() => []}
+        >
+          +
+        </button>
       </div>
     </>
   );
