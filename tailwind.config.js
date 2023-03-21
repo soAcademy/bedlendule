@@ -9,6 +9,9 @@ module.exports = {
       colors: {
         primary: "#36B32D",
         secondary: "#E8A897 ",
+        yesButton : "#99B47B",
+        yesButtonHover : "#99b47bc8",
+        yesButtonActive :"#9cb482",
       },
       dropShadow: {
         '3xl': '0 35px 35px rgba(0, 0, 0, 0.25)',
