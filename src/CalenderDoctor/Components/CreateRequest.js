@@ -10,7 +10,7 @@ const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
   const [date, setDate] = useState("20/03/2023");
   const [hourRate, setHourRate] = useState(1000);
   const [description, setDescription] = useState("I fear to be alone");
-  const [locationType, setLocationType] = useState("Online");
+  const [locationType, setLocationType] = useState("ONLINE");
   const [location, setLocation] = useState("Google meet");
   const [problemType, setProblemType] = useState("Depression");
   const [title, setTitle] = useState("Need help");
@@ -171,12 +171,12 @@ const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
               <div className="w-full space-x-2">
                 <div className="mx-auto flex w-1/2">
                   <div className="flex p-2">
-                    <label for="online">Online</label>
+                    <label for="ONLINE">ONLINE</label>
                     <div className=" px-1 pt-1">
                       <input
                         type="radio"
-                        id="online"
-                        value="online"
+                        id="ONLINE"
+                        value="ONLINE"
                         name="location"
                         className="h-[15px] "
                         onChange={(e) => setLocationType(e.target.value)}
@@ -184,12 +184,12 @@ const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
                     </div>
                   </div>
                   <div className="flex p-2">
-                    <label for="online">Offline</label>
+                    <label for="OFFLINE">OFFLINE</label>
                     <div className=" px-1 pt-1">
                       <input
                         type="radio"
-                        id="offline"
-                        value="offline"
+                        id="OFFLINE"
+                        value="OFFLINE"
                         name="location"
                         className="h-[15px] "
                         onChange={(e) => setLocationType(e.target.value)}
