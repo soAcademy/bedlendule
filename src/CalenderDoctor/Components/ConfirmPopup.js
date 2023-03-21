@@ -1,12 +1,15 @@
-const ConfirmPopup = ({
-  title,
-  description,
-  setConfirmPopupToggle,
-  confirmPopupToggle,
-  setPage,
-}) => {
+import { useContext } from "react";
+import { ConfirmPopupContext } from "../home";
+
+const ConfirmPopup = ({ title, description, action }) => {
+  const { confirmPopupToggle, setConfirmPopupToggle } =
+    useContext(ConfirmPopupContext);
   return (
-    <>
+    <div
+          className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
+        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
+        ${!confirmPopupToggle ? "scale-0" : "scale-1"}`}
+        >
       <div
         className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
       p-6 text-center shadow-md duration-200
@@ -19,7 +22,7 @@ const ConfirmPopup = ({
         <div className="mt-4 flex flex-col space-y-2">
           <button
             className="text-md mx-auto w-24 rounded-md bg-[#99B47B] py-1 text-white duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]"
-            onClick={() => setPage("request")}
+            onClick={action}
           >
             CONFIRM
           </button>
@@ -31,7 +34,7 @@ const ConfirmPopup = ({
           </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 export default ConfirmPopup;

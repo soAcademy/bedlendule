@@ -1,4 +1,4 @@
-import Home from "./CalenderDoctor/home"
+import {Home} from "./CalenderDoctor/home"
 const App1=()=>{
   return<>
   <Home/></>

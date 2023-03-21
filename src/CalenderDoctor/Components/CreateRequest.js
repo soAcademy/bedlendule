@@ -1,7 +1,11 @@
+import { useContext } from "react";
 import ConfirmPopup from "./ConfirmPopup";
 import { MdClose } from "react-icons/md";
+import { ConfirmPopupContext } from "../home";
 
-const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
+const Request = ({ setPage }) => {
+  const { confirmPopupToggle, setConfirmPopupToggle } =
+    useContext(ConfirmPopupContext);
   return (
     <>
       <div className="min-h-11/12 relative mx-auto mt-[70px] w-[95%] rounded-lg bg-white p-6 font-kanit shadow-xl">
@@ -30,8 +34,6 @@ const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
           <ConfirmPopup
             title={"CREATE REQUEST"}
             description={"Do you want to create request?"}
-            setConfirmPopupToggle={setConfirmPopupToggle}
-            confirmPopupToggle={confirmPopupToggle}
             setPage={setPage}
           />
         </div>
