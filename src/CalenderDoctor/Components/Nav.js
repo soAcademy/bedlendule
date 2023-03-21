@@ -63,7 +63,7 @@ const Nav = ({ page, setPage, type, setType }) => {
               ${type === "doctor" && "bg-slate-200"}`}
           >
             Doctor
-          </li>
+          </li> 
           <li
             onClick={() => {
               setIsSideBarOpen(false);
