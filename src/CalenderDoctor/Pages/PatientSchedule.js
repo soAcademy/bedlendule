@@ -34,19 +34,21 @@ const UserSchedule = ({ setPage }) => {
         />
         <div className="flex p-2 text-sm">
           <div className="mx-auto my-3 flex">
-            <div className="mx-2 rounded-lg bg-[#C5E1A5] px-4 py-1 text-white shadow-lg ">
-              DOCTOR
+            <div className="mx-2 flex items-center space-x-2 rounded-md px-4 py-1 shadow-md">
+              <div className="h-4 w-4 rounded-full bg-[#C5E1A5]"></div>
+              <p>DOCTOR</p>
             </div>
-            <div className="mx-2 gap-2 rounded-lg bg-[#E1A5BB] px-4 py-1 text-white shadow-lg">
-              NO DOCTOR
+            <div className="mx-2 flex items-center space-x-2 rounded-md px-4 py-1 shadow-md">
+              <div className="h-4 w-4 rounded-full bg-[#E1A5BB]"></div>
+              <p>NO DOCTOR</p>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="mx-auto my-7 flex justify-center w-[90%] gap-2 text-white">
+      <div className="mx-auto my-2 flex w-[90%] justify-center">
         <button
-          className="button w-1/2 py-3"
+          className="button w-1/2 py-3 text-white"
           onClick={() => {
             setPage("createRequest");
           }}
@@ -55,7 +57,7 @@ const UserSchedule = ({ setPage }) => {
         </button>
       </div>
       <div>
-        <div className="pl-4 font-bold">INCOMING SCHEDULE</div>
+        <div className="pl-4 font-bold my-5">INCOMING SCHEDULE</div>
 
         {schedule.map((schedule) => (
           <div className="mx-5 my-4 flex w-[90%] rounded-lg border-2 border-sky-500 bg-slate-200 p-2 text-blue-400">
