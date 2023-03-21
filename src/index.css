@@ -3,3 +3,11 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  .button {
+    @apply rounded-lg bg-[#99B47B] text-center shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]
+  }
+  .buttonNo{
+    @apply rounded-lg bg-[#E1A5BB] text-center shadow-lg duration-200 hover:bg-[#F0E2E2] active:bg-[#D5C5C5]
+  }
+}

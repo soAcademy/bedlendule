@@ -31,6 +31,7 @@ const Request = ({ page, setPage }) => {
             <div className="mx-auto  flex w-full  flex-col ">
               <div className="pl-2">DATE</div>
               <Calendar
+                id="date"
                 value={date}
                 onChange={(e) => setDate(e.value)}
                 showButtonBar
@@ -43,6 +44,7 @@ const Request = ({ page, setPage }) => {
               <div className="">
                 From
                 <Calendar
+                  id="fromTime"
                   timeOnly
                   stepMinute={30}
                   value={fromTime}
@@ -57,6 +59,7 @@ const Request = ({ page, setPage }) => {
               <div className="">
                 To
                 <Calendar
+                  id="toTime"
                   timeOnly
                   stepMinute={30}
                   value={toTime}
@@ -71,31 +74,45 @@ const Request = ({ page, setPage }) => {
         </div>
         <div className=" w-full pl-8">
           <textarea
+            id="textarea"
             className="mx-auto h-[180px] w-[90%] rounded-lg border-2 border-slate-500 p-2"
             placeholder="What happen?"
             onChange={(e) => setText(e.target.value)}
             value={text}
           ></textarea>
         </div>
-        <div className="mx-auto flex  p-2">
-          <div className="  mx-auto space-x-8 text-sm text-white">
-            <button
-              className="rounded-lg bg-[#99B47B]  px-2 py-1 drop-shadow-lg hover:bg-[#99b47bc8] active:bg-[#9cb482] duration-200"
-              onClick={() => setLocation("Online")}
-            >
-              Online
-            </button>
-            <button
-              className="rounded-lg bg-secondary hover:bg-red-200 active:bg-red-300 px-2  py-1 drop-shadow-lg"
-              onClick={() => setLocation("Offline")}
-            >
-              Offline
-            </button>
+        <div className="w-full space-x-2">
+          <div className="mx-auto flex w-1/2">
+            <div className="flex p-2">
+              <label for="online">Online</label>
+              <div className=" px-1 pt-1">
+                <input
+                  type="radio"
+                  id="online"
+                  value="online"
+                  name="location"
+                  className="h-[15px] "
+                />
+              </div>
+            </div>
+            <div className="flex p-2">
+              <label for="online">Offline</label>
+              <div className=" px-1 pt-1">
+                <input
+                  type="radio"
+                  id="offline"
+                  value="offline"
+                  name="location"
+                  className="h-[15px] "
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div className="mx-auto  w-full space-x-4">
           <div className="mx-auto  flex space-x-4 p-2">
             <input
+              id="contact"
               className="h-[40px] w-1/2 rounded-lg border-2 border-slate-500 "
               placeholder="   Contact"
               onChange={(e) => setContact(e.target.value)}
@@ -103,6 +120,7 @@ const Request = ({ page, setPage }) => {
               required
             />
             <input
+              id="hourRate"
               className="h-[40px] w-1/2 rounded-lg border-2 border-slate-500 "
               placeholder="   Hour rate"
               onChange={(e) => setHourRate(e.target.value)}
@@ -115,7 +133,7 @@ const Request = ({ page, setPage }) => {
           <div className=" mx-auto  w-2/3 p-2">
             <div className="mx-auto bg-yellow-100">
               <div
-                className=" w-full rounded-lg bg-primary px-4 py-2 text-center text-white shadow-lg hover:bg-teal-300 active:bg-teal-200"
+                className=" button w-full py-2 text-white"
                 type="submit"
                 onClick={() =>
                   setRequest({
