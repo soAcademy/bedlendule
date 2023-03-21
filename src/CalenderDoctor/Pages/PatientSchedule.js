@@ -30,6 +30,7 @@ const UserSchedule = ({ setPage }) => {
           }}
           minDate={new Date()}
           inline
+          showOtherMonths={false}
           dateTemplate={dateTemplate}
         />
         <div className="flex p-2 text-sm">

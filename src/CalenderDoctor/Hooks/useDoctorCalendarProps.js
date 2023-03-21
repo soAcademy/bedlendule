@@ -51,7 +51,7 @@ const useDoctorCalendarProps = () => {
   useEffect(() => {
     var config = {
       method: "post",
-      url: "http://localhost:5555/bedlendule/getOpeningRequests",
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getOpeningRequests",
       headers: {},
     };
 

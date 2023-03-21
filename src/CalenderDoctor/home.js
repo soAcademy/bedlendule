@@ -13,14 +13,24 @@ import { BsArrowLeft } from "react-icons/bs";
 const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
   const [page, setPage] = useState("landing");
-  const [type, setType] = useState("patient"); //อย่าลืมเปลี่ยนเป็น doctor
+  const [type, setType] = useState("doctor"); //อย่าลืมเปลี่ยนเป็น doctor
 
   return (
     <div className="h-full font-kanit">
-      <Nav page={page} setPage={setPage} className="cursor-pointer" />
+      <Nav
+        setType={setType}
+        type={type}
+        page={page}
+        setPage={setPage}
+        className="cursor-pointer"
+      />
       {page === "landing" && <Landing setPage={setPage} type={type} />}
-      {page === "patientSchedule" && <PatientSchedule setPage={setPage} />}
-      {page === "doctorSchedule" && <DoctorSchedule setPage={setPage} />}
+      {page === "home" && type === "patient" && (
+        <PatientSchedule setPage={setPage} />
+      )}
+      {page === "home" && type === "doctor" && (
+        <DoctorSchedule setPage={setPage} />
+      )}
       {page === "createRequest" && (
         <CreateRequest
           setPage={setPage}

@@ -9,7 +9,7 @@ const ConfirmPopup = ({
     <>
       <div
         className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
-      p-6 text-center font-kanit shadow-md duration-200
+      p-6 text-center shadow-md duration-200
       ${confirmPopupToggle ? "scale-1" : "translate-y-1/4 scale-0"}`}
       >
         <div>
