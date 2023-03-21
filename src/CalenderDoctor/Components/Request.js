@@ -80,13 +80,13 @@ const Request = ({ page, setPage }) => {
         <div className="mx-auto flex  p-2">
           <div className="  mx-auto space-x-8 text-sm text-white">
             <button
-              className="rounded-lg bg-primary  px-2 py-1 drop-shadow-lg hover:bg-teal-300 active:bg-teal-200"
+              className="rounded-lg bg-[#99B47B]  px-2 py-1 drop-shadow-lg hover:bg-[#99b47bc8] active:bg-[#9cb482] duration-200"
               onClick={() => setLocation("Online")}
             >
               Online
             </button>
             <button
-              className="rounded-lg bg-secondary px-2  py-1 drop-shadow-lg"
+              className="rounded-lg bg-secondary hover:bg-red-200 active:bg-red-300 px-2  py-1 drop-shadow-lg"
               onClick={() => setLocation("Offline")}
             >
               Offline
