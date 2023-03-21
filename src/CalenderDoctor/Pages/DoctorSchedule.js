@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { Calendar } from "primereact/calendar";
 import { FaHome } from "react-icons/fa";
-import useDoctorCalendarProps from '../Hooks/useDoctorCalendarProps';
-const DoctorSchedule = ({setPage}) => {  
+import useDoctorCalendarProps from "../Hooks/useDoctorCalendarProps";
+const DoctorSchedule = ({ setPage }) => {
   const patient = [
     {
       name: "Bond Rungot",
@@ -46,17 +46,14 @@ const DoctorSchedule = ({setPage}) => {
 
       <div className="mx-auto my-7 flex w-[90%] gap-2 text-white">
         <button
-          className="w-1/2 rounded-lg bg-[#99B47B] py-3 text-center shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482] "
+          className="button w-1/2 py-3"
           onClick={() => {
             setPage("createSchedule");
           }}
         >
           CREATE SCHEDULE
         </button>
-        <button
-          className="w-1/2 rounded-lg bg-[#99B47B] py-3 text-center shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]"
-          onClick={() => []}
-        >
+        <button className="button w-1/2 py-3" onClick={() => []}>
           REQUEST
         </button>
       </div>
@@ -79,7 +76,7 @@ const DoctorSchedule = ({setPage}) => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DoctorSchedule
+export default DoctorSchedule;
