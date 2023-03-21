@@ -19,10 +19,10 @@ const UserSchedule = ({ setPage }) => {
   const [schedule, setSchedule] = useState(patient);
   const { date, setDate, dateTemplate } = usePatientCalendarProps();
   return (
-    <div className="mt-[70px] h-full">
-      <div className="flex w-full flex-col items-center justify-center">
+    <div className="z-10 mt-[70px] h-full">
+      <div className="z-10 flex w-full flex-col items-center justify-center">
         <Calendar
-          className="z-0 w-10/12"
+          className="z-0 w-10/12 shadow-lg"
           value={date}
           onChange={(e) => {
             console.log(e.value.toISOString());
@@ -44,20 +44,14 @@ const UserSchedule = ({ setPage }) => {
         </div>
       </div>
 
-      <div className="mx-auto my-7 flex w-[90%] gap-2 text-white">
+      <div className="mx-auto my-7 flex justify-center w-[90%] gap-2 text-white">
         <button
-          className="w-1/2 rounded-lg bg-[#99B47B] py-3 text-center shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482] "
+          className="button w-1/2 py-3"
           onClick={() => {
             setPage("createRequest");
           }}
         >
           CREATE REQUEST
-        </button>
-        <button
-          className="w-1/2 rounded-lg bg-[#99B47B] py-3 text-center shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]"
-          onClick={() => []}
-        >
-          REQUEST
         </button>
       </div>
       <div>
