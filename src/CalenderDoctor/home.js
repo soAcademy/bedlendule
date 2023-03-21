@@ -32,7 +32,7 @@ const Home = () => {
       {page === "setting" && (
         <button
           onClick={() => setPage("landing")}
-          className="fixed top-20 right-5 rounded-lg border-2 p-4 shadow-xl hover:bg-slate-50 active:bg-slate-100"
+          className="fixed top-20 z-40 right-5 rounded-lg border-2 p-4 shadow-xl hover:bg-slate-50 active:bg-slate-100"
         >
           <BsArrowLeft />
         </button>

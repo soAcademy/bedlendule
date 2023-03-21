@@ -2,3 +2,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .button {
+    @apply rounded-lg bg-[#99B47B] text-center shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]
+  }
+}
