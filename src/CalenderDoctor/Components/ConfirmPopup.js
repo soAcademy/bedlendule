@@ -3,7 +3,10 @@ const ConfirmPopup = ({
   description,
   setConfirmPopupToggle,
   confirmPopupToggle,
+  setIsSubmit,  
   setPage,
+  prepareData
+  
 }) => {
   return (
     <>
@@ -19,7 +22,7 @@ const ConfirmPopup = ({
         <div className="mt-4 flex flex-col space-y-2">
           <button
             className="text-md mx-auto w-24 rounded-md bg-[#99B47B] py-1 text-white duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]"
-            onClick={() => setPage("request")}
+            onClick={() => prepareData()}
           >
             CONFIRM
           </button>
