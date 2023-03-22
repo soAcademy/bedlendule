@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Calendar } from "primereact/calendar";
 import { FaHome } from "react-icons/fa";
 import usePatientCalendarProps from "../Hooks/usePatientCalendarProps";
+import CreateRequest from "../Components/CreateRequest";
 
 const UserSchedule = ({ setPage }) => {
   const patient = [
@@ -18,6 +19,7 @@ const UserSchedule = ({ setPage }) => {
   ];
   const [schedule, setSchedule] = useState(patient);
   const { date, setDate, dateTemplate } = usePatientCalendarProps();
+  const [openCreateRequest, setOpenCreateRequest] = useState();
   return (
     <div className="z-10 mt-[70px] h-full">
       <div className="z-10 flex w-full flex-col items-center justify-center">
@@ -25,11 +27,11 @@ const UserSchedule = ({ setPage }) => {
           className="z-0 w-10/12 shadow-lg"
           value={date}
           onChange={(e) => {
-            console.log(e.value.toISOString());
             setDate(e.value.toISOString());
           }}
           minDate={new Date()}
           inline
+          showOtherMonths={false}
           dateTemplate={dateTemplate}
         />
         <div className="flex p-2 text-sm">
@@ -50,14 +52,14 @@ const UserSchedule = ({ setPage }) => {
         <button
           className="button w-1/2 py-3 text-white"
           onClick={() => {
-            setPage("createRequest");
+            setOpenCreateRequest(true);
           }}
         >
           CREATE REQUEST
         </button>
       </div>
       <div>
-        <div className="pl-4 font-bold my-5">INCOMING SCHEDULE</div>
+        <div className="my-5 pl-4 font-bold">INCOMING SCHEDULE</div>
 
         {schedule.map((schedule) => (
           <div className="mx-5 my-4 flex w-[90%] rounded-lg border-2 border-sky-500 bg-slate-200 p-2 text-blue-400">
@@ -74,6 +76,15 @@ const UserSchedule = ({ setPage }) => {
           </div>
         ))}
       </div>
+      {
+        <div
+          className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
+        bg-slate-300 bg-opacity-10 backdrop-blur-[2px] duration-150
+        ${!openCreateRequest ? "scale-0" : "scale-1"}`}
+        >
+          <CreateRequest setOpenCreateRequest={setOpenCreateRequest} />
+        </div>
+      }
     </div>
   );
 };

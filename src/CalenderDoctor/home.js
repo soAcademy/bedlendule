@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext } from "react";
 import Nav from "./Components/Nav";
 import CreateRequest from "./Components/CreateRequest";
 import "primereact/resources/themes/saga-green/theme.css";
@@ -9,33 +9,42 @@ import PatientSchedule from "./Pages/PatientSchedule";
 import DoctorSchedule from "./Pages/DoctorSchedule";
 import { BsArrowLeft } from "react-icons/bs";
 
-const Home = () => {
+export const ConfirmPopupContext = createContext();
+
+export const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
   const [page, setPage] = useState("landing");
-  const [type, setType] = useState("patient"); //อย่าลืมเปลี่ยนเป็น doctor
+  const [type, setType] = useState("doctor"); //อย่าลืมเปลี่ยนเป็น doctor
 
   return (
-    <div className="h-full font-kanit">
-      <Nav page={page} setPage={setPage} className="cursor-pointer" />
-      {page === "landing" && <Landing setPage={setPage} type={type} />}
-      {page === "patientSchedule" && <PatientSchedule setPage={setPage} />}
-      {page === "doctorSchedule" && <DoctorSchedule setPage={setPage} />}
-      {page === "createRequest" && (
-        <CreateRequest
+    <ConfirmPopupContext.Provider
+      value={{ confirmPopupToggle, setConfirmPopupToggle }}
+    >
+      <div className="h-full font-kanit">
+        <Nav
+          setType={setType}
+          type={type}
+          page={page}
           setPage={setPage}
-          setConfirmPopupToggle={setConfirmPopupToggle}
-          confirmPopupToggle={confirmPopupToggle}
+          className="cursor-pointer"
         />
-      )}
-      {page === "setting" && (
-        <button
-          onClick={() => setPage("landing")}
-          className="fixed top-20 right-5 z-40 rounded-lg border-2 p-4 shadow-xl hover:bg-slate-50 active:bg-slate-100"
-        >
-          <BsArrowLeft />
-        </button>
-      )}
-    </div>
+        {page === "landing" && <Landing setPage={setPage} type={type} />}
+        {page === "home" && type === "patient" && (
+          <PatientSchedule setPage={setPage} />
+        )}
+        {page === "home" && type === "doctor" && (
+          <DoctorSchedule setPage={setPage} />
+        )}
+        {page === "createRequest" && <CreateRequest setPage={setPage} />}
+        {page === "setting" && (
+          <button
+            onClick={() => setPage("landing")}
+            className="fixed top-20 right-5 z-40 rounded-lg border-2 p-4 shadow-xl hover:bg-slate-50 active:bg-slate-100"
+          >
+            <BsArrowLeft />
+          </button>
+        )}
+      </div>
+    </ConfirmPopupContext.Provider>
   );
 };
-export default Home;

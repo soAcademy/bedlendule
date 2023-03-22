@@ -1,16 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Kanit&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer components {
   .button {
-    @apply rounded-lg bg-[#99B47B] text-center shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]
+    @apply rounded-lg bg-[#99B47B] text-center text-white shadow-lg duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482];
   }
-  .buttonNo{
-    @apply rounded-lg bg-[#E1A5BB] text-center shadow-lg duration-200 hover:bg-[#F0E2E2] active:bg-[#D5C5C5]
+  .buttonNo {
+    @apply rounded-lg bg-[#E1A5BB] text-center text-white shadow-lg duration-200 hover:bg-[#F0E2E2] active:bg-[#D5C5C5];
   }
-  .headingColor{
-    @apply text-[#4C4E64]
+  .headingColor {
+    @apply text-[#4C4E64];
   }
 }
