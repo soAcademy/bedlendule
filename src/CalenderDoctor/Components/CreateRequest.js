@@ -8,7 +8,7 @@ import axios from "axios";
 import DateTimePickerForm from "./DateTimePickerForm";
 import { ProgressSpinner } from "primereact/progressspinner";
 
-const Request = ({ setPage }) => {
+const CreateRequest = ({ setOpenCreateRequest }) => {
   const [fromTime, setFromTime] = useState();
   const [toTime, setToTime] = useState();
   const [formData, setFormData] = useState();
@@ -85,7 +85,7 @@ const Request = ({ setPage }) => {
         <div className="min-h-11/12 relative mx-auto mt-[70px] w-[95%] rounded-lg bg-white p-6 font-kanit shadow-xl">
           <MdClose
             className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
-            onClick={() => setPage("home")}
+            onClick={() => setOpenCreateRequest(false)}
           />
           <p className="pt-4 text-center text-3xl font-bold text-slate-500">
             CREATE REQUEST
@@ -227,7 +227,7 @@ const Request = ({ setPage }) => {
               className="text-md button mx-auto w-24 rounded-md py-1"
               onClick={() => {
                 setSubmitSuccessPopup(false);
-                setPage("home");
+                setOpenCreateRequest(false);
               }}
             >
               OK
@@ -265,4 +265,4 @@ const Request = ({ setPage }) => {
     </>
   );
 };
-export default Request;
+export default CreateRequest;

@@ -5,9 +5,7 @@ const usePatientCalendarProps = () => {
   const [date, setDate] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
   const dateTemplate = (date) => {
-    console.log('timeSlots', timeSlots)
     const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
-    console.log('_date.toLocaleDateString()', _date.toLocaleDateString())
     if (
       timeSlots?.includes(_date.toLocaleDateString()) &&
       _date.getTime() >= new Date().getTime()
@@ -56,7 +54,6 @@ const usePatientCalendarProps = () => {
 
     axios(config)
       .then(function async(response) {
-        console.log("response.data", response.data);
         setTimeSlots(
           response.data.map((e) =>
             new Date(e.startTime).toLocaleDateString("en", { timeZone: "UTC" })
