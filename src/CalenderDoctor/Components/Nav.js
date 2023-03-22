@@ -14,8 +14,8 @@ const Nav = ({ page, setPage, type, setType }) => {
         >
           <FaAlignJustify className="cursor-pointer" />
         </button>
-        <div className="fixed top-[-50%] right-0 float-right">
-          <img className="h-24" src="Memind2.png" alt="logo" />
+        <div className="fixed top-[-5%] right-3 float-right">
+          <img className="h-[50px]" src="doctorLogo.png" alt="logo" />
         </div>
       </div>
       <section

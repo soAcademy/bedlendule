@@ -8,6 +8,8 @@ import Landing from "./Pages/Landing";
 import PatientSchedule from "./Pages/PatientSchedule";
 import DoctorSchedule from "./Pages/DoctorSchedule";
 import { BsArrowLeft } from "react-icons/bs";
+import DoctorProfileUserSide from "./Components/RequestInfoUser";
+
 
 export const ConfirmPopupContext = createContext();
 
