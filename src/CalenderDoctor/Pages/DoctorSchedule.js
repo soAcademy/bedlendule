@@ -199,8 +199,7 @@ const DoctorSchedule = ({ setPage }) => {
               })}
               {
                 <div
-                  className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-      bg-slate-300 bg-opacity-10 backdrop-blur-[2px] duration-200
+                  className={`shader
       ${
         isEditOpen && scheduleToEdit.id === schedule.id
           ? ""
@@ -277,6 +276,9 @@ const DoctorSchedule = ({ setPage }) => {
                               )}
                               {
                                 <ConfirmPopup
+                                  className={`fixed top-[27%] left-1/2 mx-auto w-[80%] -translate-x-1/2 -translate-y-1/2 
+                                rounded-lg bg-white p-6 text-center shadow-md duration-200
+                                ${confirmRemove ? "scale-100" : "scale-0"}`}
                                   title={"Removing Timeslot"}
                                   description={"Confirm Removal"}
                                   action={() => removeTimeslot(timeslot)}
