@@ -8,10 +8,12 @@ import Landing from "./Pages/Landing";
 import PatientSchedule from "./Pages/PatientSchedule";
 import DoctorSchedule from "./Pages/DoctorSchedule";
 import { BsArrowLeft } from "react-icons/bs";
+import DoctorProfileUserSide from "./Components/RequestInfoUser";
+
 
 const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
-  const [page, setPage] = useState("landing");
+  const [page, setPage] = useState("doctorProfileUserSide");
   const [type, setType] = useState("patient"); //อย่าลืมเปลี่ยนเป็น doctor
 
   return (
@@ -27,6 +29,7 @@ const Home = () => {
           confirmPopupToggle={confirmPopupToggle}
         />
       )}
+      {page ==="doctorProfileUserSide" &&(<DoctorProfileUserSide/>)}
       {page === "setting" && (
         <button
           onClick={() => setPage("landing")}
