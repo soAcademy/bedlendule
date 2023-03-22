@@ -7,7 +7,6 @@ import "primeicons/primeicons.css";
 import Landing from "./Pages/Landing";
 import PatientSchedule from "./Pages/PatientSchedule";
 import DoctorSchedule from "./Pages/DoctorSchedule";
-import Request from "./Components/Request";
 import { BsArrowLeft } from "react-icons/bs";
 
 export const ConfirmPopupContext = createContext();
@@ -37,7 +36,6 @@ export const Home = () => {
           <DoctorSchedule setPage={setPage} />
         )}
         {page === "createRequest" && <CreateRequest setPage={setPage} />}
-        {page === "request" && <Request setPage={setPage} />}
         {page === "setting" && (
           <button
             onClick={() => setPage("landing")}
