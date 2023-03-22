@@ -8,12 +8,15 @@ import Landing from "./Pages/Landing";
 import PatientSchedule from "./Pages/PatientSchedule";
 import DoctorSchedule from "./Pages/DoctorSchedule";
 import { BsArrowLeft } from "react-icons/bs";
+import DoctorProfileUserSide from "./Components/RequestInfoUser";
+import ReviewDoctor from "./Components/ReviewDoctor";
+import RequestDetail from "./Components/RequestDetail";
 
 export const ConfirmPopupContext = createContext();
 
 export const Home = () => {
-  const [confirmPopupToggle, setConfirmPopupToggle] = useState();
-  const [page, setPage] = useState("landing");
+  const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
+  const [page, setPage] = useState("landing"); //
   const [type, setType] = useState("doctor"); //อย่าลืมเปลี่ยนเป็น doctor
 
   return (
@@ -44,6 +47,8 @@ export const Home = () => {
             <BsArrowLeft />
           </button>
         )}
+        {page === "reviewDoctor" && <ReviewDoctor setPage={setPage} />}
+        {page === "requestDetail" && <RequestDetail setPage={setPage}/>}
       </div>
     </ConfirmPopupContext.Provider>
   );
