@@ -8,7 +8,7 @@ const usePatientCalendarProps = () => {
     const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
     if (
       timeSlots?.includes(_date.toLocaleDateString()) &&
-      date.day >= new Date().getDate()
+      _date.getTime() >= new Date().getTime()
     ) {
       return date.day === new Date().getDate() ? (
         <div
@@ -48,13 +48,12 @@ const usePatientCalendarProps = () => {
   useEffect(() => {
     var config = {
       method: "post",
-      url: "http://localhost:5555/bedlendule/getAllTimeSlots",
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getAllTimeSlots",
       headers: {},
     };
 
     axios(config)
       .then(function async(response) {
-        console.log("response.data", response.data);
         setTimeSlots(
           response.data.map((e) =>
             new Date(e.startTime).toLocaleDateString("en", { timeZone: "UTC" })

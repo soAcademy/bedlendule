@@ -1,28 +1,42 @@
+import { useContext } from "react";
 import ConfirmPopup from "./ConfirmPopup";
 import { MdClose } from "react-icons/md";
+import { ConfirmPopupContext } from "../home";
 import { Calendar } from "primereact/calendar";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import DateTimePickerForm from "./DateTimePickerForm";
+import { ProgressSpinner } from "primereact/progressspinner";
 
-const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
-  const [fromTime, setFromTime] = useState(new Date());
-  const [toTime, setToTime] = useState(new Date());
-  const [date, setDate] = useState("20/03/2023");
-  const [hourRate, setHourRate] = useState(1000);
-  const [description, setDescription] = useState("I fear to be alone");
-  const [locationType, setLocationType] = useState("ONLINE");
-  const [location, setLocation] = useState("Google meet");
-  const [problemType, setProblemType] = useState("Depression");
-  const [title, setTitle] = useState("Need help");
-  const [isSubmit, setIsSubmit] = useState(false);
-  const [jsonData, setJsonData] = useState([]);
+const CreateRequest = ({ setOpenCreateRequest }) => {
+  const [fromTime, setFromTime] = useState();
+  const [toTime, setToTime] = useState();
+  const [formData, setFormData] = useState();
+  const [submitSuccessPopUp, setSubmitSuccessPopup] = useState();
+  const [submitFailPopUp, setSubmitFailPopUp] = useState();
+  const [sending, setSending] = useState(false);
+  const { confirmPopupToggle, setConfirmPopupToggle } =
+    useContext(ConfirmPopupContext);
 
-  console.log("jsonData", jsonData);
+  const patientUUID = "b380f399-2800-4423-bd93-435eb1b5858e";
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(
-      ` price: ${hourRate} locationType:${locationType} startTime:${fromTime.toISOString()} finishTime:${toTime.toISOString()}  location:${location} `
-    );
+    setConfirmPopupToggle(true);
+    const form = event.target;
+    const startTime = new Date(form[0].value + " " + form[1].value);
+    const finishTime = new Date(form[0].value + " " + form[2].value);
+    const data = {
+      title: form.title.value,
+      description: form.description.value,
+      price: Number(form.hourRate.value),
+      problemType: form.problemType.value.replace(/\s+/g, "_"),
+      meetingType: form.meetingType.value,
+      location: form.location.value,
+      startTime: startTime.toISOString(),
+      finishTime: finishTime.toISOString(),
+      patientUUID: patientUUID,
+    };
+    setFormData(data);
   };
 
   const problemTypes = [
@@ -34,27 +48,10 @@ const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
     "DEMENTIA",
     "PHOBIAS",
   ];
-  const patientUUID = "22e8ed57-d93e-4ba4-a958-85a7670ba702";
-  const prepareData = () => {
-    const _data = {
-      title: title,
-      description: description,
-      price: Number(hourRate),
-      problemType: problemType.replace(/\s+/g, "_"),
-      meetingType: locationType,
-      location: location,
-      startTime: fromTime.toISOString(),
-      finishTime: toTime.toISOString(),
-      patientUUID: patientUUID,
-    };
-    console.log("_data", _data);
-    setJsonData(_data);
-    return _data;
-  };
 
-  useEffect(() => {
-   
-    const data = jsonData;
+  const submitForm = () => {
+    setConfirmPopupToggle(false);
+    setSending(true);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -62,172 +59,113 @@ const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      data: data,
+      data: formData,
     };
 
     axios
       .request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
+        document.querySelector("#create-request").reset();
+        setFromTime();
+        setToTime();
+        setSending(false);
+        response.status === 200
+          ? setSubmitSuccessPopup(true)
+          : setSubmitFailPopUp(true);
       })
       .catch((error) => {
-        console.log(error);
+        setSending(false);
+        setSubmitFailPopUp(true);
       });
-  }, [jsonData]);
+  };
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form id="create-request" onSubmit={handleSubmit}>
         <div className="min-h-11/12 relative mx-auto mt-[70px] w-[95%] rounded-lg bg-white p-6 font-kanit shadow-xl">
           <MdClose
             className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
-            onClick={() => setPage("patientSchedule")}
+            onClick={() => setOpenCreateRequest(false)}
           />
           <p className="pt-4 text-center text-3xl font-bold text-slate-500">
             CREATE REQUEST
           </p>
-          <div>
-            <div className=" mx-auto  mb-5 rounded-lg  pb-5   ">
-              <div className=" mx-auto my-4 flex  p-2 text-center text-slate-400">
-                <div className="mx-auto flex gap-4 ">
-                  <div className="mx-auto  flex w-full  flex-col ">
-                    <div className="pl-2">DATE</div>
-                    <Calendar
-                      id="date"
-                      value={date}
-                      onChange={(e) => setDate(e.value)}
-                      showButtonBar
-                      className="mx-auto w-[120px] rounded-lg border-2 border-slate-200"
-                      placeholder="dd/mm/yyyy"
-                    ></Calendar>
-                  </div>
-
-                  <div className="mx-1">
-                    <div className="">
-                      From
-                      <Calendar
-                        id="fromTime"
-                        timeOnly
-                        stepMinute={30}
-                        value={fromTime}
-                        onChange={(e) => setFromTime(e.value)}
-                        showButtonBar
-                        className="w-[80px] rounded-lg  border-2 bg-slate-900 text-center "
-                        placeholder="  15:00"
-                      ></Calendar>
-                    </div>
-                  </div>
-                  <div className="mx-1">
-                    <div className="">
-                      To
-                      <Calendar
-                        id="toTime"
-                        timeOnly
-                        stepMinute={30}
-                        value={toTime}
-                        onChange={(e) => setToTime(e.value)}
-                        showButtonBar
-                        className="w-[80px] rounded-lg  border-2 bg-slate-900 text-center "
-                        placeholder="  16:00"
-                      ></Calendar>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="my-3  flex w-full">
-                <div className="ml-5  flex w-full  ">
-                  <div className="w-[150px]  px-2">
-                    <div className="headingColor text-center">Title</div>
-                    <input
-                      className="w-full rounded-lg border-2 border-slate-400 px-2"
-                      onChange={(e) => setTitle(e.target.value)}
-                      placeholder="Need Therapy"
-                    />
-                  </div>
-                  <div className="w-[40%]  px-2">
-                    <div className="headingColor text-center">ประเภท</div>
-                    <select
-                      className="w-[120px] rounded-lg border-2 border-slate-400 text-center text-sm"
-                      value={problemType}
-                      onChange={(e) => setProblemType(e.target.value)}
-                    >
-                      {problemTypes.map((cause, idx) => (
-                        <option key={idx} value={cause}>
-                          {cause}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div className=" w-full pl-8">
-                <textarea
-                  id="textarea"
-                  className="mx-auto h-[180px] w-[90%] rounded-lg border-2 border-slate-500 p-2"
-                  placeholder="What happen?"
-                  onChange={(e) => setDescription(e.target.value)}
-                ></textarea>
-              </div>
-              <div className="w-full space-x-2">
-                <div className="mx-auto flex w-1/2">
-                  <div className="flex p-2">
-                    <label for="ONLINE">ONLINE</label>
-                    <div className=" px-1 pt-1">
-                      <input
-                        type="radio"
-                        id="ONLINE"
-                        value="ONLINE"
-                        name="location"
-                        className="h-[15px] "
-                        onChange={(e) => setLocationType(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex p-2">
-                    <label for="OFFLINE">OFFLINE</label>
-                    <div className=" px-1 pt-1">
-                      <input
-                        type="radio"
-                        id="OFFLINE"
-                        value="OFFLINE"
-                        name="location"
-                        className="h-[15px] "
-                        onChange={(e) => setLocationType(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mx-auto  w-full space-x-4">
-                <div className="mx-auto  flex space-x-4 p-2">
-                  <input
-                    id="location"
-                    className="h-[40px] w-1/2 rounded-lg border-2 border-slate-500 px-2"
-                    placeholder="Google meet"
-                    onChange={(e) => setLocation(e.target.value)}
-                    type=""
-                    required
-                  />
-                  <input
-                    id="hourRate"
-                    className="h-[40px] w-1/2 rounded-lg border-2 border-slate-500 px-2"
-                    placeholder="   Hour rate"
-                    onChange={(e) => setHourRate(e.target.value)}
-                    type="number"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="flex">
-                <button
-                  onClick={() => setConfirmPopupToggle(true)}
-                  className="mx-auto rounded-md bg-[#99B47B] mt-5 p-2 px-4 text-xl text-white duration-200 hover:bg-[#99b47bc8] active:bg-[#9cb482]"
-                  type="submit"
-                >
-                  CREATE REQUEST
-                </button>
-              </div>
+          <div className="mx-auto my-6 flex gap-4 p-2 text-center text-slate-400">
+            <DateTimePickerForm
+              fromTime={fromTime}
+              toTime={toTime}
+              setFromTime={setFromTime}
+              setToTime={setToTime}
+            />
+          </div>
+          <div className="my-6 flex w-full items-center gap-2">
+            <div className="w-1/2">
+              <p className="headingColor text-center">Title</p>
+              <input
+                id="title"
+                className="h-[40px] w-full rounded-lg border-2 border-slate-400 px-2"
+                placeholder="Need Therapy"
+              />
             </div>
+            <div className="w-1/2">
+              <p className="headingColor text-center">ประเภท</p>
+              <select
+                id="problemType"
+                className="h-[40px] w-full rounded-lg border-2 border-slate-400 text-center text-[15px]"
+              >
+                {problemTypes.map((cause, idx) => (
+                  <option className="" key={idx} value={cause}>
+                    {cause}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div className="flex w-full justify-center">
+            <textarea
+              id="description"
+              className="h-[180px] w-[90%] rounded-lg border-2 border-slate-500 p-2"
+              placeholder="What happen?"
+            ></textarea>
+          </div>
+          <div className="my-4 flex items-center justify-center gap-2">
+            <label for="online">ONLINE</label>
+            <input
+              type="radio"
+              id="online"
+              value="ONLINE"
+              name="meetingType"
+              className="mr-3"
+            />
+            <label for="offline">OFFLINE</label>
+            <input
+              type="radio"
+              id="offline"
+              value="OFFLINE"
+              name="meetingType"
+            />
+          </div>
+          <div className="flex w-full gap-4">
+            <input
+              id="location"
+              name="location"
+              className="h-[40px] w-1/2 rounded-lg border-2 border-slate-500 px-2"
+              placeholder="Location"
+              type=""
+              required
+            />
+            <input
+              id="hourRate"
+              className="h-[40px] w-1/2 rounded-lg border-2 border-slate-500 px-2"
+              placeholder="Hour rate"
+              type="number"
+              required
+            />
+          </div>
+          <div className="mt-6 mb-2 flex">
+            <button className="button mx-auto p-4 " type="submit">
+              CREATE REQUEST
+            </button>
           </div>
         </div>
         {
@@ -239,15 +177,92 @@ const Request = ({ setConfirmPopupToggle, confirmPopupToggle, setPage }) => {
             <ConfirmPopup
               title={"CREATE REQUEST"}
               description={"Do you want to create request?"}
-              setConfirmPopupToggle={setConfirmPopupToggle}
-              confirmPopupToggle={confirmPopupToggle}
-              setIsSubmit={setIsSubmit}
-              prepareData={prepareData}
+              action={submitForm}
             />
           </div>
         }
       </form>
+      <div
+        className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
+        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
+        ${!sending ? "scale-0" : "scale-1"}`}
+      >
+        <div
+          className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
+      p-6 text-center shadow-md duration-200
+      ${sending ? "scale-1" : "scale-0"}`}
+        >
+          <div>
+            <p className="text-2xl font-bold text-[#4C4E64DE] ">Submitting</p>
+            <p className="text-[#4C4E64AD]">Your request is being submitted</p>
+          </div>
+          <div className="card justify-content-center my-6 flex">
+            <ProgressSpinner
+              style={{ width: "50px", height: "50px" }}
+              strokeWidth="4"
+              animationDuration="1.5s"
+            />
+          </div>
+        </div>
+      </div>
+      <div
+        className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
+        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
+        ${!submitSuccessPopUp ? "scale-0" : "scale-1"}`}
+      >
+        <div
+          className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
+      p-6 text-center shadow-md duration-200
+      ${submitSuccessPopUp ? "scale-1" : "scale-0"}`}
+        >
+          <div>
+            <p className="text-2xl font-bold text-[#4C4E64DE] ">Successful</p>
+            <p className="text-[#4C4E64AD]">
+              Your request was successfully created
+            </p>
+          </div>
+          <div className="mt-4 flex space-y-2">
+            <button
+              type="button"
+              className="text-md button mx-auto w-24 rounded-md py-1"
+              onClick={() => {
+                setSubmitSuccessPopup(false);
+                setOpenCreateRequest(false);
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
+        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
+        ${!submitFailPopUp ? "scale-0" : "scale-1"}`}
+      >
+        <div
+          className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
+      p-6 text-center shadow-md duration-200
+      ${submitFailPopUp ? "scale-1" : "scale-0"}`}
+        >
+          <div>
+            <p className="text-2xl font-bold text-[#4C4E64DE] ">Failed</p>
+            <p className="text-[#4C4E64AD]">Failed to create request</p>
+          </div>
+          <div className="mt-4 flex space-y-2">
+            <button
+              type="button"
+              className="text-md button mx-auto w-24 rounded-md py-1"
+              onClick={() => {
+                setSubmitFailPopUp(false);
+              }}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
-export default Request;
+export default CreateRequest;

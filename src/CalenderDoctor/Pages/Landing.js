@@ -3,9 +3,7 @@ const Landing = ({ setPage, type }) => {
     <div className="flex h-screen flex-col items-center justify-center space-y-6">
       <button
         onClick={() =>
-          type !== "doctor"
-            ? setPage("patientSchedule")
-            : setPage("doctorSchedule")
+          setPage("home")
         }
         className="button w-1/2 py-3"
       >
