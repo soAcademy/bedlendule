@@ -1,28 +1,27 @@
-import { useContext } from "react";
-import ConfirmPopup from "./ConfirmPopup";
-import { MdClose } from "react-icons/md";
-import { ConfirmPopupContext } from "../home";
+import { BsChevronDown } from "react-icons/bs";
 import { useState } from "react";
 import DateTimePickerForm from "./DateTimePickerForm";
 import useCreateRequest from "../Hooks/useCreateRequestForm";
 import useSubmitResult from "../Hooks/useSubmitResult";
 import useSendingPopup from "../Hooks/useSendingPopup";
+import ConfirmPopup from "./ConfirmPopup";
 
-const CreateRequest = ({ setOpenCreateRequest }) => {
+const CreateRequest = ({ setOpenCreateRequest, openCreateRequest }) => {
   const [fromTime, setFromTime] = useState(
     new Date(new Date().toLocaleDateString())
   );
   const [toTime, setToTime] = useState(
     new Date(new Date(new Date().toLocaleDateString()).getTime() + 3600000)
   );
-
+  const [popupState, setPopupState] = useState(false);
   const { setSending, SendingPopup } = useSendingPopup();
-  const { confirmPopupToggle } = useContext(ConfirmPopupContext);
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
     useSubmitResult({
       successAction: setOpenCreateRequest,
     });
   const { handleSubmit, submitForm } = useCreateRequest({
+    popupState,
+    setPopupState,
     setSending,
     setFromTime,
     setToTime,
@@ -41,10 +40,13 @@ const CreateRequest = ({ setOpenCreateRequest }) => {
   ];
 
   return (
-    <>
+    <div
+      className={`fixed top-0 left-0 right-0 z-50 h-full w-full duration-300
+      ${!openCreateRequest && "translate-y-full"}`}
+    >
       <form id="create-request" onSubmit={handleSubmit}>
-        <div className="min-h-11/12 relative mx-auto mt-[70px] w-[95%] rounded-lg bg-white p-6 font-kanit shadow-xl">
-          <MdClose
+        <div className="mx-auto mt-36 h-screen  w-full rounded-lg bg-white p-6 font-kanit shadow-xl">
+          <BsChevronDown
             className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
             onClick={() => setOpenCreateRequest(false)}
           />
@@ -130,22 +132,18 @@ const CreateRequest = ({ setOpenCreateRequest }) => {
           </div>
         </div>
         {
-          <div
-            className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
-        ${!confirmPopupToggle ? "scale-0" : "scale-1"}`}
-          >
-            <ConfirmPopup
-              title={"CREATE REQUEST"}
-              description={"Do you want to create request?"}
-              action={submitForm}
-            />
-          </div>
+          <ConfirmPopup
+            title={"CREATE REQUEST"}
+            description={"Do you want to create request?"}
+            action={submitForm}
+            state={popupState}
+            setState={setPopupState}
+          />
         }
       </form>
       <SendingPopup />
       <ResultPopup />
-    </>
+    </div>
   );
 };
 export default CreateRequest;

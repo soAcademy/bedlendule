@@ -1,15 +1,19 @@
-import React, { useState, useEffect, useContext } from "react";
-import { ConfirmPopupContext } from "../home";
+import React, { useState } from "react";
 import axios from "axios";
 
-const useCreateRequest= ({setSending, setFromTime,setToTime, setSubmitFailPopUp,setSubmitSuccessPopup}) => {
-  const { confirmPopupToggle, setConfirmPopupToggle } =
-    useContext(ConfirmPopupContext);
+const useCreateRequest = ({
+  setSending,
+  setFromTime,
+  setToTime,
+  setSubmitFailPopUp,
+  setSubmitSuccessPopup,
+  setPopupState,
+}) => {
   const [formData, setFormData] = useState();
   const patientUUID = "b380f399-2800-4423-bd93-435eb1b5858e";
   const handleSubmit = (event) => {
     event.preventDefault();
-    setConfirmPopupToggle(true);
+    setPopupState(true);
     const form = event.target;
     const startTime = new Date(form[0].value + " " + form[1].value);
     const finishTime = new Date(form[0].value + " " + form[2].value);
@@ -27,7 +31,7 @@ const useCreateRequest= ({setSending, setFromTime,setToTime, setSubmitFailPopUp,
     setFormData(data);
   };
   const submitForm = () => {
-    setConfirmPopupToggle(false);
+    setPopupState(false);
     setSending(true);
     const config = {
       method: "post",
@@ -56,7 +60,7 @@ const useCreateRequest= ({setSending, setFromTime,setToTime, setSubmitFailPopUp,
       });
   };
 
-  return {handleSubmit,submitForm}
+  return { handleSubmit, submitForm };
 };
 
-export default useCreateRequest
+export default useCreateRequest;

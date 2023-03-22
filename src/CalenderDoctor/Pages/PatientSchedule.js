@@ -79,10 +79,13 @@ const UserSchedule = ({ setPage }) => {
       {
         <div
           className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-        bg-slate-300 bg-opacity-10 backdrop-blur-[2px] duration-150
-        ${!openCreateRequest ? "scale-0" : "scale-1"}`}
+        bg-slate-300 bg-opacity-10 backdrop-blur-[2px] duration-200
+        ${!openCreateRequest ? "pointer-events-none opacity-0" : ""}`}
         >
-          <CreateRequest setOpenCreateRequest={setOpenCreateRequest} />
+          <CreateRequest
+            openCreateRequest={openCreateRequest}
+            setOpenCreateRequest={setOpenCreateRequest}
+          />
         </div>
       }
     </div>
