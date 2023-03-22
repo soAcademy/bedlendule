@@ -12,7 +12,7 @@ import { BsArrowLeft } from "react-icons/bs";
 export const ConfirmPopupContext = createContext();
 
 export const Home = () => {
-  const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
+  const [confirmPopupToggle, setConfirmPopupToggle] = useState();
   const [page, setPage] = useState("landing");
   const [type, setType] = useState("doctor"); //อย่าลืมเปลี่ยนเป็น doctor
 

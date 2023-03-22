@@ -7,13 +7,13 @@ const useSendingPopup = () => {
     <>
       <div
         className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-    bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
-    ${!sending ? "scale-0" : "scale-1"}`}
+        bg-slate-300 bg-opacity-10 backdrop-blur-[2px] duration-200
+        ${!sending && "pointer-events-none opacity-0"}`}
       >
         <div
-          className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
-  p-6 text-center shadow-md duration-200
-  ${sending ? "scale-1" : "scale-0"}`}
+          className={`fixed top-1/2 left-1/2 mx-auto w-[80%] -translate-x-1/2 -translate-y-1/2 
+          rounded-lg bg-white p-6 text-center shadow-md duration-100
+        ${sending ? "scale-100" : "scale-0"}`}
         >
           <div>
             <p className="text-2xl font-bold text-[#4C4E64DE] ">Submitting</p>
@@ -33,4 +33,4 @@ const useSendingPopup = () => {
   return { sending, setSending, SendingPopup };
 };
 
-export default useSendingPopup
+export default useSendingPopup;
