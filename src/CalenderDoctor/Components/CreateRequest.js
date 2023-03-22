@@ -4,17 +4,24 @@ import { MdClose } from "react-icons/md";
 import { ConfirmPopupContext } from "../home";
 import { useState } from "react";
 import DateTimePickerForm from "./DateTimePickerForm";
-import { ProgressSpinner } from "primereact/progressspinner";
 import useCreateRequest from "../Hooks/useCreateRequestForm";
+import useSubmitResult from "../Hooks/useSubmitResult";
+import useSendingPopup from "../Hooks/useSendingPopup";
 
 const CreateRequest = ({ setOpenCreateRequest }) => {
-  const [fromTime, setFromTime] = useState();
-  const [toTime, setToTime] = useState();
-  const [submitSuccessPopUp, setSubmitSuccessPopup] = useState();
-  const [submitFailPopUp, setSubmitFailPopUp] = useState();
-  const [sending, setSending] = useState(false);
-  const { confirmPopupToggle } =
-    useContext(ConfirmPopupContext);
+  const [fromTime, setFromTime] = useState(
+    new Date(new Date().toLocaleDateString())
+  );
+  const [toTime, setToTime] = useState(
+    new Date(new Date(new Date().toLocaleDateString()).getTime() + 3600000)
+  );
+
+  const { setSending, SendingPopup } = useSendingPopup();
+  const { confirmPopupToggle } = useContext(ConfirmPopupContext);
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
+    useSubmitResult({
+      successAction: setOpenCreateRequest,
+    });
   const { handleSubmit, submitForm } = useCreateRequest({
     setSending,
     setFromTime,
@@ -136,86 +143,8 @@ const CreateRequest = ({ setOpenCreateRequest }) => {
           </div>
         }
       </form>
-      <div
-        className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
-        ${!sending ? "scale-0" : "scale-1"}`}
-      >
-        <div
-          className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
-      p-6 text-center shadow-md duration-200
-      ${sending ? "scale-1" : "scale-0"}`}
-        >
-          <div>
-            <p className="text-2xl font-bold text-[#4C4E64DE] ">Submitting</p>
-            <p className="text-[#4C4E64AD]">Your request is being submitted</p>
-          </div>
-          <div className="card justify-content-center my-6 flex">
-            <ProgressSpinner
-              style={{ width: "50px", height: "50px" }}
-              strokeWidth="4"
-              animationDuration="1.5s"
-            />
-          </div>
-        </div>
-      </div>
-      <div
-        className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
-        ${!submitSuccessPopUp ? "scale-0" : "scale-1"}`}
-      >
-        <div
-          className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
-      p-6 text-center shadow-md duration-200
-      ${submitSuccessPopUp ? "scale-1" : "scale-0"}`}
-        >
-          <div>
-            <p className="text-2xl font-bold text-[#4C4E64DE] ">Successful</p>
-            <p className="text-[#4C4E64AD]">
-              Your request was successfully created
-            </p>
-          </div>
-          <div className="mt-4 flex space-y-2">
-            <button
-              type="button"
-              className="text-md button mx-auto w-24 rounded-md py-1"
-              onClick={() => {
-                setSubmitSuccessPopup(false);
-                setOpenCreateRequest(false);
-              }}
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      </div>
-      <div
-        className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
-        ${!submitFailPopUp ? "scale-0" : "scale-1"}`}
-      >
-        <div
-          className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
-      p-6 text-center shadow-md duration-200
-      ${submitFailPopUp ? "scale-1" : "scale-0"}`}
-        >
-          <div>
-            <p className="text-2xl font-bold text-[#4C4E64DE] ">Failed</p>
-            <p className="text-[#4C4E64AD]">Failed to create request</p>
-          </div>
-          <div className="mt-4 flex space-y-2">
-            <button
-              type="button"
-              className="text-md button mx-auto w-24 rounded-md py-1"
-              onClick={() => {
-                setSubmitFailPopUp(false);
-              }}
-            >
-              OK
-            </button>
-          </div>
-        </div>
-      </div>
+      <SendingPopup />
+      <ResultPopup />
     </>
   );
 };

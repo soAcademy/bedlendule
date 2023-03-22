@@ -7,14 +7,110 @@ import useDoctorCalendarProps from "../Hooks/useDoctorCalendarProps";
 import axios from "axios";
 import ConfirmPopup from "../Components/ConfirmPopup";
 import { ConfirmPopupContext } from "../home";
+import useSendingPopup from "../Hooks/useSendingPopup";
+import useSubmitResult from "../Hooks/useSubmitResult";
 const DoctorSchedule = ({ setPage }) => {
+  const [fromTime, setFromTime] = useState(
+    new Date(new Date().toLocaleDateString())
+  );
+  const [toTime, setToTime] = useState(
+    new Date(new Date(new Date().toLocaleDateString()).getTime() + 3600000)
+  );
+  const [price, setPrice] = useState();
+  const [idxToDelete, setIdxToDelete] = useState();
   const [schedules, setSchedules] = useState([]);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [scheduleToEdit, setScheduleToEdit] = useState([]);
-  const { date, setDate, dateTemplate } = useDoctorCalendarProps();
+  const [newTimeSlots, setNewTimeSlots] = useState([]);
   const [removingTimeSlotIds, setRemovingTimeSlotIds] = useState([]);
-  const [addingTimeSlot, setAddingTimeSlot] = useState(false);
+  const [openTimeSlotForm, setOpenTimeSlotForm] = useState(false);
+  const [updated, setUpdated] = useState();
+  const [duplicatedTime, setDuplicatedTime] = useState(false);
   const { setConfirmPopupToggle } = useContext(ConfirmPopupContext);
+  const { date, setDate, dateTemplate } = useDoctorCalendarProps();
+  const { sending, setSending, SendingPopup } = useSendingPopup();
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
+    useSubmitResult({
+      successAction: setIsEditOpen,
+      failedAction: setIsEditOpen,
+    });
+  const removeTimeslot = (timeslot) => {
+    console.log("removingTimeSlotIds", removingTimeSlotIds);
+    console.log("timeslot", timeslot);
+
+    const _newTimeSlots = newTimeSlots.filter((e, edx) => idxToDelete !== edx);
+    setRemovingTimeSlotIds([...new Set([...removingTimeSlotIds, timeslot.id])]);
+    setNewTimeSlots(_newTimeSlots);
+    setConfirmPopupToggle(false);
+  };
+
+  const addTimeSlot = () => {
+    const duration = toTime.getTime() - fromTime.getTime();
+    const date = scheduleToEdit.timeslots[0].startTime.split("T")[0];
+    const _startTime = new Date(
+      date +
+        " " +
+        fromTime.toLocaleTimeString().split(" ")[0].slice(0, 6) +
+        "00 " +
+        fromTime.toLocaleTimeString().split(" ")[1]
+    );
+    const _finishTime = new Date(_startTime.getTime() + duration);
+    const newAddingTimeSlot = {
+      startTime: _startTime.toISOString(),
+      finishTime: _finishTime.toISOString(),
+      price: Number(price),
+    };
+    if (
+      newTimeSlots.findIndex(
+        (timeslot) => timeslot.startTime === _startTime.toISOString()
+      ) === -1
+    ) {
+      const _timeslots = [
+        ...new Map([
+          ...newTimeSlots.map((item) => [item["startTime"], item]),
+          [newAddingTimeSlot["startTime"], newAddingTimeSlot],
+        ]).values(),
+      ];
+      setNewTimeSlots(_timeslots);
+      setOpenTimeSlotForm(false);
+    } else {
+      setDuplicatedTime(true);
+      setTimeout(() => setDuplicatedTime(false), 3000);
+    }
+  };
+
+  const updateSchedule = () => {
+    let data = JSON.stringify({
+      scheduleId: scheduleToEdit.id,
+      addingTimeSlots: newTimeSlots.filter((timeslot) => !timeslot.id),
+      removingTimeSlots: removingTimeSlotIds.filter((e) => !!e),
+      title: scheduleToEdit.title,
+      meetingType: scheduleToEdit.meetingType,
+      location: scheduleToEdit.location,
+    });
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/updateSchedule",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    setSending(true);
+    axios
+      .request(config)
+      .then((response) => {
+        setRemovingTimeSlotIds([]);
+        setUpdated(true);
+        setSending(false);
+        setSubmitSuccessPopup(true);
+      })
+      .catch((error) => {
+        setSending(false);
+        setSubmitFailPopUp(true);
+      });
+  };
 
   useEffect(() => {
     let data = JSON.stringify({
@@ -38,13 +134,15 @@ const DoctorSchedule = ({ setPage }) => {
           .then((response) => {
             const data = response.data;
             setSchedules(data);
+            console.log("data", data);
           })
           .catch((error) => {
             console.log(error);
           }),
       50
     );
-  }, []);
+  }, [updated]);
+
   return (
     <div className="mt-[70px] h-full">
       <div className="flex w-full flex-col items-center justify-center">
@@ -91,8 +189,7 @@ const DoctorSchedule = ({ setPage }) => {
           INCOMING SCHEDULE
         </div>
 
-        {schedules.map((schedule, idx, schedules) => {
-          const timeslots = schedule.timeslots;
+        {schedules?.map((schedule, idx) => {
           return (
             <div
               key={idx}
@@ -114,6 +211,7 @@ const DoctorSchedule = ({ setPage }) => {
                 <button
                   onClick={() => {
                     setScheduleToEdit(schedule);
+                    setNewTimeSlots(schedule.timeslots);
                     setIsEditOpen(true);
                   }}
                   className="float-right text-2xl text-slate-500 hover:text-slate-400"
@@ -121,14 +219,13 @@ const DoctorSchedule = ({ setPage }) => {
                   <BiEditAlt />
                 </button>
               </div>
-
               {schedule.timeslots?.map((timeslot, idx) => {
                 return (
                   <div
                     key={idx}
                     className={`flex items-center justify-between rounded-lg border-2 bg-slate-100 p-2 text-slate-400 ${
                       timeslot.request &&
-                      "border-[#beda9f] bg-[#f5fbec] text-slate-600"
+                      "border-[#beda9f] bg-[#f1fae4] text-slate-600"
                     }`}
                   >
                     <div>
@@ -176,136 +273,142 @@ const DoctorSchedule = ({ setPage }) => {
                         {schedule.description}
                       </p>
                     </div>
-                    {scheduleToEdit.timeslots?.map(
-                      (timeslot, jdx, timeslots) => {
-                        return (
-                          <div key={jdx} className="flex">
-                            <div
-                              className={`flex w-10/12 items-center justify-between rounded-lg border-2 bg-slate-100 p-2 text-slate-400 ${
-                                timeslot.request &&
-                                "border-[#beda9f] bg-[#f5fbec] text-slate-600"
-                              }`}
-                            >
-                              <div>
-                                <p className="text-left">
-                                  {timeslot.request
-                                    ? timeslot.request?.patient.firstName +
-                                      " " +
-                                      timeslot.request?.patient.lastName
-                                    : "No Booking"}
-                                </p>
-                                <p>
-                                  {new Date(
-                                    timeslot.startTime
-                                  ).toLocaleDateString("TH")}{" "}
-                                  :{" "}
-                                  {new Date(timeslot.startTime)
-                                    .toLocaleTimeString("TH")
-                                    .slice(0, 5)}
-                                  -
-                                  {new Date(timeslot.finishTime)
-                                    .toLocaleTimeString("TH")
-                                    .slice(0, 5)}
-                                </p>
-                              </div>
-                              <div>฿ {timeslot.price}</div>
+                    {newTimeSlots?.map((timeslot, jdx) => {
+                      return (
+                        <div key={jdx} className="flex">
+                          <div
+                            className={`flex w-10/12 items-center justify-between rounded-lg border-2 bg-slate-100 p-2 text-slate-400 ${
+                              timeslot.request &&
+                              "border-[#beda9f] bg-[#f1fae4] text-slate-600"
+                            }`}
+                          >
+                            <div>
+                              <p className="text-left">
+                                {timeslot.request
+                                  ? timeslot.request?.patient.firstName +
+                                    " " +
+                                    timeslot.request?.patient.lastName
+                                  : "No Booking"}
+                              </p>
+                              <p>
+                                {new Date(
+                                  timeslot.startTime
+                                ).toLocaleDateString("TH")}{" "}
+                                :{" "}
+                                {new Date(timeslot.startTime)
+                                  .toLocaleTimeString("TH")
+                                  .slice(0, 5)}
+                                -
+                                {new Date(timeslot.finishTime)
+                                  .toLocaleTimeString("TH")
+                                  .slice(0, 5)}
+                              </p>
                             </div>
-                            {!timeslot.request && (
-                              <button
-                                onClick={() => {
-                                  setConfirmPopupToggle(true);
-                                  // const _schedule = {
-                                  //   ...schedule,
-                                  //   timeslots: [
-                                  //     ...timeslots.filter((e, idx) => idx !== jdx),
-                                  //   ],
-                                  // };
-                                  // schedules[idx] = _schedule;
-                                }}
-                                className="ml-6 text-2xl text-slate-600"
-                              >
-                                <BiTrash />
-                              </button>
-                            )}
-                            {
-                              <ConfirmPopup
-                                title={"Removing Timeslot"}
-                                description={"Confirm Removal"}
-                                action={() => {
-                                  // const _schedule = {
-                                  //   ...schedule,
-                                  //   timeslots: [
-                                  //     ...timeslots.filter(
-                                  //       (e, idx) => idx !== jdx
-                                  //     ),
-                                  //   ],
-                                  // };
-                                  // scheduleToEdit.timeslots = [
-                                  //   ...timeslots.filter(
-                                  //     (e, idx) => idx !== jdx
-                                  //   ),
-                                  // ];
-                                  const newScheduleToEdit = {
-                                    ...scheduleToEdit,
-                                    timeslots: timeslots.filter(
-                                      (e, idx) => idx !== jdx
-                                    ),
-                                  };
-                                  setRemovingTimeSlotIds([
-                                    ...new Set([
-                                      ...removingTimeSlotIds,
-                                      timeslot.id,
-                                    ]),
-                                  ]);
-                                  console.log(removingTimeSlotIds);
-                                  setScheduleToEdit(newScheduleToEdit);
-                                  // schedules[idx] = _schedule;
-                                  setConfirmPopupToggle(false);
-                                }}
-                              />
-                            }
+                            <div>฿ {timeslot.price}</div>
                           </div>
-                        );
-                      }
-                    )}
-                    {addingTimeSlot && (
-                      <div className="flex w-full">
-                        <div className="flex w-10/12 justify-center space-x-4 ">
-                          <div>
-                            <Calendar
-                              placeholder="Start"
-                              stepMinute={30}
-                              timeOnly
+                          {!timeslot.request && (
+                            <button
+                              onClick={() => {
+                                setConfirmPopupToggle(true);
+                                setIdxToDelete(jdx);
+                              }}
+                              className="ml-6 text-2xl text-slate-600"
+                            >
+                              <BiTrash />
+                            </button>
+                          )}
+                          {
+                            <ConfirmPopup
+                              title={"Removing Timeslot"}
+                              description={"Confirm Removal"}
+                              action={() => removeTimeslot(timeslot)}
                             />
-                          </div>
-                          <div>
-                            <Calendar
-                              className="w-full"
-                              placeholder="Finish"
-                              stepMinute={30}
-                              timeOnly
-                            />
-                          </div>
+                          }
                         </div>
-                        <button className="text-3xl text-slate-400 hover:text-slate-500 ">
+                      );
+                    })}
+                    {openTimeSlotForm && (
+                      <div className="flex w-full flex-col space-y-2 py-2">
+                        <div className="flex items-center justify-between space-x-2">
+                          <div className="">
+                            <Calendar
+                              id="fromTime"
+                              inputId="start-time"
+                              readOnlyInput
+                              timeOnly
+                              showButtonBar
+                              hourFormat="12"
+                              stepMinute={30}
+                              value={fromTime}
+                              appendTo={"self"}
+                              onChange={(e) => {
+                                (e.value?.getTime() >= toTime?.getTime() ||
+                                  (!toTime && e.value)) &&
+                                  setToTime(
+                                    new Date(e.value.getTime() + 1800000)
+                                  );
+                                setFromTime(e.value);
+                              }}
+                              className="w-[100px] rounded-lg border-2 bg-slate-900 text-center "
+                              placeholder="From"
+                            ></Calendar>
+                          </div>
+                          <div className="">
+                            <Calendar
+                              id="toTime"
+                              inputId="finish-time"
+                              readOnlyInput
+                              timeOnly
+                              showButtonBar
+                              hourFormat="12"
+                              stepMinute={30}
+                              value={toTime}
+                              minDate={fromTime}
+                              onChange={(e) => setToTime(e.value)}
+                              className="w-[100px] rounded-lg border-2 bg-slate-900 text-center"
+                              placeholder="To"
+                            ></Calendar>
+                          </div>
+                          <input
+                            id="price"
+                            type="number"
+                            placeholder="Price"
+                            onChange={(e) => {
+                              setPrice(e.target.value);
+                            }}
+                            className="mx-auto h-11 w-20 items-center rounded-md border-2 border-double text-center drop-shadow"
+                          ></input>
+                        </div>
+                        <p
+                          className={`text-red-500 duration-300 ${
+                            duplicatedTime ? "visible" : "opacity-0"
+                          }`}
+                        >
+                          This time slot is already exist
+                        </p>
+                        <button
+                          disabled={fromTime && toTime && price ? false : true}
+                          onClick={() => addTimeSlot()}
+                          className={`mx-auto text-3xl text-green-600 opacity-60 hover:text-green-500 disabled:text-slate-100`}
+                        >
                           <BiCheckCircle className="border-slate-300" />
                         </button>
                       </div>
                     )}
-                    {!addingTimeSlot && (
+                    {!openTimeSlotForm && (
                       <button
                         onClick={() => {
-                          setAddingTimeSlot(true);
+                          setOpenTimeSlotForm(true);
                         }}
                         className="pt-4 text-3xl text-slate-500"
                       >
                         <IoIosAddCircleOutline />
                       </button>
                     )}
-                    <div className="flex justify-center gap-2 pt-20">
+                    <div className="flex justify-center gap-2 py-2">
                       <button
                         className="text-md button w-24 p-2 text-white"
-                        onClick={() => {}}
+                        onClick={updateSchedule}
                       >
                         CONFIRM
                       </button>
@@ -323,6 +426,8 @@ const DoctorSchedule = ({ setPage }) => {
           );
         })}
       </div>
+      <SendingPopup />
+      <ResultPopup />
     </div>
   );
 };
