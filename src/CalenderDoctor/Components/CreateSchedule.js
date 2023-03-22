@@ -171,7 +171,7 @@ const CreateSchedule = ({ setOpenCreateRequest }) => {
         {
           <div
             className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
+        bg-slate-300 bg-opacity-10 backdrop-blur-[2px] duration-200
         ${!confirmPopupToggle ? "scale-0" : "scale-1"}`}
           >
             <ConfirmPopup
@@ -183,13 +183,11 @@ const CreateSchedule = ({ setOpenCreateRequest }) => {
         }
       </form>
       <div
-        className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
+        className={`shader
         ${!sending ? "scale-0" : "scale-1"}`}
       >
         <div
-          className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
-      p-6 text-center shadow-md duration-200
+          className={`popup
       ${sending ? "scale-1" : "scale-0"}`}
         >
           <div>
@@ -206,13 +204,11 @@ const CreateSchedule = ({ setOpenCreateRequest }) => {
         </div>
       </div>
       <div
-        className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
+        className={`shader duration-150
         ${!submitSuccessPopUp ? "scale-0" : "scale-1"}`}
       >
         <div
-          className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
-      p-6 text-center shadow-md duration-200
+          className={`popup
       ${submitSuccessPopUp ? "scale-1" : "scale-0"}`}
         >
           <div>
@@ -236,13 +232,11 @@ const CreateSchedule = ({ setOpenCreateRequest }) => {
         </div>
       </div>
       <div
-        className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-        bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
+        className={`shader duration-200
         ${!submitFailPopUp ? "scale-0" : "scale-1"}`}
       >
         <div
-          className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
-      p-6 text-center shadow-md duration-200
+          className={`popup duration-200
       ${submitFailPopUp ? "scale-1" : "scale-0"}`}
         >
           <div>
