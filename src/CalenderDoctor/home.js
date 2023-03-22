@@ -10,6 +10,7 @@ import DoctorSchedule from "./Pages/DoctorSchedule";
 import { BsArrowLeft } from "react-icons/bs";
 import DoctorProfileUserSide from "./Components/RequestInfoUser";
 import ReviewDoctor from "./Components/ReviewDoctor";
+import RequestDetail from "./Components/RequestDetail";
 
 export const ConfirmPopupContext = createContext();
 
@@ -47,6 +48,7 @@ export const Home = () => {
           </button>
         )}
         {page === "reviewDoctor" && <ReviewDoctor setPage={setPage} />}
+        {page === "requestDetail" && <RequestDetail setPage={setPage}/>}
       </div>
     </ConfirmPopupContext.Provider>
   );
