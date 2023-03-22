@@ -2,26 +2,42 @@ import { useContext } from "react";
 import ConfirmPopup from "./ConfirmPopup";
 import { MdClose } from "react-icons/md";
 import { ConfirmPopupContext } from "../home";
-import { useState } from "react";
+import { Calendar } from "primereact/calendar";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import DateTimePickerForm from "./DateTimePickerForm";
 import { ProgressSpinner } from "primereact/progressspinner";
-import useCreateRequest from "../Hooks/useCreateRequestForm";
 
-const CreateRequest = ({ setOpenCreateRequest }) => {
+const CreateSchedule = ({ setOpenCreateRequest }) => {
   const [fromTime, setFromTime] = useState();
   const [toTime, setToTime] = useState();
+  const [formData, setFormData] = useState();
   const [submitSuccessPopUp, setSubmitSuccessPopup] = useState();
   const [submitFailPopUp, setSubmitFailPopUp] = useState();
   const [sending, setSending] = useState(false);
-  const { confirmPopupToggle } =
+  const { confirmPopupToggle, setConfirmPopupToggle } =
     useContext(ConfirmPopupContext);
-  const { handleSubmit, submitForm } = useCreateRequest({
-    setSending,
-    setFromTime,
-    setToTime,
-    setSubmitFailPopUp,
-    setSubmitSuccessPopup,
-  });
+
+  const patientUUID = "b380f399-2800-4423-bd93-435eb1b5858e";
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    setConfirmPopupToggle(true);
+    const form = event.target;
+    const startTime = new Date(form[0].value + " " + form[1].value);
+    const finishTime = new Date(form[0].value + " " + form[2].value);
+    const data = {
+      title: form.title.value,
+      description: form.description.value,
+      price: Number(form.hourRate.value),
+      problemType: form.problemType.value.replace(/\s+/g, "_"),
+      meetingType: form.meetingType.value,
+      location: form.location.value,
+      startTime: startTime.toISOString(),
+      finishTime: finishTime.toISOString(),
+      patientUUID: patientUUID,
+    };
+    setFormData(data);
+  };
 
   const problemTypes = [
     "DEPRESSION",
@@ -32,6 +48,36 @@ const CreateRequest = ({ setOpenCreateRequest }) => {
     "DEMENTIA",
     "PHOBIAS",
   ];
+
+  const submitForm = () => {
+    setConfirmPopupToggle(false);
+    setSending(true);
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/createRequest",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: formData,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        document.querySelector("#create-request").reset();
+        setFromTime();
+        setToTime();
+        setSending(false);
+        response.status === 200
+          ? setSubmitSuccessPopup(true)
+          : setSubmitFailPopUp(true);
+      })
+      .catch((error) => {
+        setSending(false);
+        setSubmitFailPopUp(true);
+      });
+  };
 
   return (
     <>
@@ -219,4 +265,4 @@ const CreateRequest = ({ setOpenCreateRequest }) => {
     </>
   );
 };
-export default CreateRequest;
+export default CreateSchedule;

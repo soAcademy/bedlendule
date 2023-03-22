@@ -14,8 +14,7 @@ const DoctorSchedule = ({ setPage }) => {
   const { date, setDate, dateTemplate } = useDoctorCalendarProps();
   const [removingTimeSlotIds, setRemovingTimeSlotIds] = useState([]);
   const [addingTimeSlot, setAddingTimeSlot] = useState(false);
-  const { setConfirmPopupToggle } =
-    useContext(ConfirmPopupContext);
+  const { setConfirmPopupToggle } = useContext(ConfirmPopupContext);
 
   useEffect(() => {
     let data = JSON.stringify({
@@ -25,7 +24,7 @@ const DoctorSchedule = ({ setPage }) => {
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "http://localhost:5555/bedlendule/getScheduleByUUID",
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByUUID",
       headers: {
         "Content-Type": "application/json",
       },
@@ -38,13 +37,12 @@ const DoctorSchedule = ({ setPage }) => {
           .request(config)
           .then((response) => {
             const data = response.data;
-            console.log("response", data);
             setSchedules(data);
           })
           .catch((error) => {
             console.log(error);
           }),
-      300
+      50
     );
   }, []);
   return (
@@ -54,7 +52,6 @@ const DoctorSchedule = ({ setPage }) => {
           className="z-0 w-10/12 md:w-8/12"
           value={date}
           onChange={(e) => {
-            console.log(e.value.toISOString());
             setDate(e.value.toISOString());
           }}
           minDate={new Date()}
