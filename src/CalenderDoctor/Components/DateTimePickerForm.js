@@ -1,6 +1,12 @@
 import { Calendar } from "primereact/calendar";
 import React, { useState } from "react";
-const DateTimePickerForm = ({ fromTime, setFromTime, toTime, setToTime }) => {
+const DateTimePickerForm = ({
+  fromTime,
+  setFromTime,
+  toTime,
+  setToTime,
+  setIsDateAvailable,
+}) => {
   const [date, setDate] = useState(new Date());
   return (
     <>
@@ -33,6 +39,10 @@ const DateTimePickerForm = ({ fromTime, setFromTime, toTime, setToTime }) => {
             (e.value?.getTime() >= toTime?.getTime() || (!toTime && e.value)) &&
               setToTime(new Date(e.value.getTime() + 1800000));
             setFromTime(e.value);
+            if (e.value > new Date().getTime() + 3600000) {
+              setIsDateAvailable(true)
+            } else {setIsDateAvailable(false)}
+            console.log("e.value", e.value);
           }}
           className="w-[90px] rounded-lg border-2 bg-slate-900 text-center "
           placeholder="From"

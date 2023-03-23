@@ -4,6 +4,7 @@ import axios from "axios";
 const usePatientCalendarProps = () => {
   const [date, setDate] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
+  const [datesArray, setDatesArray] = useState([]);
   const dateTemplate = (date) => {
     const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
     if (
@@ -42,7 +43,21 @@ const usePatientCalendarProps = () => {
         </div>
       );
     } else {
-      return date.day;
+      return (
+        <div
+          className="cursor-not-allowed bg-slate-200 text-slate-400"
+          style={{
+            borderRadius: "50%",
+            width: "3em",
+            height: "3em",
+            lineHeight: "3em",
+            padding: 0,
+            textAlign: "center",
+          }}
+        >
+          {date.day}
+        </div>
+      );
     }
   };
   useEffect(() => {
@@ -64,7 +79,7 @@ const usePatientCalendarProps = () => {
         console.log(error);
       });
   }, []);
-  return { date, setDate, timeSlots, setTimeSlots, dateTemplate };
+  return { date, setDate, timeSlots, setTimeSlots, dateTemplate, datesArray };
 };
 
 export default usePatientCalendarProps;

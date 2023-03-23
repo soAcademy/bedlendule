@@ -11,7 +11,7 @@ const useSubmitResult = ({ successAction, failedAction }) => {
       >
         <div
           className={`popup duration-100
-        ${submitSuccessPopUp ? "scale-100" : "scale-0"}`}
+        ${submitSuccessPopUp ? "scale-100" : "scale-95"}`}
         >
           <div>
             <p className="text-2xl font-bold text-[#4C4E64DE] ">Successful</p>

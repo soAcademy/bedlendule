@@ -8,15 +8,17 @@ const useCreateRequest = ({
   setSubmitFailPopUp,
   setSubmitSuccessPopup,
   setPopupState,
+  isDateAvailable,
 }) => {
   const [formData, setFormData] = useState();
-  const patientUUID = "b380f399-2800-4423-bd93-435eb1b5858e";
+  const patientUUID = "c646e99a-9a64-497a-87fd-6972bd7bf387";
   const handleSubmit = (event) => {
     event.preventDefault();
-    setPopupState(true);
     const form = event.target;
     const startTime = new Date(form[0].value + " " + form[1].value);
     const finishTime = new Date(form[0].value + " " + form[2].value);
+
+    setPopupState(true);
     const data = {
       title: form.title.value,
       description: form.description.value,

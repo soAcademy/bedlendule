@@ -6,20 +6,34 @@ import useSubmitResult from "../Hooks/useSubmitResult";
 import useSendingPopup from "../Hooks/useSendingPopup";
 import ConfirmPopup from "./ConfirmPopup";
 
-const CreateRequest = ({ setOpenCreateRequest, openCreateRequest }) => {
+const CreateRequest = ({
+  setOpenCreateRequest,
+  openCreateRequest,
+  setUpdated,
+  updated,
+}) => {
   const [fromTime, setFromTime] = useState(
-    new Date(new Date().toLocaleDateString())
+    new Date(
+      new Date(new Date().toLocaleDateString()).getTime() +
+        1800000 * Math.ceil(new Date().getMinutes() / 30) +
+        3600000 * (new Date().getHours() + 1)
+    )
   );
   const [toTime, setToTime] = useState(
     new Date(new Date(new Date().toLocaleDateString()).getTime() + 3600000)
   );
   const [popupState, setPopupState] = useState(false);
+  const [isDateAvailable, setIsDateAvailable] = useState(true);
   const { setSending, SendingPopup } = useSendingPopup();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
     useSubmitResult({
-      successAction: setOpenCreateRequest,
+      successAction: () => {
+        setOpenCreateRequest(false);
+        setUpdated(!updated);
+      },
     });
   const { handleSubmit, submitForm } = useCreateRequest({
+    setIsDateAvailable,
     popupState,
     setPopupState,
     setSending,
@@ -41,11 +55,11 @@ const CreateRequest = ({ setOpenCreateRequest, openCreateRequest }) => {
 
   return (
     <div
-      className={`fixed top-0 left-0 right-0 z-50 h-full w-full duration-300
+      className={`fixed bottom-0 left-0 right-0 z-50 w-full duration-300
       ${!openCreateRequest && "translate-y-full"}`}
     >
       <form id="create-request" onSubmit={handleSubmit}>
-        <div className="mx-auto mt-36 h-screen  w-full rounded-lg bg-white p-6 font-kanit shadow-xl">
+        <div className="mt-36 w-full rounded-lg bg-white p-6 font-kanit shadow-xl">
           <BsChevronDown
             className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
             onClick={() => setOpenCreateRequest(false)}
@@ -55,6 +69,7 @@ const CreateRequest = ({ setOpenCreateRequest, openCreateRequest }) => {
           </p>
           <div className="mx-auto my-6 flex gap-4 p-2 text-center text-slate-400">
             <DateTimePickerForm
+              setIsDateAvailable={setIsDateAvailable}
               fromTime={fromTime}
               toTime={toTime}
               setFromTime={setFromTime}
@@ -125,21 +140,30 @@ const CreateRequest = ({ setOpenCreateRequest, openCreateRequest }) => {
               required
             />
           </div>
-          <div className="mt-6 mb-2 flex">
-            <button className="button mx-auto p-4 " type="submit">
+          <p
+            className={`pt-5 text-center text-red-400 opacity-0 ${
+              !isDateAvailable && "animate-pulse opacity-100"
+            }`}
+          >
+            The selected time is not available
+          </p>
+          <div className="mt-6 flex">
+            <button
+              disabled={isDateAvailable ? false : true}
+              className={`button mx-auto p-4 disabled:bg-slate-300`}
+              type="submit"
+            >
               CREATE REQUEST
             </button>
           </div>
         </div>
-        {
-          <ConfirmPopup
-            title={"CREATE REQUEST"}
-            description={"Do you want to create request?"}
-            action={submitForm}
-            state={popupState}
-            setState={setPopupState}
-          />
-        }
+        <ConfirmPopup
+          title={"CREATE REQUEST"}
+          description={"Do you want to create request?"}
+          action={submitForm}
+          state={popupState}
+          setState={setPopupState}
+        />
       </form>
       <SendingPopup />
       <ResultPopup />

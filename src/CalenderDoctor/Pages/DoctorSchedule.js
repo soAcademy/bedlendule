@@ -15,6 +15,7 @@ import useSubmitResult from "../Hooks/useSubmitResult";
 import useUpdateSchedule from "../Hooks/useUpdateSchedule";
 import ConfirmPopup from "../Components/ConfirmPopup";
 import { BsChevronDown } from "react-icons/bs";
+
 const DoctorSchedule = ({ setPage }) => {
   const [fromTime, setFromTime] = useState(
     new Date(new Date().toLocaleDateString())
@@ -278,7 +279,7 @@ const DoctorSchedule = ({ setPage }) => {
                                 <ConfirmPopup
                                   className={`fixed top-[27%] left-1/2 mx-auto w-[80%] -translate-x-1/2 -translate-y-1/2 
                                 rounded-lg bg-white p-6 text-center shadow-md duration-200
-                                ${confirmRemove ? "scale-100" : "scale-0"}`}
+                                ${confirmRemove ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
                                   title={"Removing Timeslot"}
                                   description={"Confirm Removal"}
                                   action={() => removeTimeslot(timeslot)}
