@@ -44,7 +44,7 @@ function Registration() {
               <input type="checkbox" /> Remember your password?
             </label>
             <div className="mx-6 font-bold">
-            <a href="#"> Forget Password? </a>
+              <a href="#"> Forget Password? </a>
             </div>
           </div>
         </div>
