@@ -11,12 +11,13 @@ import { BsArrowLeft } from "react-icons/bs";
 import DoctorProfileUserSide from "./Components/RequestInfoUser";
 import ReviewDoctor from "./Components/ReviewDoctor";
 import RequestDetail from "./Components/RequestDetail";
+import SelectDoctor from "./Components/SelectDoctor";
 
 export const ConfirmPopupContext = createContext();
 
 export const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
-  const [page, setPage] = useState("landing"); //
+  const [page, setPage] = useState("selectDoctor"); // landing 
   const [type, setType] = useState("doctor"); //อย่าลืมเปลี่ยนเป็น doctor
 
   return (
@@ -49,6 +50,7 @@ export const Home = () => {
         )}
         {page === "reviewDoctor" && <ReviewDoctor setPage={setPage} />}
         {page === "requestDetail" && <RequestDetail setPage={setPage}/>}
+        {page === "selectDoctor" && <SelectDoctor/>}
       </div>
     </ConfirmPopupContext.Provider>
   );
