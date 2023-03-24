@@ -31,6 +31,10 @@ const CreateRequest = ({
         setOpenCreateRequest(false);
         setUpdated(!updated);
       },
+      failedAction: () => {
+        setOpenCreateRequest(false);
+        setUpdated(!updated);
+      },
     });
   const { handleSubmit, submitForm } = useCreateRequest({
     setIsDateAvailable,
@@ -61,13 +65,13 @@ const CreateRequest = ({
       <form id="create-request" onSubmit={handleSubmit}>
         <div className="mt-36 w-full rounded-lg bg-white p-6 font-kanit shadow-xl">
           <BsChevronDown
-            className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
+            className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
             onClick={() => setOpenCreateRequest(false)}
           />
           <p className="pt-4 text-center text-3xl font-bold text-slate-500">
             CREATE REQUEST
           </p>
-          <div className="mx-auto my-6 flex gap-4 p-2 text-center text-slate-400">
+          <div className="mx-auto my-6 flex gap-4 p-2 text-center text-slate-500">
             <DateTimePickerForm
               setIsDateAvailable={setIsDateAvailable}
               fromTime={fromTime}
@@ -76,9 +80,9 @@ const CreateRequest = ({
               setToTime={setToTime}
             />
           </div>
-          <div className="my-6 flex w-full items-center gap-2">
+          <div className="my-6 flex w-full items-center gap-2 text-slate-500">
             <div className="w-1/2">
-              <p className="headingColor text-center">Title</p>
+              <p className="headingColor text-center text-slate-500">Title</p>
               <input
                 id="title"
                 className="h-[40px] w-full rounded-lg border-2 border-slate-400 px-2"
@@ -86,7 +90,7 @@ const CreateRequest = ({
               />
             </div>
             <div className="w-1/2">
-              <p className="headingColor text-center">ประเภท</p>
+              <p className="headingColor text-center text-slate-500">ประเภท</p>
               <select
                 id="problemType"
                 className="h-[40px] w-full rounded-lg border-2 border-slate-400 text-center text-[15px]"
@@ -106,7 +110,7 @@ const CreateRequest = ({
               placeholder="What happen?"
             ></textarea>
           </div>
-          <div className="my-4 flex items-center justify-center gap-2">
+          <div className="my-4 flex items-center justify-center gap-2 text-slate-500">
             <label for="online">ONLINE</label>
             <input
               type="radio"

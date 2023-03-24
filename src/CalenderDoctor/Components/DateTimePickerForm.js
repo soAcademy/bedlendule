@@ -11,7 +11,7 @@ const DateTimePickerForm = ({
   return (
     <>
       <div className="mx-auto flex w-full flex-col">
-        DATE
+        Date
         <Calendar
           readOnlyInput
           minDate={new Date()}
