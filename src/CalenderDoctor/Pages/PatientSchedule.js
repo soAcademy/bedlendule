@@ -5,6 +5,7 @@ import usePatientCalendarProps from "../Hooks/usePatientCalendarProps";
 import CreateRequest from "../Components/CreateRequest";
 import SelectDoctor from "../Components/SelectDoctor";
 
+
 const UserSchedule = ({ setPage, page }) => {
   const patient = [
     {
@@ -104,6 +105,7 @@ const UserSchedule = ({ setPage, page }) => {
           <SelectDoctor date={date} setInsidePage={setInsidePage} />
         </div>
       )}
+      
     </>
   );
 };
