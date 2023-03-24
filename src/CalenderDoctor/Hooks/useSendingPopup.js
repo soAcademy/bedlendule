@@ -11,7 +11,7 @@ const useSendingPopup = () => {
       >
         <div
           className={`popup duration-100
-        ${sending ? "scale-100" : "scale-0"}`}
+        ${sending ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
         >
           <div>
             <p className="text-2xl font-bold text-[#4C4E64DE] ">Submitting</p>

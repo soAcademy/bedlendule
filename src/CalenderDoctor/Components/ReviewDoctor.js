@@ -1,45 +1,101 @@
 import { useState, useEffect } from "react";
+import { AiOutlineClose } from "react-icons/ai";
 import { Rating } from "primereact/rating";
-const ReviewDoctor = ({ setPage }) => {
-  const [reviewStar, setReviewStar] = useState(0);
+import ConfirmPopup from "./ConfirmPopup";
+import axios from "axios";
+import useSendingPopup from "../Hooks/useSendingPopup";
+import useSubmitResult from "../Hooks/useSubmitResult";
+
+const ReviewDoctor = ({
+  setOpenReview,
+  openReview,
+  requestId,
+  setUpdated,
+  updated,
+}) => {
+  const [score, setScore] = useState(0);
   const [review, setReview] = useState();
-  const [formData, setSetFormData] = useState();
+  const [confirmReview, setConfirmReview] = useState(false);
+  const { setSending, SendingPopup } = useSendingPopup();
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
+    useSubmitResult({
+      successAction: () => {
+        setOpenReview(false);
+        setUpdated(!updated);
+      },
+    });
   const introduction =
-    "Review you doctor for others to learn more about your experience";
-  // console.log("reviewStar", reviewStar);
+    "Review doctor for others to learn more about your experience";
+  // console.log("score", score);
   const handleSubmit = (event) => {
     event.preventDefault();
-    // console.log("Review", review, reviewStar);
-    const _data = { review: review, score: reviewStar };
-    setSetFormData(_data);
-    console.log("formData", formData);
+    setConfirmReview(true);
+    const _data = { review: review, score: score, requestId: requestId };
+    console.log("formData", _data);
+  };
+  const submitReview = () => {
+    setSending(true);
+    let data = JSON.stringify({
+      requestId: requestId,
+      score: score,
+      review: review,
+    });
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/createReview",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+        setSending(false);
+        response.status === 200
+          ? setSubmitSuccessPopup(true)
+          : setSubmitFailPopUp(true);
+      })
+      .catch((error) => {
+        console.log(error);
+        setSending(true);
+        setSubmitFailPopUp(true);
+      });
   };
 
   return (
     <>
-      <form className="h-screen w-screen" onSubmit={handleSubmit}>
-        <div className="mx-5 my-[200px]  h-1/2 rounded-lg   shadow-lg md:mx-auto md:w-1/2">
-          <div className="headingColor  relative p-4 text-center text-3xl font-bold">
-            REVIEW DOCTOR
-            <div
-              className="absolute top-4 right-5 float-right text-2xl font-light text-slate-500"
-              onClick={() => setPage("landing")}
-            >
-              x
-            </div>
+      <form
+        className={`popup w-11/12 ${
+          openReview ? "scale-100 opacity-100" : "scale-95 opacity-0"
+        } `}
+        onSubmit={handleSubmit}
+      >
+        <div className="headingColor relative p-4 text-center text-3xl font-bold">
+          REVIEW DOCTOR
+          <button
+            type="button"
+            className="absolute -top-2 -right-2 text-2xl text-slate-500 duration-200 hover:text-slate-400 active:text-slate-600"
+            onClick={() => setOpenReview(false)}
+          >
+            <AiOutlineClose />
+          </button>
+        </div>
+        <div className="">
+          <div className="flex text-center md:px-[200px]">
+            <Rating
+              id="rating"
+              className="mx-auto"
+              value={score}
+              onChange={(e) => setScore(e.value)}
+              cancel={false}
+            />
           </div>
-          <div className="my-2 mx-auto h-[35px]  w-2/3 px-4 text-xl">
-            <div className="mx-auto  pl-[40px] text-center md:px-[200px] ">
-              <Rating
-                id="rating"
-                className=""
-                value={reviewStar}
-                onChange={(e) => setReviewStar(e.value)}
-                cancel={false}
-              />
-            </div>
-          </div>
-          <div className="w-full px-4 md:text-center">{introduction}</div>
+          <div className="my-4 w-full px-4 md:text-center">{introduction}</div>
           <div className="my-2 mx-4 justify-center ">
             <textarea
               id="description"
@@ -49,13 +105,22 @@ const ReviewDoctor = ({ setPage }) => {
               onChange={(e) => setReview(e.target.value)}
             ></textarea>
           </div>
-          <div className="flex justify-center  ">
-            <button className="button mx-[35px] w-[80%] py-2 " type="submit">
+          <div className="flex justify-center">
+            <button className="button mx-[35px] w-[80%] py-2" type="submit">
               REVIEW
             </button>
           </div>
         </div>
       </form>
+      <ConfirmPopup
+        title={"Submit Review"}
+        description={"Confirm submitting a review"}
+        action={submitReview}
+        state={confirmReview}
+        setState={setConfirmReview}
+      />
+      <SendingPopup />
+      <ResultPopup />
     </>
   );
 };

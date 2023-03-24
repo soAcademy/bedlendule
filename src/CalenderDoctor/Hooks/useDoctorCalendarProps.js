@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 const useDoctorCalendarProps = () => {
-  const [date, setDate] = useState(null);
   const [openRequests, setOpenRequests] = useState([]);
 
   const dateTemplate = (date) => {
     const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
-    // console.log("date", date, _date, _date.getTime(), new Date().getTime());
-    // console.log("openRequests", openRequests);
     if (
       openRequests.includes(_date.toLocaleDateString()) &&
       _date.getTime() >= new Date().getTime()
@@ -67,7 +64,7 @@ const useDoctorCalendarProps = () => {
         console.log(error);
       });
   }, []);
-  return { date, setDate, openRequests, setOpenRequests, dateTemplate };
+  return { openRequests, setOpenRequests, dateTemplate };
 };
 
 export default useDoctorCalendarProps;

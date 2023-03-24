@@ -1,13 +1,12 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { Rating } from "primereact/rating";
-import { ProgressSpinner } from "primereact/progressspinner";
 
 const SelectDoctor = ({ date, setInsidePage }) => {
   const [doctors, setDoctors] = useState([]);
-  const [selectedDoctor,setSelectedDoctor] = useState([]);
+  const [selectedDoctor, setSelectedDoctor] = useState([]);
 
-  console.log("selectedDoctor",selectedDoctor);
+  console.log("selectedDoctor", selectedDoctor);
 
   const findFreeDoctor = (freeDoctor) => {
     const filter = freeDoctor.map((doctor) =>
@@ -24,8 +23,8 @@ const SelectDoctor = ({ date, setInsidePage }) => {
   };
 
   useEffect(() => {
-    const data = JSON.stringify({ date: date.toString() });
-
+    const data = JSON.stringify({ date: date });
+    console.log("data", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -54,7 +53,7 @@ const SelectDoctor = ({ date, setInsidePage }) => {
         <div className="headingColor relative text-center text-3xl font-bold ">
           SELECT DOCTOR
           <div
-            className="absolute top-[-20px] right-5 text-2xl font-light text-slate-400 cursor-pointer"
+            className="absolute top-[-20px] right-5 cursor-pointer text-2xl font-light text-slate-400"
             onClick={() => setInsidePage("patientSchedule")}
           >
             x
@@ -62,8 +61,10 @@ const SelectDoctor = ({ date, setInsidePage }) => {
         </div>
 
         {doctors.map((doctor) => (
-          <div className="mx-auto my-4 flex w-[90%] flex-col rounded-lg border-2 border-slate-400 bg-[#F0F3EC] p-4 cursor-pointer hover:bg-[#C5E1A5]"
-          onClick={()=>setSelectedDoctor(doctor)}>
+          <div
+            className="mx-auto my-4 flex w-[90%] cursor-pointer flex-col rounded-lg border-2 border-slate-400 bg-[#F0F3EC] p-4 hover:bg-[#C5E1A5]"
+            onClick={() => setSelectedDoctor(doctor)}
+          >
             <div className="flex ">
               <div className="font-bol w-[60%] text-xl text-[#666CFF]">
                 {doctor.doctorUUID.firstName}&nbsp; {doctor.doctorUUID.lastName}
