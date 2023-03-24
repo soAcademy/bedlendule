@@ -2,6 +2,7 @@ import { FaAlignJustify } from "react-icons/fa";
 import React, { useState } from "react";
 const Nav = ({ page, setPage, type, setType }) => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
+
   return (
     <div className="relative z-[9999] h-full">
       <div className="fixed top-0 z-50 flex h-[50px] w-full flex-row bg-[#C5E1A5] px-2 drop-shadow-md">
@@ -63,7 +64,7 @@ const Nav = ({ page, setPage, type, setType }) => {
               ${type === "doctor" && "bg-slate-200"}`}
           >
             Doctor
-          </li> 
+          </li>
           <li
             onClick={() => {
               setIsSideBarOpen(false);
