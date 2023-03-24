@@ -5,7 +5,7 @@ const ConfirmPopup = ({ title, description, action, state, setState,className })
   >
     <div
     
-      className={className? className :`popup
+      className={className? className :`popup duration-300
     ${state ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
     >
       <div>

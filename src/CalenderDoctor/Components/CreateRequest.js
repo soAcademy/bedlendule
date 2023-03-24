@@ -1,10 +1,15 @@
 import { BsChevronDown } from "react-icons/bs";
 import { useState } from "react";
-import DateTimePickerForm from "./DateTimePickerForm";
-import useCreateRequest from "../Hooks/useCreateRequestForm";
+import useCreateRequest from "../Hooks/useCreateRequest";
 import useSubmitResult from "../Hooks/useSubmitResult";
 import useSendingPopup from "../Hooks/useSendingPopup";
 import ConfirmPopup from "./ConfirmPopup";
+import useDateTimepicker from "../Hooks/useDateTimePicker";
+import {
+  DatePicker,
+  FinishTimePicker,
+  StartTimePicker,
+} from "./DateTimePicker";
 
 const CreateRequest = ({
   setOpenCreateRequest,
@@ -12,18 +17,18 @@ const CreateRequest = ({
   setUpdated,
   updated,
 }) => {
-  const [fromTime, setFromTime] = useState(
-    new Date(
-      new Date(new Date().toLocaleDateString()).getTime() +
-        1800000 * Math.ceil(new Date().getMinutes() / 30) +
-        3600000 * (new Date().getHours() + 1)
-    )
-  );
-  const [toTime, setToTime] = useState(
-    new Date(new Date(new Date().toLocaleDateString()).getTime() + 3600000)
-  );
+  const {
+    date,
+    isDateAvailable,
+    startTime,
+    setStartTime,
+    finishTime,
+    setFinishTime,
+    handleDateChange,
+    handleStartTimeChange,
+    handleFinishTimeChange,
+  } = useDateTimepicker();
   const [popupState, setPopupState] = useState(false);
-  const [isDateAvailable, setIsDateAvailable] = useState(true);
   const { setSending, SendingPopup } = useSendingPopup();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
     useSubmitResult({
@@ -37,12 +42,11 @@ const CreateRequest = ({
       },
     });
   const { handleSubmit, submitForm } = useCreateRequest({
-    setIsDateAvailable,
     popupState,
     setPopupState,
     setSending,
-    setFromTime,
-    setToTime,
+    setStartTime,
+    setFinishTime,
     setSubmitFailPopUp,
     setSubmitSuccessPopup,
   });
@@ -71,14 +75,26 @@ const CreateRequest = ({
           <p className="pt-4 text-center text-3xl font-bold text-slate-500">
             CREATE REQUEST
           </p>
-          <div className="mx-auto my-6 flex gap-4 p-2 text-center text-slate-500">
-            <DateTimePickerForm
-              setIsDateAvailable={setIsDateAvailable}
-              fromTime={fromTime}
-              toTime={toTime}
-              setFromTime={setFromTime}
-              setToTime={setToTime}
-            />
+          <div className="mx-auto my-6 flex w-full justify-center p-2 text-center text-slate-500">
+            <div className="">
+              <DatePicker
+                className={"w-[120px]"}
+                date={date}
+                handleDateChange={handleDateChange}
+              />
+            </div>
+            <div className="mx-2">
+              <StartTimePicker
+                startTime={startTime}
+                handleStartTimeChange={handleStartTimeChange}
+              />
+            </div>
+            <div>
+              <FinishTimePicker
+                finishTime={finishTime}
+                handleFinishTimeChange={handleFinishTimeChange}
+              />
+            </div>
           </div>
           <div className="my-6 flex w-full items-center gap-2 text-slate-500">
             <div className="w-1/2">
@@ -113,6 +129,7 @@ const CreateRequest = ({
           <div className="my-4 flex items-center justify-center gap-2 text-slate-500">
             <label for="online">ONLINE</label>
             <input
+              required
               type="radio"
               id="online"
               value="ONLINE"
@@ -121,6 +138,7 @@ const CreateRequest = ({
             />
             <label for="offline">OFFLINE</label>
             <input
+              required
               type="radio"
               id="offline"
               value="OFFLINE"
@@ -139,7 +157,7 @@ const CreateRequest = ({
             <input
               id="hourRate"
               className="h-[40px] w-1/2 rounded-lg border-2 border-slate-500 px-2"
-              placeholder="Hour rate"
+              placeholder="Price"
               type="number"
               required
             />

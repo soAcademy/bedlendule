@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar } from "primereact/calendar";
 import { FaHome } from "react-icons/fa";
 import {
@@ -10,59 +10,59 @@ import {
 } from "react-icons/bi";
 import useDoctorCalendarProps from "../Hooks/useDoctorCalendarProps";
 import axios from "axios";
-import useSendingPopup from "../Hooks/useSendingPopup";
-import useSubmitResult from "../Hooks/useSubmitResult";
 import useUpdateSchedule from "../Hooks/useUpdateSchedule";
 import ConfirmPopup from "../Components/ConfirmPopup";
 import { BsChevronDown } from "react-icons/bs";
 import CreateSchedule from "../Components/CreateSchedule";
+import {
+  FinishTimePicker,
+  StartTimePicker,
+} from "../Components/DateTimePicker";
+import useDateTimepicker from "../Hooks/useDateTimePicker";
 
 const DoctorSchedule = ({ setPage }) => {
-  const [fromTime, setFromTime] = useState(
-    new Date(new Date().toLocaleDateString())
-  );
-  const [toTime, setToTime] = useState(
-    new Date(new Date(new Date().toLocaleDateString()).getTime() + 3600000)
-  );
   const [price, setPrice] = useState();
   const [idxToDelete, setIdxToDelete] = useState();
   const [schedules, setSchedules] = useState([]);
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const [scheduleToEdit, setScheduleToEdit] = useState([]);
   const [newTimeSlots, setNewTimeSlots] = useState([]);
   const [openTimeSlotForm, setOpenTimeSlotForm] = useState(false);
   const [updated, setUpdated] = useState();
-  const [duplicatedTime, setDuplicatedTime] = useState(false);
-  const [confirmSubmit, setConfirmSubmit] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [openCreateSchedule, setOpenCreateSchedule] = useState(false);
-  const { date, setDate, dateTemplate } = useDoctorCalendarProps();
-  const { setSending, SendingPopup } = useSendingPopup();
-  const closeEditPanel = () => {
-    setIsEditOpen(false);
-    setConfirmSubmit(false);
-  };
-  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
-    useSubmitResult({
-      successAction: closeEditPanel,
-      failedAction: closeEditPanel,
-    });
-  const { removeTimeslot, addTimeSlot, updateSchedule } = useUpdateSchedule({
+  const { dateTemplate } = useDoctorCalendarProps();
+  const {
+    handleStartTimeChange,
+    handleFinishTimeChange,
+    startTime,
+    finishTime,
+    date,
+    setDate,
+  } = useDateTimepicker();
+  const {
+    removeTimeslot,
+    addTimeSlot,
+    updateSchedule,
+    duplicatedTime,
+    SendingPopup,
+    isEditOpen,
+    setIsEditOpen,
+    ResultPopup,
+    confirmSubmit,
+    setConfirmSubmit,
+  } = useUpdateSchedule({
+    setPrice,
     idxToDelete,
     newTimeSlots,
     setNewTimeSlots,
     setConfirmRemove,
-    toTime,
-    fromTime,
+    finishTime,
+    startTime,
     scheduleToEdit,
     price,
-    setDuplicatedTime,
     setOpenTimeSlotForm,
-    setSending,
     updated,
     setUpdated,
-    setSubmitFailPopUp,
-    setSubmitSuccessPopup,
   });
 
   useEffect(() => {
@@ -138,12 +138,11 @@ const DoctorSchedule = ({ setPage }) => {
         </div>
 
         {schedules?.map((schedule, idx) => {
-          
-          const startTime = new Date(
+          const scheduleStartTime = new Date(
             schedule.timeslots.at(-1)?.startTime
           ).getTime();
           return (
-            startTime > new Date().getTime() && (
+            scheduleStartTime > new Date().getTime() && (
               <div
                 key={idx}
                 className="mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9] p-2 text-slate-600 md:w-1/2"
@@ -308,43 +307,53 @@ const DoctorSchedule = ({ setPage }) => {
                           <div className="flex w-full flex-col space-y-2 rounded-lg py-2 duration-200">
                             <div className="flex items-center justify-between space-x-2">
                               <div className="">
-                                <Calendar
-                                  id="fromTime"
+                                {/* <Calendar
+                                  id="startTime"
                                   inputId="start-time"
                                   readOnlyInput
                                   timeOnly
                                   showButtonBar
                                   hourFormat="12"
                                   stepMinute={30}
-                                  value={fromTime}
+                                  value={startTime}
                                   appendTo={"self"}
                                   onChange={(e) => {
-                                    (e.value?.getTime() >= toTime?.getTime() ||
-                                      (!toTime && e.value)) &&
-                                      setToTime(
+                                    (e.value?.getTime() >= finishTime?.getTime() ||
+                                      (!finishTime && e.value)) &&
+                                      setFinishTime(
                                         new Date(e.value.getTime() + 1800000)
                                       );
-                                    setFromTime(e.value);
+                                    setStartTime(e.value);
                                   }}
                                   className="w-[100px] rounded-lg border-2 bg-slate-900 text-center "
                                   placeholder="From"
-                                ></Calendar>
+                                ></Calendar> */}
                               </div>
+                              <StartTimePicker
+                                startTime={startTime}
+                                handleStartTimeChange={handleStartTimeChange}
+                              />
                               <div className="">
-                                <Calendar
-                                  id="toTime"
+                                {/* <Calendar
+                                  id="finishTime"
                                   inputId="finish-time"
                                   readOnlyInput
                                   timeOnly
                                   showButtonBar
                                   hourFormat="12"
                                   stepMinute={30}
-                                  value={toTime}
-                                  minDate={fromTime}
-                                  onChange={(e) => setToTime(e.value)}
+                                  value={finishTime}
+                                  minDate={startTime}
+                                  onChange={(e) => setFinishTime(e.value)}
                                   className="w-[100px] rounded-lg border-2 bg-slate-900 text-center"
                                   placeholder="To"
-                                ></Calendar>
+                                ></Calendar> */}
+                                <FinishTimePicker
+                                  finishTime={finishTime}
+                                  handleFinishTimeChange={
+                                    handleFinishTimeChange
+                                  }
+                                />
                               </div>
                               <input
                                 id="price"
@@ -359,7 +368,9 @@ const DoctorSchedule = ({ setPage }) => {
                             <div className="space-x-2 text-6xl">
                               <button
                                 disabled={
-                                  fromTime && toTime && price ? false : true
+                                  startTime && finishTime && price
+                                    ? false
+                                    : true
                                 }
                                 onClick={() => addTimeSlot()}
                                 className={`mx-auto text-green-600 opacity-60 hover:text-green-500 disabled:text-slate-300`}
@@ -377,11 +388,11 @@ const DoctorSchedule = ({ setPage }) => {
                         )}
                         {openTimeSlotForm && (
                           <p
-                            className={`text-red-500 duration-300 ${
-                              duplicatedTime ? "visible" : "opacity-0"
-                            }`}
+                            className={`text-center text-red-400 opacity-0 
+                            ${duplicatedTime && "animate-pulse opacity-100"} 
+                            `}
                           >
-                            This time slot is already exist
+                            The selected time slot is not available
                           </p>
                         )}
                         {!openTimeSlotForm && (

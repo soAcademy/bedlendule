@@ -14,9 +14,9 @@ const useSubmitResult = ({ successAction, failedAction }) => {
         ${submitSuccessPopUp ? "scale-100" : "scale-95"}`}
         >
           <div>
-            <p className="text-2xl font-bold text-[#4C4E64DE] ">Successful</p>
+            <p className="text-2xl font-bold text-[#4C4E64DE] ">Success</p>
             <p className="text-[#4C4E64AD]">
-              Your request was successfully submitted
+              Your request has been successfully submitted
             </p>
           </div>
           <div className="mt-4 flex space-y-2">
@@ -44,8 +44,8 @@ const useSubmitResult = ({ successAction, failedAction }) => {
   ${submitFailPopUp ? "scale-1" : "scale-0"}`}
         >
           <div>
-            <p className="text-2xl font-bold text-[#4C4E64DE] ">Failed</p>
-            <p className="text-[#4C4E64AD]">Failed to submit request</p>
+            <p className="text-2xl font-bold text-[#4C4E64DE] ">Request Failed</p>
+            <p className="text-[#4C4E64AD]">Your request has been denied. Please review the requirements and try again.</p>
           </div>
           <div className="mt-4 flex space-y-2">
             <button

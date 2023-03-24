@@ -3,12 +3,11 @@ import axios from "axios";
 
 const useCreateRequest = ({
   setSending,
-  setFromTime,
-  setToTime,
+  setStartTime,
+  setFinishTime,
   setSubmitFailPopUp,
   setSubmitSuccessPopup,
   setPopupState,
-  isDateAvailable,
 }) => {
   const [formData, setFormData] = useState();
   const patientUUID = "c646e99a-9a64-497a-87fd-6972bd7bf387";
@@ -49,8 +48,8 @@ const useCreateRequest = ({
       .request(config)
       .then((response) => {
         document.querySelector("#create-request").reset();
-        setFromTime();
-        setToTime();
+        setStartTime();
+        setFinishTime();
         setSending(false);
         response.status === 200
           ? setSubmitSuccessPopup(true)
