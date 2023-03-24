@@ -1,28 +1,30 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { Rating } from "primereact/rating";
+import { ProgressSpinner } from "primereact/progressspinner";
 
-const SelectDoctor = () => {
-  const [freeDoctor, setFreeDoctor] = useState([]);
+const SelectDoctor = ({ date, setInsidePage }) => {
   const [doctors, setDoctors] = useState([]);
+  const [selectedDoctor,setSelectedDoctor] = useState([]);
+
+  console.log("selectedDoctor",selectedDoctor);
 
   const findFreeDoctor = (freeDoctor) => {
     const filter = freeDoctor.map((doctor) =>
       doctor.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
+    console.log("filter", filter);
     const indexes = filter
-      .map((r, idx) => (r.length === 1 ? idx : -1))
+      .map((r, idx) => (r.length >= 1 ? idx : -1))
       .filter((idx) => idx !== -1);
+
     const results = indexes.map((idx) => freeDoctor[idx]);
-    console.log("results", results);
 
     return results;
   };
 
   useEffect(() => {
-    const data = JSON.stringify({
-      date: "2023-03-22",
-    });
+    const data = JSON.stringify({ date: date.toString() });
 
     const config = {
       method: "post",
@@ -36,24 +38,32 @@ const SelectDoctor = () => {
 
     axios(config)
       .then((response) => {
-        const data = findFreeDoctor(response.data);
-        setDoctors(data);
-        console.log("data", data);
+        console.log("response.data", response.data);
+        const _data = findFreeDoctor(response.data);
+        console.log("_data", _data);
+        setDoctors(_data);
       })
       .catch((error) => {
         console.log(error);
       });
   }, []);
-  console.log("doctors", doctors);
 
- 
   return (
     <>
-      <div className="mt-[70px]">
-        <div className="headingColor text-center text-3xl font-bold">SELECT DOCTOR</div>
+      <div className="mt-[70px] ">
+        <div className="headingColor relative text-center text-3xl font-bold ">
+          SELECT DOCTOR
+          <div
+            className="absolute top-[-20px] right-5 text-2xl font-light text-slate-400 cursor-pointer"
+            onClick={() => setInsidePage("patientSchedule")}
+          >
+            x
+          </div>
+        </div>
 
         {doctors.map((doctor) => (
-          <div className="mx-auto my-4 flex w-[90%] flex-col rounded-lg border-2 border-slate-400 bg-[#F0F3EC] p-4">
+          <div className="mx-auto my-4 flex w-[90%] flex-col rounded-lg border-2 border-slate-400 bg-[#F0F3EC] p-4 cursor-pointer hover:bg-[#C5E1A5]"
+          onClick={()=>setSelectedDoctor(doctor)}>
             <div className="flex ">
               <div className="font-bol w-[60%] text-xl text-[#666CFF]">
                 {doctor.doctorUUID.firstName}&nbsp; {doctor.doctorUUID.lastName}
