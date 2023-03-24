@@ -26,8 +26,8 @@ const SelectDoctor = ({ date, setInsidePage }) => {
   };
 
   useEffect(() => {
-    const data = JSON.stringify({ date: date.toString() });
-
+    const data = JSON.stringify({ date: date });
+    console.log("data", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,

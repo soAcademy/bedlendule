@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar } from "primereact/calendar";
 import { FaHome } from "react-icons/fa";
 import {
@@ -10,56 +10,59 @@ import {
 } from "react-icons/bi";
 import useDoctorCalendarProps from "../Hooks/useDoctorCalendarProps";
 import axios from "axios";
-import useSendingPopup from "../Hooks/useSendingPopup";
-import useSubmitResult from "../Hooks/useSubmitResult";
 import useUpdateSchedule from "../Hooks/useUpdateSchedule";
 import ConfirmPopup from "../Components/ConfirmPopup";
 import { BsChevronDown } from "react-icons/bs";
+import CreateSchedule from "../Components/CreateSchedule";
+import {
+  FinishTimePicker,
+  StartTimePicker,
+} from "../Components/DateTimePicker";
+import useDateTimepicker from "../Hooks/useDateTimePicker";
+
 const DoctorSchedule = ({ setPage }) => {
-  const [fromTime, setFromTime] = useState(
-    new Date(new Date().toLocaleDateString())
-  );
-  const [toTime, setToTime] = useState(
-    new Date(new Date(new Date().toLocaleDateString()).getTime() + 3600000)
-  );
   const [price, setPrice] = useState();
   const [idxToDelete, setIdxToDelete] = useState();
   const [schedules, setSchedules] = useState([]);
-  const [isEditOpen, setIsEditOpen] = useState(false);
   const [scheduleToEdit, setScheduleToEdit] = useState([]);
   const [newTimeSlots, setNewTimeSlots] = useState([]);
   const [openTimeSlotForm, setOpenTimeSlotForm] = useState(false);
   const [updated, setUpdated] = useState();
-  const [duplicatedTime, setDuplicatedTime] = useState(false);
-  const [confirmSubmit, setConfirmSubmit] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState(false);
-  const { date, setDate, dateTemplate } = useDoctorCalendarProps();
-  const { setSending, SendingPopup } = useSendingPopup();
-  const closeEditPanel = () => {
-    setIsEditOpen(false);
-    setConfirmSubmit(false);
-  };
-  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
-    useSubmitResult({
-      successAction: closeEditPanel,
-      failedAction: closeEditPanel,
-    });
-  const { removeTimeslot, addTimeSlot, updateSchedule } = useUpdateSchedule({
+  const [openCreateSchedule, setOpenCreateSchedule] = useState(false);
+  const { dateTemplate } = useDoctorCalendarProps();
+  const {
+    handleStartTimeChange,
+    handleFinishTimeChange,
+    startTime,
+    finishTime,
+    date,
+    setDate,
+  } = useDateTimepicker();
+  const {
+    removeTimeslot,
+    addTimeSlot,
+    updateSchedule,
+    duplicatedTime,
+    SendingPopup,
+    isEditOpen,
+    setIsEditOpen,
+    ResultPopup,
+    confirmSubmit,
+    setConfirmSubmit,
+  } = useUpdateSchedule({
+    setPrice,
     idxToDelete,
     newTimeSlots,
     setNewTimeSlots,
     setConfirmRemove,
-    toTime,
-    fromTime,
+    finishTime,
+    startTime,
     scheduleToEdit,
     price,
-    setDuplicatedTime,
     setOpenTimeSlotForm,
-    setSending,
     updated,
     setUpdated,
-    setSubmitFailPopUp,
-    setSubmitSuccessPopup,
   });
 
   useEffect(() => {
@@ -80,8 +83,8 @@ const DoctorSchedule = ({ setPage }) => {
     axios
       .request(config)
       .then((response) => {
-        const data = [...response.data];
-        setSchedules(data);
+        console.log("data", response.data);
+        setSchedules(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -120,7 +123,7 @@ const DoctorSchedule = ({ setPage }) => {
         <button
           className="button w-1/2 py-3 md:w-1/4"
           onClick={() => {
-            setPage("createSchedule");
+            setOpenCreateSchedule(true);
           }}
         >
           CREATE SCHEDULE
@@ -135,79 +138,85 @@ const DoctorSchedule = ({ setPage }) => {
         </div>
 
         {schedules?.map((schedule, idx) => {
+          const scheduleStartTime = new Date(
+            schedule.timeslots.at(-1)?.startTime
+          ).getTime();
           return (
-            <div
-              key={idx}
-              className="mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9] p-2 text-slate-600 md:w-1/2"
-            >
-              <div className="flex justify-between">
-                <div className="w-2/3">
-                  <div className="font-bold">{schedule.title}</div>
-                  <div className="flex text-center">
-                    <div className="my-auto flex items-center text-center text-xs">
-                      <FaHome className="text-blue-500" />
-                      &nbsp;
-                      {schedule.meetingType === "ONLINE" &&
-                        schedule.meetingType + " : "}
-                      {schedule.location}
+            scheduleStartTime > new Date().getTime() && (
+              <div
+                key={idx}
+                className="mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9] p-2 text-slate-600 md:w-1/2"
+              >
+                <div className="flex justify-between">
+                  <div className="w-2/3">
+                    <div className="font-bold">{schedule.title}</div>
+                    <div className="flex text-center">
+                      <div className="my-auto flex items-center text-center text-xs">
+                        <FaHome className="text-blue-500" />
+                        &nbsp;
+                        {schedule.meetingType === "ONLINE" &&
+                          schedule.meetingType + " : "}
+                        {schedule.location}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <button
-                  onClick={() => {
-                    setScheduleToEdit(schedule);
-                    setNewTimeSlots(schedule.timeslots);
-                    setIsEditOpen(true);
-                  }}
-                  className="float-right text-2xl text-slate-500 hover:text-slate-400"
-                >
-                  <BiEditAlt />
-                </button>
-              </div>
-              {schedule.timeslots?.map((timeslot, idx) => {
-                return (
-                  <div
-                    key={idx}
-                    className={`flex items-center justify-between rounded-lg border-2 bg-slate-100 p-2 text-slate-400 ${
-                      timeslot.request &&
-                      "border-[#beda9f] bg-[#f1fae4] text-slate-600"
-                    }`}
+                  <button
+                    onClick={() => {
+                      setScheduleToEdit(schedule);
+                      setNewTimeSlots(schedule.timeslots);
+                      setIsEditOpen(true);
+                    }}
+                    className="float-right text-2xl text-slate-500 hover:text-slate-400"
                   >
-                    <div>
-                      <p>
-                        {timeslot.request
-                          ? timeslot.request?.patient.firstName +
-                            " " +
-                            timeslot.request?.patient.lastName
-                          : "No Booking"}
-                      </p>
-                      <p>
-                        {new Date(timeslot.startTime).toLocaleDateString("TH")}{" "}
-                        :{" "}
-                        {new Date(timeslot.startTime)
-                          .toLocaleTimeString("TH")
-                          .slice(0, 5)}
-                        -
-                        {new Date(timeslot.finishTime)
-                          .toLocaleTimeString("TH")
-                          .slice(0, 5)}
-                      </p>
+                    <BiEditAlt />
+                  </button>
+                </div>
+                {schedule.timeslots?.map((timeslot, idx) => {
+                  return (
+                    <div
+                      key={idx}
+                      className={`flex items-center justify-between rounded-lg border-2 bg-slate-100 p-2 text-slate-400 ${
+                        timeslot.request &&
+                        "border-[#beda9f] bg-[#f1fae4] text-slate-600"
+                      }`}
+                    >
+                      <div>
+                        <p>
+                          {timeslot.request
+                            ? timeslot.request?.patient.firstName +
+                              " " +
+                              timeslot.request?.patient.lastName
+                            : "No Booking"}
+                        </p>
+                        <p>
+                          {new Date(timeslot.startTime).toLocaleDateString(
+                            "TH"
+                          )}{" "}
+                          :{" "}
+                          {new Date(timeslot.startTime)
+                            .toLocaleTimeString("TH")
+                            .slice(0, 5)}
+                          -
+                          {new Date(timeslot.finishTime)
+                            .toLocaleTimeString("TH")
+                            .slice(0, 5)}
+                        </p>
+                      </div>
+                      <div>฿ {timeslot.price}</div>
                     </div>
-                    <div>฿ {timeslot.price}</div>
-                  </div>
-                );
-              })}
-              {
-                <div
-                  className={`shader
+                  );
+                })}
+                {
+                  <div
+                    className={`shader
       ${
         isEditOpen && scheduleToEdit.id === schedule.id
           ? ""
           : "pointer-events-none opacity-0"
       }`}
-                >
-                  <div
-                    className={`fixed bottom-0 left-1/2 flex h-[70%] w-full -translate-x-[50%] 
+                  >
+                    <div
+                      className={`fixed bottom-0 left-1/2 flex h-[70%] w-full -translate-x-[50%] 
     flex-col justify-between space-y-2 rounded-lg bg-white p-6 text-center shadow-md transition-all duration-300
     ${
       isEditOpen && scheduleToEdit.id === schedule.id
@@ -215,195 +224,224 @@ const DoctorSchedule = ({ setPage }) => {
         : "translate-y-full"
     }
 `}
-                  >
-                    <BsChevronDown
-                      className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
-                      onClick={() => setIsEditOpen(false)}
-                    />
-                    <div className="">
-                      <div>
-                        <p className="text-2xl font-bold text-[#4C4E64DE] ">
-                          {idx} {schedule.title}
-                        </p>
-                        <p className="text-start text-[#4C4E64AD]">
-                          {schedule.description}
-                        </p>
-                      </div>
-                      <div className="no-scrollbar max-h-[230px] overflow-scroll">
-                        {newTimeSlots?.map((timeslot, jdx) => {
-                          return (
-                            <div key={jdx} className="flex">
-                              <div
-                                className={`flex w-10/12 items-center justify-between rounded-lg border-2 bg-slate-100 p-2 text-slate-400 ${
-                                  timeslot.request &&
-                                  "border-[#beda9f] bg-[#f1fae4] text-slate-600"
-                                }`}
-                              >
-                                <div>
-                                  <p className="text-left">
-                                    {timeslot.request
-                                      ? timeslot.request?.patient.firstName +
-                                        " " +
-                                        timeslot.request?.patient.lastName
-                                      : "No Booking"}
-                                  </p>
-                                  <p>
-                                    {new Date(
-                                      timeslot.startTime
-                                    ).toLocaleDateString("TH")}{" "}
-                                    :{" "}
-                                    {new Date(timeslot.startTime)
-                                      .toLocaleTimeString("TH")
-                                      .slice(0, 5)}
-                                    -
-                                    {new Date(timeslot.finishTime)
-                                      .toLocaleTimeString("TH")
-                                      .slice(0, 5)}
-                                  </p>
-                                </div>
-                                <div>฿ {timeslot.price}</div>
-                              </div>
-                              {!timeslot.request && (
-                                <button
-                                  onClick={() => {
-                                    setConfirmRemove(true);
-                                    setIdxToDelete(jdx);
-                                  }}
-                                  className="ml-6 text-2xl text-slate-600"
-                                >
-                                  <BiTrash />
-                                </button>
-                              )}
-                              {
-                                <ConfirmPopup
-                                  className={`fixed top-[27%] left-1/2 mx-auto w-[80%] -translate-x-1/2 -translate-y-1/2 
-                                rounded-lg bg-white p-6 text-center shadow-md duration-200
-                                ${confirmRemove ? "scale-100" : "scale-0"}`}
-                                  title={"Removing Timeslot"}
-                                  description={"Confirm Removal"}
-                                  action={() => removeTimeslot(timeslot)}
-                                  state={confirmRemove}
-                                  setState={setConfirmRemove}
-                                />
-                              }
-                            </div>
-                          );
-                        })}
-                      </div>
-                      {openTimeSlotForm && (
-                        <div className="flex w-full flex-col space-y-2 rounded-lg py-2 duration-200">
-                          <div className="flex items-center justify-between space-x-2">
-                            <div className="">
-                              <Calendar
-                                id="fromTime"
-                                inputId="start-time"
-                                readOnlyInput
-                                timeOnly
-                                showButtonBar
-                                hourFormat="12"
-                                stepMinute={30}
-                                value={fromTime}
-                                appendTo={"self"}
-                                onChange={(e) => {
-                                  (e.value?.getTime() >= toTime?.getTime() ||
-                                    (!toTime && e.value)) &&
-                                    setToTime(
-                                      new Date(e.value.getTime() + 1800000)
-                                    );
-                                  setFromTime(e.value);
-                                }}
-                                className="w-[100px] rounded-lg border-2 bg-slate-900 text-center "
-                                placeholder="From"
-                              ></Calendar>
-                            </div>
-                            <div className="">
-                              <Calendar
-                                id="toTime"
-                                inputId="finish-time"
-                                readOnlyInput
-                                timeOnly
-                                showButtonBar
-                                hourFormat="12"
-                                stepMinute={30}
-                                value={toTime}
-                                minDate={fromTime}
-                                onChange={(e) => setToTime(e.value)}
-                                className="w-[100px] rounded-lg border-2 bg-slate-900 text-center"
-                                placeholder="To"
-                              ></Calendar>
-                            </div>
-                            <input
-                              id="price"
-                              type="number"
-                              placeholder="Price"
-                              onChange={(e) => {
-                                setPrice(e.target.value);
-                              }}
-                              className="mx-auto h-11 w-20 items-center rounded-md border-2 border-double text-center drop-shadow"
-                            ></input>
-                          </div>
-                          <div className="space-x-2 text-6xl">
-                            <button
-                              disabled={
-                                fromTime && toTime && price ? false : true
-                              }
-                              onClick={() => addTimeSlot()}
-                              className={`mx-auto text-green-600 opacity-60 hover:text-green-500 disabled:text-slate-300`}
-                            >
-                              <BiCheckCircle className="border-slate-300" />
-                            </button>
-                            <button
-                              onClick={() => setOpenTimeSlotForm(false)}
-                              className={`mx-auto text-red-600 opacity-60 hover:text-red-500`}
-                            >
-                              <BiXCircle className="border-slate-300" />
-                            </button>
-                          </div>
+                    >
+                      <BsChevronDown
+                        className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
+                        onClick={() => setIsEditOpen(false)}
+                      />
+                      <div className="">
+                        <div>
+                          <p className="text-2xl font-bold text-[#4C4E64DE] ">
+                            {idx} {schedule.title}
+                          </p>
+                          <p className="text-start text-[#4C4E64AD]">
+                            {schedule.description}
+                          </p>
                         </div>
-                      )}
-                      {openTimeSlotForm && (
-                        <p
-                          className={`text-red-500 duration-300 ${
-                            duplicatedTime ? "visible" : "opacity-0"
-                          }`}
+                        <div className="no-scrollbar max-h-[230px] overflow-scroll">
+                          {newTimeSlots?.map((timeslot, jdx) => {
+                            return (
+                              <div key={jdx} className="flex">
+                                <div
+                                  className={`flex w-10/12 items-center justify-between rounded-lg border-2 bg-slate-100 p-2 text-slate-400 ${
+                                    timeslot.request &&
+                                    "border-[#beda9f] bg-[#f1fae4] text-slate-600"
+                                  }`}
+                                >
+                                  <div>
+                                    <p className="text-left">
+                                      {timeslot.request
+                                        ? timeslot.request?.patient.firstName +
+                                          " " +
+                                          timeslot.request?.patient.lastName
+                                        : "No Booking"}
+                                    </p>
+                                    <p>
+                                      {new Date(
+                                        timeslot.startTime
+                                      ).toLocaleDateString("TH")}{" "}
+                                      :{" "}
+                                      {new Date(timeslot.startTime)
+                                        .toLocaleTimeString("TH")
+                                        .slice(0, 5)}
+                                      -
+                                      {new Date(timeslot.finishTime)
+                                        .toLocaleTimeString("TH")
+                                        .slice(0, 5)}
+                                    </p>
+                                  </div>
+                                  <div>฿ {timeslot.price}</div>
+                                </div>
+                                {!timeslot.request && (
+                                  <button
+                                    onClick={() => {
+                                      setConfirmRemove(true);
+                                      setIdxToDelete(jdx);
+                                    }}
+                                    className="ml-6 text-2xl text-slate-600"
+                                  >
+                                    <BiTrash />
+                                  </button>
+                                )}
+                                {
+                                  <ConfirmPopup
+                                    className={`fixed top-[27%] left-1/2 mx-auto w-[80%] -translate-x-1/2 -translate-y-1/2 
+                                rounded-lg bg-white p-6 text-center shadow-md duration-200
+                                ${
+                                  confirmRemove
+                                    ? "scale-100 opacity-100"
+                                    : "scale-95 opacity-0"
+                                }`}
+                                    title={"Removing Timeslot"}
+                                    description={"Confirm Removal"}
+                                    action={() => removeTimeslot(timeslot)}
+                                    state={confirmRemove}
+                                    setState={setConfirmRemove}
+                                  />
+                                }
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {openTimeSlotForm && (
+                          <div className="flex w-full flex-col space-y-2 rounded-lg py-2 duration-200">
+                            <div className="flex items-center justify-between space-x-2">
+                              <div className="">
+                                {/* <Calendar
+                                  id="startTime"
+                                  inputId="start-time"
+                                  readOnlyInput
+                                  timeOnly
+                                  showButtonBar
+                                  hourFormat="12"
+                                  stepMinute={30}
+                                  value={startTime}
+                                  appendTo={"self"}
+                                  onChange={(e) => {
+                                    (e.value?.getTime() >= finishTime?.getTime() ||
+                                      (!finishTime && e.value)) &&
+                                      setFinishTime(
+                                        new Date(e.value.getTime() + 1800000)
+                                      );
+                                    setStartTime(e.value);
+                                  }}
+                                  className="w-[100px] rounded-lg border-2 bg-slate-900 text-center "
+                                  placeholder="From"
+                                ></Calendar> */}
+                              </div>
+                              <StartTimePicker
+                                startTime={startTime}
+                                handleStartTimeChange={handleStartTimeChange}
+                              />
+                              <div className="">
+                                {/* <Calendar
+                                  id="finishTime"
+                                  inputId="finish-time"
+                                  readOnlyInput
+                                  timeOnly
+                                  showButtonBar
+                                  hourFormat="12"
+                                  stepMinute={30}
+                                  value={finishTime}
+                                  minDate={startTime}
+                                  onChange={(e) => setFinishTime(e.value)}
+                                  className="w-[100px] rounded-lg border-2 bg-slate-900 text-center"
+                                  placeholder="To"
+                                ></Calendar> */}
+                                <FinishTimePicker
+                                  finishTime={finishTime}
+                                  handleFinishTimeChange={
+                                    handleFinishTimeChange
+                                  }
+                                />
+                              </div>
+                              <input
+                                id="price"
+                                type="number"
+                                placeholder="Price"
+                                onChange={(e) => {
+                                  setPrice(e.target.value);
+                                }}
+                                className="mx-auto h-11 w-20 items-center rounded-md border-2 border-double text-center drop-shadow"
+                              ></input>
+                            </div>
+                            <div className="space-x-2 text-6xl">
+                              <button
+                                disabled={
+                                  startTime && finishTime && price
+                                    ? false
+                                    : true
+                                }
+                                onClick={() => addTimeSlot()}
+                                className={`mx-auto text-green-600 opacity-60 hover:text-green-500 disabled:text-slate-300`}
+                              >
+                                <BiCheckCircle className="border-slate-300" />
+                              </button>
+                              <button
+                                onClick={() => setOpenTimeSlotForm(false)}
+                                className={`mx-auto text-red-600 opacity-60 hover:text-red-500`}
+                              >
+                                <BiXCircle className="border-slate-300" />
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                        {openTimeSlotForm && (
+                          <p
+                            className={`text-center text-red-400 opacity-0 
+                            ${duplicatedTime && "animate-pulse opacity-100"} 
+                            `}
+                          >
+                            The selected time slot is not available
+                          </p>
+                        )}
+                        {!openTimeSlotForm && (
+                          <button
+                            onClick={() => {
+                              setOpenTimeSlotForm(true);
+                            }}
+                            className="pt-4 text-3xl text-slate-500"
+                          >
+                            <BiPlusCircle />
+                          </button>
+                        )}
+                      </div>
+                      <div className="static bottom-0 justify-center space-x-2 py-2">
+                        <button
+                          className="text-md button w-24 p-2 text-white"
+                          onClick={() => setConfirmSubmit(true)}
                         >
-                          This time slot is already exist
-                        </p>
-                      )}
-                      {!openTimeSlotForm && (
+                          CONFIRM
+                        </button>
                         <button
                           onClick={() => {
-                            setOpenTimeSlotForm(true);
+                            setOpenTimeSlotForm(false);
+                            setIsEditOpen(false);
                           }}
-                          className="pt-4 text-3xl text-slate-500"
+                          className="text-md button w-24 bg-slate-400 p-2 text-white hover:bg-slate-300 active:bg-slate-500"
                         >
-                          <BiPlusCircle />
+                          CANCEL
                         </button>
-                      )}
-                    </div>
-                    <div className="static bottom-0 justify-center space-x-2 py-2">
-                      <button
-                        className="text-md button w-24 p-2 text-white"
-                        onClick={() => setConfirmSubmit(true)}
-                      >
-                        CONFIRM
-                      </button>
-                      <button
-                        onClick={() => {
-                          setOpenTimeSlotForm(false);
-                          setIsEditOpen(false);
-                        }}
-                        className="text-md button w-24 bg-slate-400 p-2 text-white hover:bg-slate-300 active:bg-slate-500"
-                      >
-                        CANCEL
-                      </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              }
-            </div>
+                }
+              </div>
+            )
           );
         })}
+      </div>
+      <div
+        className={`fixed top-0 left-0 right-0 z-50 h-full w-full
+        bg-slate-300 bg-opacity-10 backdrop-blur-[2px] duration-200
+        ${!openCreateSchedule ? "pointer-events-none opacity-0" : ""}`}
+      >
+        <CreateSchedule
+          updated={updated}
+          setUpdated={setUpdated}
+          openCreateSchedule={openCreateSchedule}
+          setOpenCreateSchedule={setOpenCreateSchedule}
+        />
       </div>
       <ConfirmPopup
         title={"SUBMIT REQUEST"}
