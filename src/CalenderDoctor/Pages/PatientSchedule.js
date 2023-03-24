@@ -8,7 +8,21 @@ import axios from "axios";
 import ReviewDoctor from "../Components/ReviewDoctor";
 import SelectDoctor from "../Components/SelectDoctor";
 
-const UserSchedule = ({ setPage }) => {
+const UserSchedule = ({ setPage, page }) => {
+  const patient = [
+    {
+      name: "Bond Rungot",
+      time: "19/02/2023 (8am - 9am)",
+      location: "Tu hospital",
+    },
+    {
+      name: "Thanapon Bunchot",
+      time: "20/02/2023 (8am - 9am)",
+      location: "Home office",
+    },
+  ];
+
+  const [schedule, setSchedule] = useState(patient);
   const [openCreateRequest, setOpenCreateRequest] = useState();
   const [requests, setRequests] = useState([]);
   const [updated, setUpdated] = useState(false);
@@ -16,6 +30,7 @@ const UserSchedule = ({ setPage }) => {
   const [requestId, setRequestId] = useState();
   const [insidePage, setInsidePage] = useState("patientSchedule");
   const { date, setDate, dateTemplate } = usePatientCalendarProps();
+  
   useEffect(() => {
     let data = JSON.stringify({
       uuid: "c646e99a-9a64-497a-87fd-6972bd7bf387",
