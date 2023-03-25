@@ -8,7 +8,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   const doctorDetails = {
     firstName: "Marry",
     lastName: "Wakage",
-    review: 4,
+    review: 5,
     licenseID: "123514788",
     userName: "Marry@",
     email: "Marry@gmail.com",
@@ -37,9 +37,12 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   return (
     <>
       <div className="mx-auto flex h-screen w-[90%] flex-col ">
-        <div className="mt-[70px] w-full text-center text-2xl">
+        <div className="mt-[70px] w-full text-center text-2xl relative">
           {doctorDetails.firstName} &nbsp; {doctorDetails.lastName}
+          <div className="absolute top-0 right-0 text-xl  backButton"
+          onClick={()=>setPage("doctorLists")}>&lt;</div>
         </div>
+       
         <div className="mx-auto  pt-2">
           <Rating
             readOnly

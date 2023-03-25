@@ -10,6 +10,8 @@ const SelectDoctor = ({ date, setInsidePage }) => {
   const [page, setPage] = useState("doctorLists");
 
   console.log("selectedDoctor", selectedDoctor);
+  console.log("doctors", doctors);
+  console.log("page", page);
 
   const findFreeDoctor = (freeDoctor) => {
     const filter = freeDoctor.map((doctor) =>
@@ -57,13 +59,12 @@ const SelectDoctor = ({ date, setInsidePage }) => {
           <div className="headingColor relative text-center text-3xl font-bold ">
             SELECT DOCTOR
             <div
-              className="absolute top-[-20px] right-5 cursor-pointer text-2xl font-light text-slate-400"
+              className="backButton absolute top-[-10px] right-5 my-auto w-[30px] text-base hover:bg-[#C5E1A5]"
               onClick={() => setInsidePage("patientSchedule")}
             >
-              x
+              &lt;
             </div>
           </div>
-
           {doctors.map((doctor) => (
             <div
               className="mx-auto my-4 flex w-[90%] cursor-pointer flex-col rounded-lg border-2 border-slate-400 bg-[#F0F3EC] p-4 hover:bg-[#C5E1A5]"
