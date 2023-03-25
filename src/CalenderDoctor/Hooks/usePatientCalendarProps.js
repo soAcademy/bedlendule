@@ -5,12 +5,50 @@ const usePatientCalendarProps = () => {
   const [date, setDate] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
   const [datesArray, setDatesArray] = useState([]);
+  const [disabledDates, setDisabledDates] = useState([]);
+  useEffect(() => {
+    var config = {
+      method: "post",
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getAllTimeSlots",
+      headers: {},
+    };
+
+    axios(config)
+      .then(function async(response) {
+        const _timeslots = [
+          ...new Set(
+            response.data.map((e) =>
+              new Date(e.startTime).toLocaleDateString("en", {
+                timeZone: "UTC",
+              })
+            )
+          ),
+        ];
+        setTimeSlots(_timeslots);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    const _disabledDates = datesArray.filter((e) => !timeSlots.includes(e));
+    setDisabledDates(_disabledDates);
+  }, [timeSlots, datesArray]);
+
   const dateTemplate = (date) => {
     const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
+    if (!datesArray.includes(_date.toLocaleDateString())) {
+      const _datesArray = [
+        ...new Set([...datesArray, _date.toLocaleDateString()]),
+      ];
+      setDatesArray(_datesArray);
+    }
     if (
       timeSlots?.includes(_date.toLocaleDateString()) &&
-      _date.getTime() >= new Date().getTime()
+      _date.getTime() >= new Date(new Date().toDateString()).getTime()
     ) {
+      
       return date.day === new Date().getDate() ? (
         <div
           style={{
@@ -45,7 +83,7 @@ const usePatientCalendarProps = () => {
     } else {
       return (
         <div
-          className="cursor-not-allowed bg-slate-200 text-slate-400"
+          className="bg-slate-200 text-slate-400"
           style={{
             borderRadius: "50%",
             width: "3em",
@@ -60,26 +98,16 @@ const usePatientCalendarProps = () => {
       );
     }
   };
-  useEffect(() => {
-    var config = {
-      method: "post",
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getAllTimeSlots",
-      headers: {},
-    };
 
-    axios(config)
-      .then(function async(response) {
-        setTimeSlots(
-          response.data.map((e) =>
-            new Date(e.startTime).toLocaleDateString("en", { timeZone: "UTC" })
-          )
-        );
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, []);
-  return { date, setDate, timeSlots, setTimeSlots, dateTemplate, datesArray };
+  return {
+    date,
+    setDate,
+    timeSlots,
+    setTimeSlots,
+    dateTemplate,
+    datesArray,
+    disabledDates,
+  };
 };
 
 export default usePatientCalendarProps;

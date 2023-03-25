@@ -9,28 +9,14 @@ import ReviewDoctor from "../Components/ReviewDoctor";
 import SelectDoctor from "../Components/SelectDoctor";
 
 const UserSchedule = ({ setPage, page }) => {
-  const patient = [
-    {
-      name: "Bond Rungot",
-      time: "19/02/2023 (8am - 9am)",
-      location: "Tu hospital",
-    },
-    {
-      name: "Thanapon Bunchot",
-      time: "20/02/2023 (8am - 9am)",
-      location: "Home office",
-    },
-  ];
-
-  const [schedule, setSchedule] = useState(patient);
   const [openCreateRequest, setOpenCreateRequest] = useState();
   const [requests, setRequests] = useState([]);
   const [updated, setUpdated] = useState(false);
   const [openReview, setOpenReview] = useState(false);
   const [requestId, setRequestId] = useState();
   const [insidePage, setInsidePage] = useState("patientSchedule");
-  const { date, setDate, dateTemplate } = usePatientCalendarProps();
-  
+  const { date, setDate, dateTemplate, disabledDates,datesArray } =
+    usePatientCalendarProps();
   useEffect(() => {
     let data = JSON.stringify({
       uuid: "c646e99a-9a64-497a-87fd-6972bd7bf387",
@@ -56,6 +42,8 @@ const UserSchedule = ({ setPage, page }) => {
         console.log(error);
       });
   }, [updated]);
+  // console.log('disabledDates', disabledDates)
+  // console.log('datesArray', datesArray)
   return (
     <>
       {insidePage === "patientSchedule" && (
@@ -68,6 +56,7 @@ const UserSchedule = ({ setPage, page }) => {
                 setDate(e.value.toISOString());
                 setInsidePage("selectDoctor");
               }}
+              disabledDates={disabledDates.map((e) => new Date(e))}
               minDate={new Date()}
               inline
               showOtherMonths={false}
