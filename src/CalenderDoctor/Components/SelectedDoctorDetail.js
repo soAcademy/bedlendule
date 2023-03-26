@@ -3,9 +3,6 @@ import { GiAlarmClock } from "react-icons/gi";
 import { AiFillDollarCircle } from "react-icons/ai";
 import { MdClose } from "react-icons/md";
 const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
-  console.log("doctor uuid:", selectedDoctor.doctorUUID.uuid);
-  console.log("time slots:", selectedDoctor.timeslots);
-
   const doctorDetails = {
     firstName: "Marry",
     lastName: "Wakage",

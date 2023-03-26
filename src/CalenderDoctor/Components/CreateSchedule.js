@@ -108,7 +108,7 @@ const CreateSchedule = ({
           />
         </div>
         <div className=" flex flex-col">
-          <div className="no-scrollbar h-[130px] space-y-2 overflow-scroll">
+          <div className="no-scrollbar h-[100px] space-y-2 overflow-scroll">
             {newTimeSlots?.map((timeslot, jdx) => {
               return (
                 <div key={jdx} className="mx-auto flex">
@@ -234,18 +234,18 @@ const CreateSchedule = ({
           >
             <BiPlusCircle className="text-3xl" /> Add Time slot
           </button>
+        </div>
+        <div className="fixed bottom-7 left-1/2 -translate-x-1/2 flex flex-col w-full">
           <p
             className={`text-center text-red-400 opacity-0 
                 ${
-                  (!isDateAvailable || duplicatedTime) &&
+                  (!isDateAvailable || duplicatedTime) && openTimeSlotForm &&
                   "animate-pulse opacity-100"
                 } 
                 `}
           >
             The selected time is not available
           </p>
-        </div>
-        <div className="fixed bottom-7 left-1/2 -translate-x-1/2 flex ">
           <button
             disabled={newTimeSlots.length > 0 ? false : true}
             className={`button mx-auto p-4 disabled:bg-slate-300`}

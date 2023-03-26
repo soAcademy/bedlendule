@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const useSubmitResult = ({ successAction, failedAction }) => {
-  const [submitSuccessPopUp, setSubmitSuccessPopup] = useState();
+  const [submitSuccessPopUp, setSubmitSuccessPopUp] = useState();
   const [submitFailPopUp, setSubmitFailPopUp] = useState();
   const ResultPopup = () => (
     <>
@@ -24,7 +24,7 @@ const useSubmitResult = ({ successAction, failedAction }) => {
               type="button"
               className="text-md button mx-auto w-24 rounded-md py-1"
               onClick={() => {
-                setSubmitSuccessPopup(false);
+                setSubmitSuccessPopUp(false);
                 successAction();
               }}
             >
@@ -68,7 +68,7 @@ const useSubmitResult = ({ successAction, failedAction }) => {
     submitFailPopUp,
     setSubmitFailPopUp,
     submitSuccessPopUp,
-    setSubmitSuccessPopup,
+    setSubmitSuccessPopUp,
   };
 };
 
