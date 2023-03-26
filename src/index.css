@@ -20,6 +20,9 @@
     @apply fixed top-1/2 left-1/2 mx-auto w-[80%] -translate-x-1/2 -translate-y-1/2 
     rounded-lg bg-white p-6 text-center shadow-md duration-100
   }
+  .backButton{
+    @apply w-[30px] aspect-square my-auto  text-slate-300 shadow-lg rounded-lg;
+  }
 }
 
 @layer utilities {

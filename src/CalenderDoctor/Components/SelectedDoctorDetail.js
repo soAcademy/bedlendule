@@ -9,7 +9,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   const doctorDetails = {
     firstName: "Marry",
     lastName: "Wakage",
-    review: 4,
+    review: 5,
     licenseID: "123514788",
     userName: "Marry@",
     email: "Marry@gmail.com",
@@ -37,7 +37,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
 
   return (
     <>
-      <div className="fixed top-10 flex flex-col w-full ">
+      <div className="fixed top-10 flex w-full flex-col ">
         <button
           className="fixed right-5 top-7 rounded-lg text-2xl font-light text-slate-400 hover:bg-slate-50 hover:text-slate-300"
           onClick={() => setPage("doctorLists")}
@@ -46,7 +46,14 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
         </button>
         <div className="w-full text-center text-2xl">
           {doctorDetails.firstName} &nbsp; {doctorDetails.lastName}
+          <div
+            className="backButton absolute top-0 right-0  text-xl"
+            onClick={() => setPage("doctorLists")}
+          >
+            &lt;
+          </div>
         </div>
+
         <div className="mx-auto  pt-2">
           <Rating
             readOnly
