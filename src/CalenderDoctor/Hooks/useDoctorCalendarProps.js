@@ -2,9 +2,41 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 const useDoctorCalendarProps = () => {
   const [openRequests, setOpenRequests] = useState([]);
+  const [datesArray, setDatesArray] = useState([]);
+  const [disabledDates, setDisabledDates] = useState([]);
+  useEffect(() => {
+    var config = {
+      method: "post",
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getOpeningRequests",
+      headers: {},
+    };
+
+    axios(config)
+      .then(function async(response) {
+        setOpenRequests(
+          response.data.map((e) =>
+            new Date(e.startTime).toLocaleDateString("en", { timeZone: "UTC" })
+          )
+        );
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    const _disabledDates = datesArray.filter((e) => !openRequests.includes(e));
+    setDisabledDates(_disabledDates);
+  }, [openRequests, datesArray]);
 
   const dateTemplate = (date) => {
     const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
+    if (!datesArray.includes(_date.toLocaleDateString())) {
+      const _datesArray = [
+        ...new Set([...datesArray, _date.toLocaleDateString()]),
+      ];
+      setDatesArray(_datesArray);
+    }
     if (
       openRequests.includes(_date.toLocaleDateString()) &&
       _date.getTime() >= new Date().getTime()
@@ -45,26 +77,7 @@ const useDoctorCalendarProps = () => {
     }
   };
 
-  useEffect(() => {
-    var config = {
-      method: "post",
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getOpeningRequests",
-      headers: {},
-    };
-
-    axios(config)
-      .then(function async(response) {
-        setOpenRequests(
-          response.data.map((e) =>
-            new Date(e.startTime).toLocaleDateString("en", { timeZone: "UTC" })
-          )
-        );
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }, []);
-  return { openRequests, setOpenRequests, dateTemplate };
+  return { openRequests, setOpenRequests, dateTemplate, disabledDates };
 };
 
 export default useDoctorCalendarProps;

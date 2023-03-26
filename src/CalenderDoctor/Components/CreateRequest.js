@@ -63,11 +63,16 @@ const CreateRequest = ({
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 z-50 w-full duration-300
-      ${!openCreateRequest && "translate-y-full"}`}
+      className={`fixed left-0 z-50 flex w-full flex-col
+  font-kanit shadow-xl duration-300
+    ${openCreateRequest ? "" : "pointer-events-none opacity-0"}`}
     >
-      <form id="create-request" onSubmit={handleSubmit}>
-        <div className="mt-36 w-full rounded-lg bg-white p-6 font-kanit shadow-xl">
+      <div
+        className={`fixed top-24 left-0 w-full h-screen bg-white p-6 duration-200 ${
+          openCreateRequest ? "" : "translate-y-full"
+        }`}
+      >
+        <form id="create-request" onSubmit={handleSubmit}>
           <BsChevronDown
             className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
             onClick={() => setOpenCreateRequest(false)}
@@ -169,7 +174,7 @@ const CreateRequest = ({
           >
             The selected time is not available
           </p>
-          <div className="mt-6 flex">
+          <div className="fixed bottom-7 left-1/2 -translate-x-1/2 flex ">
             <button
               disabled={isDateAvailable ? false : true}
               className={`button mx-auto p-4 disabled:bg-slate-300`}
@@ -178,17 +183,17 @@ const CreateRequest = ({
               CREATE REQUEST
             </button>
           </div>
-        </div>
-        <ConfirmPopup
-          title={"CREATE REQUEST"}
-          description={"Do you want to create request?"}
-          action={submitForm}
-          state={popupState}
-          setState={setPopupState}
-        />
-      </form>
-      <SendingPopup />
-      <ResultPopup />
+          <ConfirmPopup
+            title={"CREATE REQUEST"}
+            description={"Do you want to create request?"}
+            action={submitForm}
+            state={popupState}
+            setState={setPopupState}
+          />
+        </form>
+        <SendingPopup />
+        <ResultPopup />
+      </div>
     </div>
   );
 };

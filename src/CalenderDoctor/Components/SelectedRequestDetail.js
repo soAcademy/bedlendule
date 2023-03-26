@@ -1,11 +1,10 @@
 import { Rating } from "primereact/rating";
 import { GiAlarmClock } from "react-icons/gi";
 import { AiFillDollarCircle } from "react-icons/ai";
-const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
-  console.log("doctor uuid:", selectedDoctor.doctorUUID.uuid);
-  console.log("time slots:", selectedDoctor.timeslots);
-
-  const doctorDetails = {
+import { MdClose } from "react-icons/md";
+import { IoIosReturnLeft } from "react-icons/io";
+const SelectedPatientDetail = ({ setPage, selectedPati }) => {
+  const patiDetails = {
     firstName: "Marry",
     lastName: "Wakage",
     review: 4,
@@ -14,7 +13,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
     email: "Marry@gmail.com",
     contact: "(+66)92-597-5877",
     pictureUrl:
-      "https://thumbs.dreamstime.com/b/beautiful-young-doctor-9927050.jpg",
+      "https://thumbs.dreamstime.com/b/beautiful-young-pati-9927050.jpg",
     timeslots: [
       {
         startTime: "15:00",
@@ -36,21 +35,27 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
 
   return (
     <>
-      <div className="mx-auto flex h-screen w-[90%] flex-col ">
-        <div className="mt-[70px] w-full text-center text-2xl">
-          {doctorDetails.firstName} &nbsp; {doctorDetails.lastName}
+      <div className="mt-10 flex flex-col ">
+        <button
+          className="fixed right-5 top-7 rounded-lg text-2xl font-light text-slate-400 hover:bg-slate-50 hover:text-slate-300"
+          onClick={() => setPage("patientLists")}
+        >
+          <MdClose />
+        </button>
+        <div className="w-full text-center text-2xl">
+          {patiDetails.firstName} &nbsp; {patiDetails.lastName}
         </div>
         <div className="mx-auto  pt-2">
           <Rating
             readOnly
-            value={doctorDetails.review}
+            value={patiDetails.review}
             cancel={false}
             className=""
           />
         </div>
         <div className="mx-auto my-2">
           <img
-            src="https://thumbs.dreamstime.com/b/beautiful-young-doctor-9927050.jpg"
+            src="https://thumbs.dreamstime.com/b/beautiful-young-pati-9927050.jpg"
             className="h-[200px] rounded-lg"
           />
         </div>
@@ -62,33 +67,33 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
               Username:
               <span className="text-slate-500 underline underline-offset-2">
                 {" "}
-                {doctorDetails.userName}
+                {patiDetails.userName}
               </span>
             </li>
             <li>
               Email:
               <span className="text-slate-500 underline underline-offset-2">
-                {doctorDetails.email}
+                {patiDetails.email}
               </span>
             </li>
             <li>
               License ID:
               <span className="text-slate-500 underline underline-offset-2">
                 {" "}
-                {doctorDetails.licenseID}
+                {patiDetails.licenseID}
               </span>
             </li>
             <li>
               Contact :
               <span className="text-slate-500 underline underline-offset-2">
                 {" "}
-                {doctorDetails.contact}
+                {patiDetails.contact}
               </span>
             </li>
           </ul>
         </div>
         <div className=" mx-auto w-[95%]">
-          {doctorDetails.timeslots.map((timeslots) => (
+          {patiDetails.timeslots.map((timeslots) => (
             <ul className="mx-auto my-4 flex flex-row gap-2  ">
               <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
                 <div className="absolute top-[-10px] w-[50px] bg-white px-1 text-slate-400">
@@ -136,4 +141,4 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
     </>
   );
 };
-export default SelectDoctorDetail;
+export default SelectedPatientDetail;

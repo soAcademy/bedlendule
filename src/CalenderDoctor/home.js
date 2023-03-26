@@ -24,7 +24,7 @@ export const Home = () => {
     <ConfirmPopupContext.Provider
       value={{ confirmPopupToggle, setConfirmPopupToggle }}
     >
-      <div className="h-full font-kanit">
+      <div className="relative h-full w-full font-kanit">
         <Nav
           setType={setType}
           type={type}

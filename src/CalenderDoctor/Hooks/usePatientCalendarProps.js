@@ -48,7 +48,6 @@ const usePatientCalendarProps = () => {
       timeSlots?.includes(_date.toLocaleDateString()) &&
       _date.getTime() >= new Date(new Date().toDateString()).getTime()
     ) {
-      
       return date.day === new Date().getDate() ? (
         <div
           style={{
