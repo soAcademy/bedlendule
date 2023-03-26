@@ -1,6 +1,7 @@
 import { Rating } from "primereact/rating";
 import { GiAlarmClock } from "react-icons/gi";
 import { AiFillDollarCircle } from "react-icons/ai";
+import { MdClose } from "react-icons/md";
 const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   console.log("doctor uuid:", selectedDoctor.doctorUUID.uuid);
   console.log("time slots:", selectedDoctor.timeslots);
@@ -36,13 +37,23 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
 
   return (
     <>
-      <div className="mx-auto flex h-screen w-[90%] flex-col ">
-        <div className="mt-[70px] w-full text-center text-2xl relative">
+      <div className="fixed top-10 flex w-full flex-col ">
+        <button
+          className="fixed right-5 top-7 rounded-lg text-2xl font-light text-slate-400 hover:bg-slate-50 hover:text-slate-300"
+          onClick={() => setPage("doctorLists")}
+        >
+          <MdClose />
+        </button>
+        <div className="w-full text-center text-2xl">
           {doctorDetails.firstName} &nbsp; {doctorDetails.lastName}
-          <div className="absolute top-0 right-0 text-xl  backButton"
-          onClick={()=>setPage("doctorLists")}>&lt;</div>
+          <div
+            className="backButton absolute top-0 right-0  text-xl"
+            onClick={() => setPage("doctorLists")}
+          >
+            &lt;
+          </div>
         </div>
-       
+
         <div className="mx-auto  pt-2">
           <Rating
             readOnly
