@@ -19,6 +19,8 @@ const UserSchedule = ({ setPage, page }) => {
   const [insidePage, setInsidePage] = useState("patientSchedule");
   const { date, setDate, dateTemplate, disabledDates } =
     usePatientCalendarProps();
+    console.log('disabledDates', disabledDates)
+    console.log('dateTemplate', dateTemplate)
   useEffect(() => {
     setFetching(true);
     setRequests([]);
@@ -145,12 +147,12 @@ const UserSchedule = ({ setPage, page }) => {
                             .slice(0, 5)}
                         </p>
                       </div>
-                      <button
+                      {/* <button
                         onClick={() => {}}
                         className="float-right text-2xl text-slate-500 hover:text-slate-400"
                       >
                         <BiEditAlt />
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 ))}

@@ -314,14 +314,14 @@ const DoctorSchedule = ({ setPage }) => {
                                 )}
                                 {
                                   <ConfirmPopup
-                                    className={`fixed top-[27%] left-1/2 mx-auto w-[80%] -translate-x-1/2 -translate-y-1/2 
-                                rounded-lg bg-white p-6 text-center shadow-md duration-200
-                                ${
-                                  confirmRemove
-                                    ? "scale-100 opacity-100"
-                                    : "scale-95 opacity-0"
-                                }`}
-                                    title={"Removing Timeslot"}
+                                //     className={`fixed top-1/2 left-1/2 mx-auto w-[80%] -translate-x-1/2 -translate-y-1/2 
+                                // rounded-lg bg-white p-6 text-center shadow-md duration-200
+                                // ${
+                                //   confirmRemove
+                                //     ? "scale-100 opacity-100"
+                                //     : "scale-95 opacity-0"
+                                // }`}
+                                    title={"Remove Timeslot"}
                                     description={"Confirm Removal"}
                                     action={() => removeTimeslot(timeslot)}
                                     state={confirmRemove}
