@@ -21,8 +21,10 @@ import {
 import useDateTimepicker from "../Hooks/useDateTimePicker";
 import SelectRequest from "../Components/SelectRequest";
 import { MdClose } from "react-icons/md";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 const DoctorSchedule = ({ setPage }) => {
+  const [fetching, setFetching] = useState(false);
   const [price, setPrice] = useState();
   const [idxToDelete, setIdxToDelete] = useState();
   const [schedules, setSchedules] = useState([]);
@@ -69,6 +71,8 @@ const DoctorSchedule = ({ setPage }) => {
   });
 
   useEffect(() => {
+    setFetching(true);
+    setSchedules([]);
     let data = JSON.stringify({
       uuid: "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b",
     });
@@ -87,10 +91,12 @@ const DoctorSchedule = ({ setPage }) => {
       .request(config)
       .then((response) => {
         console.log("data", response.data);
+        setFetching(false);
         setSchedules(response.data);
       })
       .catch((error) => {
         console.log(error);
+        setFetching(false);
       });
   }, [updated]);
 
@@ -145,10 +151,20 @@ const DoctorSchedule = ({ setPage }) => {
               REQUEST
             </button>
           </div>
-          <div className="my-4 ml-4 font-bold text-slate-700 md:w-1/2">
-            INCOMING SCHEDULE
-          </div>
-
+          {!fetching && (
+            <div className="my-4 ml-4 font-bold text-slate-700 md:w-1/2">
+              INCOMING SCHEDULE
+            </div>
+          )}
+          {fetching && (
+            <div className="mt-10 flex w-full items-center justify-center">
+              <ProgressSpinner
+                style={{ width: "50px", height: "50px" }}
+                strokeWidth="4"
+                animationDuration="0.5s"
+              />
+            </div>
+          )}
           {schedules?.map((schedule, idx) => {
             const scheduleStartTime = new Date(
               schedule.timeslots.at(-1)?.startTime
@@ -409,11 +425,12 @@ const DoctorSchedule = ({ setPage }) => {
             (schedule) =>
               new Date(schedule.timeslots.at(-1).startTime).getTime() >
               new Date().getTime()
-          ) === -1 && (
-            <div className="mx-auto my-4 pl-4 text-slate-700 md:w-1/2">
-              No incoming schedule
-            </div>
-          )}
+          ) === -1 &&
+            !fetching && (
+              <div className="mx-auto my-4 pl-4 text-slate-700 md:w-1/2">
+                No incoming schedule
+              </div>
+            )}
         </div>
       )}
       <div

@@ -7,8 +7,10 @@ import CreateRequest from "../Components/CreateRequest";
 import axios from "axios";
 import ReviewDoctor from "../Components/ReviewDoctor";
 import SelectDoctor from "../Components/SelectDoctor";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 const UserSchedule = ({ setPage, page }) => {
+  const [fetching, setFetching] = useState(false);
   const [openCreateRequest, setOpenCreateRequest] = useState();
   const [requests, setRequests] = useState([]);
   const [updated, setUpdated] = useState(false);
@@ -18,6 +20,8 @@ const UserSchedule = ({ setPage, page }) => {
   const { date, setDate, dateTemplate, disabledDates } =
     usePatientCalendarProps();
   useEffect(() => {
+    setFetching(true);
+    setRequests([]);
     let data = JSON.stringify({
       uuid: "c646e99a-9a64-497a-87fd-6972bd7bf387",
     });
@@ -36,10 +40,12 @@ const UserSchedule = ({ setPage, page }) => {
       .request(config)
       .then((response) => {
         console.log(response.data);
+        setFetching(false);
         setRequests(response.data);
       })
       .catch((error) => {
         console.log(error);
+        setFetching(false);
       });
   }, [updated]);
   return (
@@ -49,7 +55,7 @@ const UserSchedule = ({ setPage, page }) => {
         className={`mt-[50px] duration-200 ${
           insidePage === "patientSchedule"
             ? "scale-100 opacity-100"
-            : "hidden pointer-events-none opacity-0"
+            : "pointer-events-none hidden opacity-0"
         }`}
       >
         <div className="z-10 mt-20 flex w-full flex-col items-center justify-center">
@@ -90,108 +96,123 @@ const UserSchedule = ({ setPage, page }) => {
             CREATE REQUEST
           </button>
         </div>
-        <div>
-          <div className="my-5 pl-4 font-bold">INCOMING SCHEDULE</div>
-
-          {requests
-            .filter(
-              (request) =>
-                new Date(request.startTime).getTime() > new Date().getTime()
-            )
-            .map((request, idx) => (
-              <div
-                key={idx}
-                className="mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9] p-2 text-slate-600 md:w-1/2"
-              >
-                <div className="flex justify-between">
-                  <div className="w-2/3">
-                    <div className="flex items-center font-bold">
-                      {request.title}
-                    </div>
-                    <div className="font-bold">
-                      <div className="my-auto flex items-center text-center text-sm">
-                        <HiLocationMarker className="text-blue-500" />
-                        &nbsp;
-                        {request.meetingType === "ONLINE" &&
-                          request.meetingType + " : "}
-                        {request.location}
-                      </div>
-                    </div>
-                    <p>
-                      {new Date(request.startTime).toLocaleDateString("TH")} :{" "}
-                      {new Date(request.startTime)
-                        .toLocaleTimeString("TH")
-                        .slice(0, 5)}
-                      -
-                      {new Date(request.finishTime)
-                        .toLocaleTimeString("TH")
-                        .slice(0, 5)}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => {}}
-                    className="float-right text-2xl text-slate-500 hover:text-slate-400"
+        {fetching && (
+          <div className="mt-10 flex w-full items-center justify-center">
+            <ProgressSpinner
+              style={{ width: "50px", height: "50px" }}
+              strokeWidth="4"
+              animationDuration="0.5s"
+            />
+          </div>
+        )}
+        {!fetching && (
+          <div>
+            <div>
+              <div className="my-5 pl-4 font-bold">INCOMING SCHEDULE</div>
+              {requests
+                .filter(
+                  (request) =>
+                    new Date(request.startTime).getTime() > new Date().getTime()
+                )
+                .map((request, idx) => (
+                  <div
+                    key={idx}
+                    className="mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9] p-2 text-slate-600 md:w-1/2"
                   >
-                    <BiEditAlt />
-                  </button>
-                </div>
-              </div>
-            ))}
-        </div>
-        <div>
-          <div className="my-5 pl-4 font-bold">PAST SCHEDULE</div>
+                    <div className="flex justify-between">
+                      <div className="w-2/3">
+                        <div className="flex items-center font-bold">
+                          {request.title}
+                        </div>
+                        <div className="font-bold">
+                          <div className="my-auto flex items-center text-center text-sm">
+                            <HiLocationMarker className="text-blue-500" />
+                            &nbsp;
+                            {request.meetingType === "ONLINE" &&
+                              request.meetingType + " : "}
+                            {request.location}
+                          </div>
+                        </div>
+                        <p>
+                          {new Date(request.startTime).toLocaleDateString("TH")}{" "}
+                          :{" "}
+                          {new Date(request.startTime)
+                            .toLocaleTimeString("TH")
+                            .slice(0, 5)}
+                          -
+                          {new Date(request.finishTime)
+                            .toLocaleTimeString("TH")
+                            .slice(0, 5)}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => {}}
+                        className="float-right text-2xl text-slate-500 hover:text-slate-400"
+                      >
+                        <BiEditAlt />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+            <div>
+              <div className="my-5 pl-4 font-bold">PAST SCHEDULE</div>
 
-          {requests
-            .filter(
-              (request) =>
-                new Date(request.finishTime).getTime() < new Date().getTime()
-            )
-            .map((request, idx) => (
-              <div
-                key={idx}
-                className={`mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9]
+              {requests
+                .filter(
+                  (request) =>
+                    new Date(request.finishTime).getTime() <
+                    new Date().getTime()
+                )
+                .map((request, idx) => (
+                  <div
+                    key={idx}
+                    className={`mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9]
             bg-slate-100 p-2 text-slate-400 md:w-1/2 ${
               !request.review && request.doctorTimeslot && "bg-transparent"
             }`}
-              >
-                <div className="flex justify-between">
-                  <div className="w-2/3">
-                    <div className="font-bold">{request.title}</div>
-                    <div className="font-bold">
-                      <div className="my-auto flex items-center text-center text-sm">
-                        <HiLocationMarker className="text-blue-500" />
-                        &nbsp;
-                        {request.meetingType === "ONLINE" &&
-                          request.meetingType + " : "}
-                        {request.location}
+                  >
+                    <div className="flex justify-between">
+                      <div className="w-2/3">
+                        <div className="font-bold">{request.title}</div>
+                        <div className="font-bold">
+                          <div className="my-auto flex items-center text-center text-sm">
+                            <HiLocationMarker className="text-blue-500" />
+                            &nbsp;
+                            {request.meetingType === "ONLINE" &&
+                              request.meetingType + " : "}
+                            {request.location}
+                          </div>
+                        </div>
+                        <p>
+                          {new Date(request.startTime).toLocaleDateString("TH")}{" "}
+                          :{" "}
+                          {new Date(request.startTime)
+                            .toLocaleTimeString("TH")
+                            .slice(0, 5)}
+                          -
+                          {new Date(request.finishTime)
+                            .toLocaleTimeString("TH")
+                            .slice(0, 5)}
+                        </p>
                       </div>
+                      {!request.review && request.doctorTimeslot && (
+                        <button
+                          onClick={() => {
+                            setRequestId(request.id);
+                            setOpenReview(true);
+                          }}
+                          className="float-right my-auto h-8 rounded-lg bg-amber-300 px-2 text-xs text-white shadow-md hover:bg-amber-200 active:bg-amber-300"
+                        >
+                          REVIEW
+                        </button>
+                      )}
                     </div>
-                    <p>
-                      {new Date(request.startTime).toLocaleDateString("TH")} :{" "}
-                      {new Date(request.startTime)
-                        .toLocaleTimeString("TH")
-                        .slice(0, 5)}
-                      -
-                      {new Date(request.finishTime)
-                        .toLocaleTimeString("TH")
-                        .slice(0, 5)}
-                    </p>
                   </div>
-                  {!request.review && request.doctorTimeslot && (
-                    <button
-                      onClick={() => {
-                        setRequestId(request.id);
-                        setOpenReview(true);
-                      }}
-                      className="float-right my-auto h-8 rounded-lg bg-amber-300 px-2 text-xs text-white shadow-md hover:bg-amber-200 active:bg-amber-300"
-                    >
-                      REVIEW
-                    </button>
-                  )}
-                </div>
-              </div>
-            ))}
-        </div>
+                ))}
+            </div>
+          </div>
+        )}
 
         <div
           className={`shader duration-200
