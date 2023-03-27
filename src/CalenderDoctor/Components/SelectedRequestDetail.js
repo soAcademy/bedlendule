@@ -3,7 +3,7 @@ import { GiAlarmClock } from "react-icons/gi";
 import { AiFillDollarCircle } from "react-icons/ai";
 import { MdClose } from "react-icons/md";
 import { IoIosReturnLeft } from "react-icons/io";
-const SelectedPatientDetail = ({ setPage, selectedPati }) => {
+const SelectedPatientDetail = ({ setPage }) => {
   const patiDetails = {
     firstName: "Marry",
     lastName: "Wakage",
