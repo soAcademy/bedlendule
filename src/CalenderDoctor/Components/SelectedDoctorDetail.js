@@ -6,15 +6,20 @@ import { useState, useEffect } from "react";
 import Appointment from "./Appointment";
 import axios from "axios";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { IoIosReturnLeft } from "react-icons/io";
 
 const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
-  const [insidePage, setInsidePage] = useState("selectDoctorDetail");
+  const [appointmentPopup, setAppointmentPopup] = useState(false);
   const [doctorDetail, setDoctorDetail] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState();
+  const [doctorName,setDoctorName] = useState([]);
 
   console.log("currentTime", currentTime);
+  console.log("selectedDoctor",selectedDoctor.doctorUUID)
+  console.log("doctorName",doctorName)
+  console.log("appointmentPopup selectDoctor",appointmentPopup)
  
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
@@ -79,18 +84,19 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
       // console.log("response.data>>", response.data);
       setDoctorDetail(response.data);
       currentTime2(response.data);
+      setDoctorName(selectedDoctor.doctorUUID)
     });
   }, [selectedDoctor]);
 
   return (
     <>
-      {insidePage === "selectDoctorDetail" && (
+      
         <div className="fixed top-10 flex w-full flex-col  ">
           <button
             className="fixed right-5 top-7 rounded-lg text-2xl font-light text-slate-400 hover:bg-slate-50 hover:text-slate-300"
             onClick={() => setPage("doctorLists")}
           >
-            <MdClose />
+            <IoIosReturnLeft className="shadow-lg rounded-lg w-[40px]"/>
           </button>
           <div className="w-full text-center text-2xl">
             {selectedDoctor.doctorUUID?.firstName} &nbsp;{" "}
@@ -160,12 +166,13 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
                 <ul
                   className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
                   onClick={() => {
-                    setChooseTimeSlot(r);
-                    setInsidePage("Appointment");
+                    setChooseTimeSlot(r)
+                    ;setAppointmentPopup(!appointmentPopup)
+                   ;
                   }}
                 >
                   <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
-                    <div className="absolute top-[-10px] w-[50px] bg-white px-1 text-slate-400">
+                    <div className="absolute top-[-10px] w-[50px] bg-white px-1 text-slate-400 rounded-lg">
                       From
                     </div>
                     <div className="mx-auto flex">
@@ -178,7 +185,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
                     </div>
                   </li>
                   <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                    <div className="absolute top-[-10px] bg-white px-1 text-slate-400">
+                    <div className="absolute top-[-10px] bg-white px-1 text-slate-400 rounded-lg">
                       To
                     </div>
                     <div className="mx-auto flex">
@@ -191,7 +198,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
                     </div>
                   </li>
                   <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                    <div className="absolute top-[-10px] bg-white px-1 text-slate-400">
+                    <div className="absolute top-[-10px] bg-white px-1 text-slate-400 rounded-lg">
                       Rate
                     </div>
                     <div className=" mx-auto flex">
@@ -199,7 +206,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
                         1500 THB/Hour
                       </div>
                       <div className="px-1">
-                        <AiFillDollarCircle className="my-auto text-base" />
+                        <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
                       </div>
                     </div>
                   </li>
@@ -208,11 +215,13 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
             )}
           </div>
         </div>
-      )}
-      {insidePage === "Appointment" && (
+      
+      {appointmentPopup&& (
         <Appointment
-          setInsidePage={setInsidePage}
           chooseTimeSlot={chooseTimeSlot}
+          doctorName={doctorName}
+          setAppointmentPopup={setAppointmentPopup}
+          appointmentPopup={appointmentPopup}
         />
       )}
     </>
