@@ -8,7 +8,6 @@ import Appointment from "./Appointment";
 const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [insidePage, setInsidePage] = useState("selectDoctorDetail");
-  console.log("chooseTimeslot", chooseTimeSlot);
   const doctorDetails = {
     firstName: "Marry",
     lastName: "Wakage",
@@ -50,12 +49,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
           </button>
           <div className="w-full text-center text-2xl">
             {doctorDetails.firstName} &nbsp; {doctorDetails.lastName}
-            <div
-              className="backButton absolute top-0 right-0  text-xl"
-              onClick={() => setPage("doctorLists")}
-            >
-              &lt;
-            </div>
           </div>
 
           <div className="mx-auto  pt-2">
@@ -70,6 +63,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
             <img
               src="https://thumbs.dreamstime.com/b/beautiful-young-doctor-9927050.jpg"
               className="h-[200px] rounded-lg"
+              alt="doctorURL"
             />
           </div>
           <div className=" mx-auto my-5 w-[80%] rounded-lg border-2  border-slate-400 pt-2">

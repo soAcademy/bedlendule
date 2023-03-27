@@ -19,10 +19,6 @@ const SelectDoctor = ({
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
 
-  console.log("selectedDoctor", selectedDoctor);
-  console.log("doctors", doctors);
-  console.log("page", page);
-
   const findFreeDoctor = (freeDoctor) => {
     const filter = freeDoctor.map((doctor) =>
       doctor.timeslots.filter((timeslots) => timeslots.requestId === null)
