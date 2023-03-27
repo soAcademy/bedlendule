@@ -12,14 +12,19 @@ const ReviewDoctor = ({
   requestId,
   setUpdated,
   updated,
+  timeSlotId
 }) => {
   const [score, setScore] = useState(0);
   const [review, setReview] = useState();
   const [confirmReview, setConfirmReview] = useState(false);
   const { setSending, SendingPopup } = useSendingPopup();
-  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: () => {
+        setOpenReview(false);
+        setUpdated(!updated);
+      },
+      failedAction: () => {
         setOpenReview(false);
         setUpdated(!updated);
       },
@@ -35,10 +40,12 @@ const ReviewDoctor = ({
   };
   const submitReview = () => {
     setSending(true);
+    setConfirmReview(false)
     let data = JSON.stringify({
       requestId: requestId,
       score: score,
       review: review,
+      timeSlotId: timeSlotId
     });
 
     let config = {
@@ -57,12 +64,12 @@ const ReviewDoctor = ({
         console.log(JSON.stringify(response.data));
         setSending(false);
         response.status === 200
-          ? setSubmitSuccessPopup(true)
+          ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
       })
       .catch((error) => {
         console.log(error);
-        setSending(true);
+        setSending(false);
         setSubmitFailPopUp(true);
       });
   };

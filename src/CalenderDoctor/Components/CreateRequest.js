@@ -30,7 +30,7 @@ const CreateRequest = ({
   } = useDateTimepicker();
   const [popupState, setPopupState] = useState(false);
   const { setSending, SendingPopup } = useSendingPopup();
-  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: () => {
         setOpenCreateRequest(false);
@@ -48,7 +48,7 @@ const CreateRequest = ({
     setStartTime,
     setFinishTime,
     setSubmitFailPopUp,
-    setSubmitSuccessPopup,
+    setSubmitSuccessPopUp,
   });
 
   const problemTypes = [

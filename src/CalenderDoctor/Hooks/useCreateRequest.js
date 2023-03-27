@@ -6,7 +6,7 @@ const useCreateRequest = ({
   setStartTime,
   setFinishTime,
   setSubmitFailPopUp,
-  setSubmitSuccessPopup,
+  setSubmitSuccessPopUp,
   setPopupState,
 }) => {
   const [formData, setFormData] = useState();
@@ -52,7 +52,7 @@ const useCreateRequest = ({
         setFinishTime();
         setSending(false);
         response.status === 200
-          ? setSubmitSuccessPopup(true)
+          ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
       })
       .catch((error) => {
