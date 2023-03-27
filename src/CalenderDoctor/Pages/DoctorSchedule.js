@@ -194,7 +194,8 @@ const DoctorSchedule = ({ setPage }) => {
                           setNewTimeSlots(schedule.timeslots);
                           setIsEditOpen(true);
                         }}
-                        className="float-right text-2xl text-slate-500 hover:text-slate-400"
+                        className={`float-right text-2xl text-slate-500 hover:text-slate-400
+                        ${schedule.title === "Patient Request" && "hidden"}`}
                       >
                         <BiEditAlt />
                       </button>
@@ -208,7 +209,7 @@ const DoctorSchedule = ({ setPage }) => {
                             "border-[#beda9f] bg-[#f1fae4] text-slate-600"
                           }`}
                         >
-                          <div>
+                          <div className="w-3/4">
                             <p>
                               {timeslot.request
                                 ? timeslot.request?.patient.firstName +
@@ -230,7 +231,7 @@ const DoctorSchedule = ({ setPage }) => {
                                 .slice(0, 5)}
                             </p>
                           </div>
-                          <div>฿ {timeslot.price}</div>
+                          <div className="w-1/5 text-end">฿ {timeslot.price}</div>
                         </div>
                       );
                     })}

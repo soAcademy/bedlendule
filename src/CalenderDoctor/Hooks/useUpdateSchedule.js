@@ -25,7 +25,7 @@ const useUpdateSchedule = ({
     setIsEditOpen(false);
     setConfirmSubmit(false);
   };
-  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: closeEditPanel,
       failedAction: closeEditPanel,
@@ -110,9 +110,10 @@ const useUpdateSchedule = ({
         setRemovingTimeSlotIds([]);
         setUpdated(!updated);
         setSending(false);
-        setSubmitSuccessPopup(true);
+        setSubmitSuccessPopUp(true);
       })
       .catch((error) => {
+        console.log('error', error)
         setSending(false);
         setSubmitFailPopUp(true);
       });
