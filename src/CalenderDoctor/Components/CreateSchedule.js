@@ -17,7 +17,7 @@ import useDateTimepicker from "../Hooks/useDateTimePicker";
 import CreateScheduleForm from "./CreateScheduleForm";
 import {
   useAddOrRemoveTimeSlot,
-  useSubmitSchedule,
+  useCreateSchedule,
 } from "../Hooks/useCreateSchedule";
 
 const CreateSchedule = ({
@@ -45,7 +45,7 @@ const CreateSchedule = ({
     handleFinishTimeChange,
   } = useDateTimepicker();
   const { setSending, SendingPopup } = useSendingPopup();
-  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: () => {
         setOpenCreateSchedule(false);
@@ -53,7 +53,7 @@ const CreateSchedule = ({
       },
       failedAction: () => {},
     });
-  const { handleSubmit, submitForm } = useSubmitSchedule({
+  const { handleSubmit, submitForm } = useCreateSchedule({
     newTimeSlots,
     setPopupState,
     formData,
@@ -65,7 +65,7 @@ const CreateSchedule = ({
     setDate,
     setNewTimeSlots,
     setSubmitFailPopUp,
-    setSubmitSuccessPopup,
+    setSubmitSuccessPopUp,
   });
 
   const {
@@ -99,13 +99,13 @@ const CreateSchedule = ({
         }`}
       >
         <div className="">
-          <CreateScheduleForm
-            handleSubmit={handleSubmit}
-            setFormData={setFormData}
-            setPopupState={setPopupState}
-            setOpenCreateSchedule={setOpenCreateSchedule}
-            newTimeSlots={newTimeSlots}
-          />
+        <CreateScheduleForm
+        handleSubmit={handleSubmit}
+        setFormData={setFormData}
+        setPopupState={setPopupState}
+        setOpenCreateSchedule={setOpenCreateSchedule}
+        newTimeSlots={newTimeSlots}
+      />
         </div>
         <div className=" flex flex-col">
           <div className="no-scrollbar h-[100px] space-y-2 overflow-scroll">
@@ -246,13 +246,7 @@ const CreateSchedule = ({
           >
             The selected time is not available
           </p>
-          <button
-            disabled={newTimeSlots.length > 0 ? false : true}
-            className={`button mx-auto p-4 disabled:bg-slate-300`}
-            type="submit"
-          >
-            CREATE SCHEDULE
-          </button>
+
         </div>
         <ConfirmPopup
           title={"CREATE SCHEDULE"}

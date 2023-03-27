@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-export const useSubmitSchedule = ({
+export const useCreateSchedule = ({
   newTimeSlots,
   setPopupState,
   formData,
@@ -13,12 +13,13 @@ export const useSubmitSchedule = ({
   setDate,
   setNewTimeSlots,
   setSubmitFailPopUp,
-  setSubmitSuccessPopup,
+  setSubmitSuccessPopUp,
 }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
-    const doctorUUID = "7ecf8aa7-0fe9-45da-b73b-6d6369dd29b0";
+    const doctorUUID = "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b";
     const form = event.target;
+    console.log('form', form["description"])
     const data = {
       uuid: doctorUUID,
       title: form["title"].value,
@@ -66,10 +67,11 @@ export const useSubmitSchedule = ({
         setNewTimeSlots([]);
         setSending(false);
         response.status === 200
-          ? setSubmitSuccessPopup(true)
+          ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
       })
       .catch((error) => {
+        console.log('error', error)
         setSending(false);
         setSubmitFailPopUp(true);
       });

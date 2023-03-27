@@ -33,10 +33,12 @@ const UserSchedule = ({ setPage, page }) => {
     useSubmitResult({
       successAction: () => {
         setOpenRemoveRequest(false);
+        setOpenChooseDoctors(false)
         setUpdated(!updated);
       },
       failedAction: () => {
         setOpenRemoveRequest(false);
+        setOpenChooseDoctors(false)
         setUpdated(!updated);
       },
     });
