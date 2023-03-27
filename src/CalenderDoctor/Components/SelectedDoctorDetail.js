@@ -43,12 +43,12 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
         </button>
         <div className="w-full text-center text-2xl">
           {doctorDetails.firstName} &nbsp; {doctorDetails.lastName}
-          <div
+          {/* <div
             className="backButton absolute top-0 right-0  text-xl"
             onClick={() => setPage("doctorLists")}
           >
             &lt;
-          </div>
+          </div> */}
         </div>
 
         <div className="mx-auto  pt-2">
