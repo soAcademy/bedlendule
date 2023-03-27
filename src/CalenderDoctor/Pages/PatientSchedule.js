@@ -11,16 +11,20 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import ConfirmPopup from "../Components/ConfirmPopup";
 import useSendingPopup from "../Hooks/useSendingPopup";
 import useSubmitResult from "../Hooks/useSubmitResult";
+import { MdClose } from "react-icons/md";
+import { Rating } from "primereact/rating";
 
 const UserSchedule = ({ setPage, page }) => {
-  const [timeSlotId, setTimeSlotId] = useState();
-  const [openRemoveRequest, setOpenRemoveRequest] = useState(false);
   const [fetching, setFetching] = useState(false);
+  const [openRemoveRequest, setOpenRemoveRequest] = useState(false);
+  const [openChooseDoctors, setOpenChooseDoctors] = useState(false);
   const [openCreateRequest, setOpenCreateRequest] = useState();
+  const [confirmChoosing, setConfirmChoosing] = useState(false);
+  const [timeSlotId, setTimeSlotId] = useState();
   const [requests, setRequests] = useState([]);
   const [updated, setUpdated] = useState(false);
   const [openReview, setOpenReview] = useState(false);
-  const [requestId, setRequestId] = useState();
+  const [requestToExecute, setRequestToExecute] = useState();
   const [insidePage, setInsidePage] = useState("patientSchedule");
   const { date, setDate, dateTemplate, disabledDates } =
     usePatientCalendarProps();
@@ -37,12 +41,44 @@ const UserSchedule = ({ setPage, page }) => {
       },
     });
 
+  const chooseDoctor = () => {
+    setConfirmChoosing(false)
+    setSending(true)
+    let data = JSON.stringify({
+      "requestId": requestToExecute.id,
+      "timeSlotId": timeSlotId
+    });
+    console.log('data', data)
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://bedlendule-backend.vercel.app/bedlendule/chooseDoctor',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    
+    axios.request(config)
+    .then((response) => {
+      setSending(false);
+      response.status === 200
+        ? setSubmitSuccessPopUp(true)
+        : setSubmitFailPopUp(true);
+        console.log('chooseDoctor Response', response.data)
+    })
+    .catch((error) => {
+      console.log(error);
+        setSending(false);
+        setSubmitFailPopUp(true);
+    });
+    
+  }
   const deleteRequest = () => {
     setOpenRemoveRequest(false);
     setSending(true);
-    console.log(requestId);
     let data = JSON.stringify({
-      id: requestId,
+      id: requestToExecute.id,
     });
 
     let config = {
@@ -62,7 +98,6 @@ const UserSchedule = ({ setPage, page }) => {
         response.status === 200
           ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
-        console.log(JSON.stringify(response.data));
       })
       .catch((error) => {
         console.log(error);
@@ -90,7 +125,7 @@ const UserSchedule = ({ setPage, page }) => {
     axios
       .request(config)
       .then((response) => {
-        console.log(response.data);
+        console.log("response.data", response.data);
         setFetching(false);
         setRequests(response.data);
       })
@@ -170,7 +205,7 @@ const UserSchedule = ({ setPage, page }) => {
                     className={`mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9] p-2 text-slate-600 md:w-1/2
                     ${
                       request.doctorTimeslot.length > 0 &&
-                      request.status === "CHOOSEN" &&
+                      request.status === "CHOSEN" &&
                       "border-[#beda9f] bg-[#f1fae4] text-slate-600"
                     }`}
                   >
@@ -202,7 +237,7 @@ const UserSchedule = ({ setPage, page }) => {
                       </div>
                       <button
                         onClick={() => {
-                          setRequestId(request.id);
+                          setRequestToExecute(request);
                           setOpenRemoveRequest(true);
                         }}
                         className={`float-right text-2xl text-slate-500 hover:text-slate-400 
@@ -212,14 +247,14 @@ const UserSchedule = ({ setPage, page }) => {
                       </button>
                       <button
                         onClick={() => {
-                          setRequestId(request.id);
-                          // setOpenRemoveRequest(true);
+                          setRequestToExecute(request);
+                          console.log(
+                            request
+                          );
+                          setOpenChooseDoctors(true);
                         }}
-                        className={`float-right button p-2 text-sm h-fit my-auto text-white
-                        ${
-                          request.status !== "ACCEPTED" &&
-                          "hidden"
-                        }`}
+                        className={`button float-right my-auto h-fit p-2 text-xs text-white
+                        ${request.status !== "ACCEPTED" && "hidden"}`}
                       >
                         CHOOSE DOCTOR
                       </button>
@@ -271,8 +306,7 @@ const UserSchedule = ({ setPage, page }) => {
                       {!request.review && request.status === "CHOSEN" && (
                         <button
                           onClick={() => {
-                            console.log("request.id", request.id);
-                            setRequestId(request.id);
+                            setRequestToExecute(request);
                             setTimeSlotId(request.doctorTimeslot[0].id);
                             setOpenReview(true);
                           }}
@@ -297,7 +331,7 @@ const UserSchedule = ({ setPage, page }) => {
           setUpdated={setUpdated}
           openReview={openReview}
           setOpenReview={setOpenReview}
-          requestId={requestId}
+          requestId={requestToExecute?.id}
           timeSlotId={timeSlotId}
         />
       </div>
@@ -334,9 +368,113 @@ const UserSchedule = ({ setPage, page }) => {
         setState={setOpenRemoveRequest}
       />
       {/* )} */}
+      
+      <div
+        className={`shader fixed left-0 z-50 flex w-full
+  flex-col font-kanit shadow-xl duration-300
+    ${openChooseDoctors ? "" : "pointer-events-none opacity-0"}`}
+      >
+        <div
+          className={`fixed top-1/2 left-1/2 w-11/12 -translate-y-1/2 -translate-x-1/2 rounded-lg
+          bg-white p-6 shadow-xl duration-200 ${
+            openChooseDoctors ? "" : "scale-95 opacity-0"
+          }`}
+        >
+          <MdClose
+            className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
+            onClick={() => setOpenChooseDoctors(false)}
+          />
+          <p className="text-center text-3xl font-bold text-slate-600">
+            REQUEST
+          </p>
+          <div className="my-5 flex justify-evenly rounded-xl border bg-slate-50 p-2">
+            <p>
+              <p>Date</p> {requestToExecute?.startTime.split("T")[0]}
+            </p>
+            <p>
+              <p>From</p>
+              {requestToExecute?.startTime.split("T")[1].slice(0, 5)}
+            </p>
+            <p>
+              <p>To</p> {requestToExecute?.finishTime.split("T")[1].slice(0, 5)}
+            </p>
+          </div>
+          <p>Description</p>
+          <div className="flex h-40 rounded-xl border bg-slate-50 p-2">
+            {requestToExecute?.description}
+          </div>
+          <div className="flex items-center justify-between gap-3">
+            <div className="my-5 flex w-1/2 rounded-xl border bg-slate-50 p-2">
+              {requestToExecute?.meetingType} : {requestToExecute?.location}
+            </div>
+            <div className="my-5 flex w-1/2 rounded-xl border bg-slate-50 p-2">
+              Price : ฿{requestToExecute?.price}
+            </div>
+          </div>
+          {requestToExecute?.doctorTimeslot.map((e) => (
+            <div className="flex items-center justify-between">
+              <div className="my-2 w-3/4 rounded-xl border border-[#cfe6eb] p-2 px-3 shadow-md">
+                <div className="flex justify-between">
+                  <p className="text-lg text-[#3f6fb6]">
+                    {e.firstName} {e.lastName}
+                  </p>
+                  <Rating
+                    onIcon={
+                      <img
+                        src="/rating-icon-active.png"
+                        onError={(e) =>
+                          (e.target.src =
+                            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                        }
+                        alt="custom-active"
+                        width="12px"
+                        height="12px"
+                      />
+                    }
+                    offIcon={
+                      <img
+                        src="/rating-icon-inactive.png"
+                        onError={(e) =>
+                          (e.target.src =
+                            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                        }
+                        alt="custom-inactive"
+                        width="12px"
+                        height="12px"
+                      />
+                    }
+                    readOnly
+                    cancel={false}
+                    value={e.reviewScore}
+                  />
+                </div>
+                <p>{e.background}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setConfirmChoosing(true);
+                  setTimeSlotId(e.id);
+                }}
+                className="button h-fit p-1 px-2 text-sm"
+              >
+                choose
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+      <ConfirmPopup
+        title={"Confirm Choosing Therapist"}
+        description={"Would you like to proceed with this therapist?"}
+        action={chooseDoctor}
+        state={confirmChoosing}
+        setState={setConfirmChoosing}
+      />
+      ;
       <SendingPopup />
       <ResultPopup />
     </>
+    
   );
 };
 
