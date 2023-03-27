@@ -7,7 +7,7 @@ const useSubmitResult = ({ successAction, failedAction }) => {
     <>
       <div
         className={`shader duration-200
-    ${!submitSuccessPopUp ? "scale-0" : "scale-1"}`}
+    ${submitSuccessPopUp ? "scale-100" : "scale-0"}`}
       >
         <div
           className={`popup duration-100
@@ -36,12 +36,12 @@ const useSubmitResult = ({ successAction, failedAction }) => {
       <div
         className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
     bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
-    ${!submitFailPopUp ? "scale-0" : "scale-1"}`}
+    ${submitFailPopUp ? "scale-100" : "scale-0"}`}
       >
         <div
           className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
   p-6 text-center shadow-md duration-200
-  ${submitFailPopUp ? "scale-1" : "scale-0"}`}
+  ${submitFailPopUp ? "scale-100" : "scale-95"}`}
         >
           <div>
             <p className="text-2xl font-bold text-[#4C4E64DE] ">Request Failed</p>
