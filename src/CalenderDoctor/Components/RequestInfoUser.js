@@ -115,6 +115,30 @@ const DoctorProfileUserSide = () => {
                   <div className=" ml-[150px] flex  w-1/2 py-2 pl-10 md:mx-auto md:w-full md:pl-[1100px] ">
                     <div className="w-full">
                       <Rating
+                      onIcon={
+                        <img
+                          src="/rating-icon-active.png"
+                          onError={(e) =>
+                            (e.target.src =
+                              "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                          }
+                          alt="custom-active"
+                          width="12px"
+                          height="12px"
+                        />
+                      }
+                      offIcon={
+                        <img
+                          src="/rating-icon-inactive.png"
+                          onError={(e) =>
+                            (e.target.src =
+                              "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                          }
+                          alt="custom-inactive"
+                          width="12px"
+                          height="12px"
+                        />
+                      }
                         value={mockDoctordata.review[0].score}
                         readOnly
                         cancel={false}

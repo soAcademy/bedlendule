@@ -1,11 +1,8 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Rating } from "primereact/rating";
 import { ProgressSpinner } from "primereact/progressspinner";
-import SelectRequestDetail from "./SelectedRequestDetail";
 import { MdClose, MdOutlinePayments } from "react-icons/md";
 import { IoIosReturnLeft } from "react-icons/io";
-import { DatePicker } from "./DateTimePicker";
 import { Calendar } from "primereact/calendar";
 import ConfirmPopup from "./ConfirmPopup";
 import useSendingPopup from "../Hooks/useSendingPopup";
