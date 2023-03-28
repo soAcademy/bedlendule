@@ -28,6 +28,7 @@ const UserSchedule = ({ setPage, page }) => {
   const [insidePage, setInsidePage] = useState("patientSchedule");
   const { date, setDate, dateTemplate, disabledDates } =
     usePatientCalendarProps();
+    console.log('disabledDates', disabledDates)
   const { sending, setSending, SendingPopup } = useSendingPopup();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
@@ -150,7 +151,7 @@ const UserSchedule = ({ setPage, page }) => {
             className="z-0 w-10/12 shadow-lg"
             value={date}
             onChange={(e) => {
-              setDate(e.value.toISOString());
+              setDate(e.value.toLocaleDateString());
               setInsidePage("selectDoctor");
             }}
             disabledDates={disabledDates.map((e) => new Date(e))}

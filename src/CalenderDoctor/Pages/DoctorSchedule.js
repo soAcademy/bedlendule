@@ -115,7 +115,7 @@ const DoctorSchedule = ({ setPage }) => {
               value={date}
               disabledDates={disabledDates.map((e) => new Date(e))}
               onChange={(e) => {
-                setDate(e.value.toISOString());
+                setDate(e.value.toLocaleDateString());
                 setInsidePage("selectRequest");
               }}
               minDate={new Date()}
@@ -130,7 +130,7 @@ const DoctorSchedule = ({ setPage }) => {
                   <p>REQUEST</p>
                 </div>
                 <div className="mx-2 flex items-center gap-2 rounded-md px-4 py-1 shadow-md">
-                  <div className="h-4 w-4 rounded-full bg-[#E1A5BB]"></div>
+                  <div className="h-4 w-4 rounded-full bg-slate-300"></div>
                   <p>NO REQUEST</p>
                 </div>
               </div>
