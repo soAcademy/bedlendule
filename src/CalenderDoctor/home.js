@@ -19,6 +19,7 @@ export const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
   const [page, setPage] = useState("landing"); // landing
   const [type, setType] = useState("doctor"); //อย่าลืมเปลี่ยนเป็น doctor
+  console.log("page and type",page,type) 
 
   return (
     <ConfirmPopupContext.Provider

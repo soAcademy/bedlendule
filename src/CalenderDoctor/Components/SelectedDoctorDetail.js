@@ -15,54 +15,16 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   const [loading, setLoading] = useState();
   const [currentTime, setCurrentTime] = useState();
   const [doctorName, setDoctorName] = useState([]);
+  const [schedules, setSchedules] = useState([]);
+  const [location, setLocation] = useState([]);
 
-  console.log("currentTime", currentTime);
-  console.log("selectedDoctor", selectedDoctor.doctorUUID);
-  console.log("doctorName", doctorName);
-  console.log("appointmentPopup selectDoctor", appointmentPopup);
+  console.log("selectedDoctor555", selectedDoctor);
 
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
 
-  const currentTime2 = (doctorDetail) => {
-    // หาวันว่าง
-    const _nullTimeslot = doctorDetail.schedules?.map((schedules) =>
-      schedules.timeslots?.filter((timeslots) => timeslots.requestId === null)
-    );
-    const _indexOfTimeSlot = _nullTimeslot
-      ?.map((r, idx) => (r.length > 0 ? idx : -1))
-      ?.filter((r) => r >= 0);
-    const _timeSlot = _indexOfTimeSlot?.map((r) => _nullTimeslot[r]);
-    console.log("_timeSlot", _timeSlot);
-
-    // หาวันว่างที่เป็นปัจจุบัน
-    const freeDayBoolean = _timeSlot?.map((timeslots) =>
-      timeslots.map(
-        (r) =>
-          Number(r.startTime.substring(8, 10)) >=
-          Number(new Date().toISOString().substring(8, 10))
-      )
-    );
-
-    const filteredArry = _timeSlot?.filter((obj, index) => {
-      return freeDayBoolean[index].includes(true);
-    });
-    // console.log("filteredArry", filteredArry);
-
-    // หาช่วงเวลา
-    const _doctorTimeslots = filteredArry?.map((r) =>
-      r.map((r) => {
-        return {
-          startTime: r.startTime.substring(11, 16),
-          finishTime: r.finishTime.substring(11, 16),
-        };
-      })
-    );
-    console.log("_doctorTimeslots", _doctorTimeslots);
-    return setCurrentTime(_doctorTimeslots);
-  };
-
+  // get doctor detail by UUID
   useEffect(() => {
     const _data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
@@ -81,111 +43,158 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
 
     axios(config).then((response) => {
       setLoading(false);
-      // console.log("response.data>>", response.data);
+      console.log("SelectDoctorData", response.data);
       setDoctorDetail(response.data);
-      currentTime2(response.data);
       setDoctorName(selectedDoctor.doctorUUID);
     });
   }, [selectedDoctor]);
 
+  // get ScheduleBy UUID
+  useEffect(() => {
+    const _data = JSON.stringify({
+      uuid: selectedDoctor.doctorUUID?.uuid,
+    });
+    // console.log("_data", _data);
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByUUID",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: _data,
+    };
+    axios(config).then((response) => {
+      console.log("getScheduleByUUID", response.data);
+      setSchedules(response.data);
+      findTimeslot(response.data);
+      findindexOfSchedules(response.data);
+    });
+  }, [selectedDoctor]);
+
+  //get doctor Id for requestnull
+  const findTimeslot = (schedules) => {
+    console.log("schedulesfindslot", schedules);
+    const findRequestNull = selectedDoctor.timeslots?.filter(
+      (timeslots) => timeslots.requestId === null
+    );
+    const idRequestNull = findRequestNull?.map((r) => r.id);
+    const times = idRequestNull?.map((a) =>
+      schedules?.map((r) => r.timeslots?.filter((c) => c.id === a))
+    );
+    const _arrayTimes = times?.map((r) => r?.filter((c) => c.length > 0));
+
+    const _doctorTimeslots = _arrayTimes?.map((r) =>
+      r.map((c) =>
+        c.map((r) => {
+          return {
+            startTime: r.startTime.substring(11, 16),
+            finishTime: r.finishTime.substring(11, 16),
+            price: r.price,
+          };
+        })
+      )
+    );
+    return setCurrentTime(_doctorTimeslots);
+  };
+  //find index of scheduled which has timeslot(requestNull)
+  const findindexOfSchedules = (schedules) => {
+    console.log("schedules888", schedules);
+
+    const findRequestNull = selectedDoctor.timeslots
+      ?.filter((timeslots) => timeslots.requestId === null)
+      .map((r) => r.id);
+    console.log("requestNull", findRequestNull);
+    const filter = schedules.map((r) =>
+      r.timeslots.map((r, idx) => (r.id === findRequestNull[0] ? r : []))
+    );
+
+    const boolean = filter.map((r) => r.map((a) => a.length === undefined));
+    const onlyTrue = boolean.map((r) => (r.includes(true) ? true : false));
+    const indexOfTrue = onlyTrue
+      .map((r, idx) => (r === true ? idx : -1))
+      .filter((c) => c > 0);
+    const location = indexOfTrue
+      .map((r) => schedules[r])
+      .map((r) => {
+        return { location: r.location, meetingType: r.meetingType };
+      });
+
+    const result = findRequestNull?.map((r) => ({ ...location, requestId: r }));
+    console.log("finalResult", result);
+
+    return setLocation(result);
+  };
+
   return (
     <>
-      <button
-          className="fixed right-5 top-6 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
+      <div className="fixed top-10 flex w-full flex-col  ">
+        <button
+          className="fixed right-5 top-7 rounded-lg text-2xl font-light text-slate-400 hover:bg-slate-50 hover:text-slate-300"
           onClick={() => setPage("doctorLists")}
         >
-          <IoIosReturnLeft />
+          <IoIosReturnLeft className="w-[40px] rounded-lg shadow-lg" />
         </button>
-      {loading ? (
-        <div className="fixed top-1/2 flex w-full items-center justify-center">
-          <ProgressSpinner
-            style={{ width: "50px", height: "50px" }}
-            strokeWidth="8"
-            animationDuration="0.7s"
+        <div className="w-full text-center text-2xl">
+          {selectedDoctor.doctorUUID?.firstName} &nbsp;{" "}
+          {selectedDoctor.doctorUUID?.lastName}
+        </div>
+
+        <div className="mx-auto  pt-2">
+          <Rating
+            readOnly
+            value={scoreFromReview}
+            cancel={false}
+            style={{ color: "var(--text-yellow)" }}
           />
         </div>
-      ) : (
-        <div className="fixed top-10 flex w-full flex-col  ">
-          <div className="w-full text-center text-2xl">
-            {selectedDoctor.doctorUUID?.firstName} &nbsp;{" "}
-            {selectedDoctor.doctorUUID?.lastName}
-          </div>
 
-          <div className="mx-auto  pt-2">
-            <Rating
-            onIcon={
-              <img
-                src="/rating-icon-active.png"
-                onError={(e) =>
-                  (e.target.src =
-                    "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                }
-                alt="custom-active"
-                width="12px"
-                height="12px"
+        <div className="mx-auto my-2  flex w-full items-center justify-center">
+          {loading && (
+            <div className="absolute   ">
+              <ProgressSpinner
+                style={{ width: "50px", height: "50px" }}
+                strokeWidth="8"
               />
-            }
-            offIcon={
-              <img
-                src="/rating-icon-inactive.png"
-                onError={(e) =>
-                  (e.target.src =
-                    "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                }
-                alt="custom-inactive"
-                width="12px"
-                height="12px"
-              />
-            }
-              readOnly
-              value={scoreFromReview}
-              cancel={false}
-              className=""
-            />
-          </div>
+            </div>
+          )}
+          <img
+            src={doctorDetail?.profilePictureUrl}
+            className="h-[200px] rounded-lg"
+            alt="doctorURL"
+          />
+        </div>
+        <div className=" mx-auto my-5 w-[80%] rounded-lg border-2  border-slate-400 pt-2 ">
+          <div className="text-center text-xl">Details</div>
 
-          <div className="mx-auto my-2">
-            <img
-              src={doctorDetail?.profilePictureUrl}
-              className="h-[200px] rounded-lg"
-              alt="doctor-profile"
-            />
-          </div>
-          <div className=" mx-auto my-5 w-[80%] rounded-lg border-2  border-slate-400 pt-2">
-            <div className="text-center text-xl">Details</div>
-
-            <ul className="p-[20px] text-slate-600">
-              <li>
-                Username:
-                <span className="text-slate-500 underline underline-offset-2">
-                  {" "}
-                  Marry@
-                </span>
-              </li>
-              <li>
-                Email:
-                <span className="text-slate-500 underline underline-offset-2">
-                  {doctorDetail.email}
-                </span>
-              </li>
-              <li>
-                License ID:
-                <span className="text-slate-500 underline underline-offset-2">
-                  {" "}
-                  {doctorDetail.licenseId}
-                </span>
-              </li>
-              <li>
-                Contact :
-                <span className="text-slate-500 underline underline-offset-2">
-                  {" "}
-                  {doctorDetail.phoneNumber}
-                </span>
-              </li>
-            </ul>
-          </div>
-          <div className=" mx-auto w-[95%]">
-            {currentTime?.map((r) =>
+          <ul className="p-[20px] text-slate-600">
+            <li className="">
+              Email:
+              <span className="text-slate-700 ">
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{" "}
+                {doctorDetail.email}
+              </span>
+            </li>
+            <li className="bg-teal-100">
+              License ID:
+              <span className="text-sm  text-slate-700">
+                {" "}
+                &nbsp;&nbsp; {doctorDetail.licenseId}
+              </span>
+            </li>
+            <li className="">
+              Contact :
+              <span className="text-sm   text-slate-700">
+                {" "}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                {doctorDetail.phoneNumber}
+              </span>
+            </li>
+          </ul>
+        </div>
+        <div className=" mx-auto w-[95%]">
+          {currentTime?.map((currentTime) =>
+            currentTime?.map((r) =>
               r.map((r) => (
                 <ul
                   className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
@@ -226,7 +235,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
                     </div>
                     <div className=" mx-auto flex">
                       <div className="underline underline-offset-2">
-                        1500 THB/Hour
+                        {r.price} THB/Hour
                       </div>
                       <div className="px-1">
                         <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
@@ -235,10 +244,10 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
                   </li>
                 </ul>
               ))
-            )}
-          </div>
+            )
+          )}
         </div>
-      )}
+      </div>
 
       {appointmentPopup && (
         <Appointment

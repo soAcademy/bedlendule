@@ -30,8 +30,12 @@ const UserSchedule = ({ setPage, page }) => {
   const [openReview, setOpenReview] = useState(false);
   const [requestToExecute, setRequestToExecute] = useState();
   const [insidePage, setInsidePage] = useState("patientSchedule");
-  const { date, setDate, dateTemplate, disabledDates } =
+  const { date, setDate, dateTemplate, disabledDates,timeSlots } =
     usePatientCalendarProps();
+    console.log("disabledDates",disabledDates);
+    console.log("date",date);
+    console.log("timeSlots123",timeSlots);
+
   const { sending, setSending, SendingPopup } = useSendingPopup();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({

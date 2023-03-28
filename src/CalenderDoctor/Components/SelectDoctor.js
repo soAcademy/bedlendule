@@ -19,6 +19,7 @@ const SelectDoctor = ({
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
 
+  
   const findFreeDoctor = (freeDoctor) => {
     const filter = freeDoctor.map((doctor) =>
       doctor.timeslots.filter((timeslots) => timeslots.requestId === null)
@@ -51,7 +52,7 @@ const SelectDoctor = ({
     axios(config)
       .then((response) => {
         setFetching(false);
-        console.log("response.data", response.data);
+        console.log("SelectDoctorData", response.data);
         const _data = findFreeDoctor(response.data);
         console.log("_data", _data);
         setDoctors(_data);
@@ -74,7 +75,7 @@ const SelectDoctor = ({
           className="fixed right-5 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
           onClick={() => setInsidePage("patientSchedule")}
         >
-          <IoIosReturnLeft />
+          <IoIosReturnLeft className=""/>
         </button>
         <div className="headingColor relative mt-8 text-center text-3xl font-bold ">
           SELECT DOCTOR
@@ -154,7 +155,7 @@ const SelectDoctor = ({
                 />
               </div>
             </div>
-            <div className="text-[#4C4E64]">{doctor.description}</div>
+            <div className="text-[#4C4E64] indent-8">{doctor.description}</div>
           </div>
         ))}
       </div>
