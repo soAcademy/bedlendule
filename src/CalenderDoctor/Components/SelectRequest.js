@@ -35,19 +35,18 @@ const SelectRequest = ({
   } = useSubmitResult({
     successAction: () => {
       setUpdated(!updated);
-      setInsidePage("doctorSchedule");
     },
     failedAction: () => {
       setUpdated(!updated);
-      setInsidePage("doctorSchedule");
     },
   });
+  const doctoruuid = "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b"
   const acceptRequest = () => {
     setConfirmPopup(false);
     console.log("timeSlot.startTime", timeSlot.startTime);
     let data = JSON.stringify({
       requestId: requestId,
-      uuid: "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b",
+      uuid: doctoruuid,
       startTime: timeSlot.startTime,
       finishTime: timeSlot.finishTime,
     });
@@ -75,7 +74,7 @@ const SelectRequest = ({
       })
       .catch((error) => {
         setSending(false);
-        setUpdated(!updated);
+        setSubmitFailPopUp(true);
         console.log(error);
       });
   };
@@ -96,8 +95,9 @@ const SelectRequest = ({
     axios(config)
       .then((response) => {
         setFetching(false);
-        console.log("response.data", response.data);
-        setRequests(response.data);
+        console.log('response.data', response.data)
+        const _requests = response.data.filter(e=>e.doctorTimeslot.findIndex(timeslot=>timeslot.schedule.uuid === doctoruuid)===-1)
+        setRequests(_requests);
       })
       .catch((error) => {
         console.log(error);
