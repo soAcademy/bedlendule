@@ -33,48 +33,48 @@ const UserSchedule = ({ setPage, page }) => {
     useSubmitResult({
       successAction: () => {
         setOpenRemoveRequest(false);
-        setOpenChooseDoctors(false)
+        setOpenChooseDoctors(false);
         setUpdated(!updated);
       },
       failedAction: () => {
         setOpenRemoveRequest(false);
-        setOpenChooseDoctors(false)
+        setOpenChooseDoctors(false);
         setUpdated(!updated);
       },
     });
 
   const chooseDoctor = () => {
-    setConfirmChoosing(false)
-    setSending(true)
+    setConfirmChoosing(false);
+    setSending(true);
     let data = JSON.stringify({
-      "requestId": requestToExecute.id,
-      "timeSlotId": timeSlotId
+      requestId: requestToExecute.id,
+      timeSlotId: timeSlotId,
     });
-    console.log('data', data)
+    console.log("data", data);
     let config = {
-      method: 'post',
+      method: "post",
       maxBodyLength: Infinity,
-      url: 'https://bedlendule-backend.vercel.app/bedlendule/chooseDoctor',
-      headers: { 
-        'Content-Type': 'application/json'
+      url: "https://bedlendule-backend.vercel.app/bedlendule/chooseDoctor",
+      headers: {
+        "Content-Type": "application/json",
       },
-      data : data
+      data: data,
     };
-    
-    axios.request(config)
-    .then((response) => {
-      setSending(false);
-      response.status === 200
-        ? setSubmitSuccessPopUp(true)
-        : setSubmitFailPopUp(true);
-    })
-    .catch((error) => {
-      console.log(error);
+
+    axios
+      .request(config)
+      .then((response) => {
+        setSending(false);
+        response.status === 200
+          ? setSubmitSuccessPopUp(true)
+          : setSubmitFailPopUp(true);
+      })
+      .catch((error) => {
+        console.log(error);
         setSending(false);
         setSubmitFailPopUp(true);
-    });
-    
-  }
+      });
+  };
   const deleteRequest = () => {
     setOpenRemoveRequest(false);
     setSending(true);
@@ -248,9 +248,7 @@ const UserSchedule = ({ setPage, page }) => {
                       <button
                         onClick={() => {
                           setRequestToExecute(request);
-                          console.log(
-                            request
-                          );
+                          console.log(request);
                           setOpenChooseDoctors(true);
                         }}
                         className={`button float-right my-auto h-fit p-2 text-xs text-white
@@ -355,6 +353,7 @@ const UserSchedule = ({ setPage, page }) => {
       ${!openCreateRequest ? "pointer-events-none opacity-0" : ""}`}
       ></div>
       <CreateRequest
+        requests={requests}
         updated={updated}
         setUpdated={setUpdated}
         openCreateRequest={openCreateRequest}
@@ -368,7 +367,6 @@ const UserSchedule = ({ setPage, page }) => {
         setState={setOpenRemoveRequest}
       />
       {/* )} */}
-      
       <div
         className={`shader fixed left-0 z-50 flex w-full
   flex-col font-kanit shadow-xl duration-300
@@ -474,7 +472,6 @@ const UserSchedule = ({ setPage, page }) => {
       <SendingPopup />
       <ResultPopup />
     </>
-    
   );
 };
 
