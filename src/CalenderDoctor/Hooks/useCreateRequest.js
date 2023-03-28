@@ -3,6 +3,7 @@ import axios from "axios";
 
 const useCreateRequest = ({
   setSending,
+  setDate,
   setStartTime,
   setFinishTime,
   setSubmitFailPopUp,
@@ -48,8 +49,17 @@ const useCreateRequest = ({
       .request(config)
       .then((response) => {
         document.querySelector("#create-request").reset();
-        setStartTime();
-        setFinishTime();
+        setStartTime(new Date(
+          new Date(new Date().toLocaleDateString()).getTime() +
+            1800000 * Math.ceil(new Date().getMinutes() / 30) +
+            3600000 * (new Date().getHours() + 1)
+        ));
+        setFinishTime(new Date(
+          new Date(new Date().toLocaleDateString()).getTime() +
+            1800000 * (Math.ceil(new Date().getMinutes() / 30) + 1) +
+            3600000 * (new Date().getHours() + 1)
+        ));
+        setDate(new Date())
         setSending(false);
         response.status === 200
           ? setSubmitSuccessPopUp(true)

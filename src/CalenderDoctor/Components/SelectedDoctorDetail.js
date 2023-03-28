@@ -90,8 +90,14 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
 
   return (
     <>
+      <button
+          className="fixed right-5 top-6 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
+          onClick={() => setPage("doctorLists")}
+        >
+          <IoIosReturnLeft />
+        </button>
       {loading ? (
-        <div className="flex w-full justify-center items-center fixed top-1/2">
+        <div className="fixed top-1/2 flex w-full items-center justify-center">
           <ProgressSpinner
             style={{ width: "50px", height: "50px" }}
             strokeWidth="8"
@@ -100,12 +106,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
         </div>
       ) : (
         <div className="fixed top-10 flex w-full flex-col  ">
-          <button
-            className="fixed right-5 top-7 rounded-lg text-2xl font-light text-slate-400 hover:bg-slate-50 hover:text-slate-300"
-            onClick={() => setPage("doctorLists")}
-          >
-            <IoIosReturnLeft className="w-[40px] rounded-lg shadow-lg" />
-          </button>
           <div className="w-full text-center text-2xl">
             {selectedDoctor.doctorUUID?.firstName} &nbsp;{" "}
             {selectedDoctor.doctorUUID?.lastName}

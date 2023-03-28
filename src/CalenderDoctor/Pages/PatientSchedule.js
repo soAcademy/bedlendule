@@ -16,6 +16,9 @@ import { Rating } from "primereact/rating";
 
 const UserSchedule = ({ setPage, page }) => {
   const [fetching, setFetching] = useState(false);
+  const [doctorUUID, setDoctorUUID] = useState();
+  const [doctorDetail, setDoctorDetail] = useState();
+  const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
   const [openRemoveRequest, setOpenRemoveRequest] = useState(false);
   const [openChooseDoctors, setOpenChooseDoctors] = useState(false);
   const [openCreateRequest, setOpenCreateRequest] = useState();
@@ -135,6 +138,35 @@ const UserSchedule = ({ setPage, page }) => {
         setFetching(false);
       });
   }, [updated]);
+
+  useEffect(() => {
+    let data = JSON.stringify({
+      uuid: doctorUUID,
+    });
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    setFetching(true);
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log("doctorDetail", response.data);
+        setFetching(false);
+        setDoctorDetail(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        setFetching(false);
+      });
+  }, [doctorUUID]);
   return (
     <>
       <div
@@ -411,7 +443,13 @@ const UserSchedule = ({ setPage, page }) => {
           </div>
           {requestToExecute?.doctorTimeslot.map((e) => (
             <div className="flex items-center justify-between">
-              <div className="my-2 w-3/4 rounded-xl border border-[#cfe6eb] p-2 px-3 shadow-md">
+              <div
+                onClick={() => {
+                  setOpenDoctorDetail(true);
+                  setDoctorUUID(e.doctorUUID);
+                }}
+                className="my-2 min-h-[80px] w-3/4 cursor-pointer rounded-xl border border-[#cfe6eb] p-2 px-3 shadow-md"
+              >
                 <div className="flex justify-between">
                   <p className="text-lg text-[#3f6fb6]">
                     {e.firstName} {e.lastName}
@@ -461,6 +499,105 @@ const UserSchedule = ({ setPage, page }) => {
           ))}
         </div>
       </div>
+      {openDoctorDetail && (
+        <div className="shader">
+          <div className="popup flex h-fit w-11/12 flex-col items-center">
+            <MdClose
+              className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
+              onClick={() => setOpenDoctorDetail(false)}
+            />
+            {
+              fetching ? (
+                <div className="flex w-full items-center justify-center">
+                  <ProgressSpinner
+                    style={{ width: "50px", height: "50px" }}
+                    strokeWidth="8"
+                    animationDuration="0.7s"
+                  />
+                </div>
+              ) : (
+                doctorDetail && (
+                  <div className="flex w-full flex-col  ">
+                    <div className="w-full text-center text-2xl">
+                      {doctorDetail.firstName} &nbsp;{" "}
+                      {doctorDetail.lastName}
+                    </div>
+
+                    <div className="mx-auto  pt-2">
+                      <Rating
+                        readOnly
+                        value={doctorDetail.reviewScore}
+                        cancel={false}
+                        className=""
+                      />
+                    </div>
+
+                    <div className="mx-auto my-2">
+                      <img
+                        src={doctorDetail.profilePictureUrl}
+                        className="h-[200px] rounded-lg"
+                        alt="doctor-profile"
+                      />
+                    </div>
+                    <div className=" mx-auto my-5 w-[80%] rounded-lg border-2  border-slate-400 pt-2">
+                      <div className="text-center text-xl">Details</div>
+
+                      <ul className="p-[20px] text-slate-600">
+                        <li>
+                          Username:
+                          <span className="text-slate-500 underline underline-offset-2">
+                            {" "}
+                            Marry@
+                          </span>
+                        </li>
+                        <li>
+                          Email:
+                          <span className="text-slate-500 underline underline-offset-2">
+                            {doctorDetail.email}
+                          </span>
+                        </li>
+                        <li>
+                          License ID:
+                          <span className="text-slate-500 underline underline-offset-2">
+                            {" "}
+                            {doctorDetail.licenseId}
+                          </span>
+                        </li>
+                        <li>
+                          Contact :
+                          <span className="text-slate-500 underline underline-offset-2">
+                            {" "}
+                            {doctorDetail.phoneNumber}
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                )
+              )
+              // (
+              // <div className="shader">
+              //   <div className="popup flex h-fit w-11/12 flex-col items-center">
+              //     <MdClose
+              //       className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
+              //       onClick={() => setOpenDoctorDetail(false)}
+              //     />
+              //       <img
+              //         src={doctorDetail.profilePictureUrl}
+              //         alt="doctor-profile"
+              //         className="h-[100px] w-[75px] border-2 object-cover"
+              //       />
+              //       <p>
+              //         {doctorDetail.firstName} {doctorDetail.lastName}
+              //       </p>
+              //       <div></div>
+              //     </div>
+              //   </div>
+              // )
+            }
+          </div>
+        </div>
+      )}
       <ConfirmPopup
         title={"Confirm Choosing Therapist"}
         description={"Would you like to proceed with this therapist?"}
