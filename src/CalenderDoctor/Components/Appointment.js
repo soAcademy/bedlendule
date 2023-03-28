@@ -55,7 +55,7 @@ const Appointment = ({ appointmentPopup,setAppointmentPopup, chooseTimeSlot, doc
               </div>
               <div className=" mx-auto flex">
                 <div className="underline underline-offset-2">
-                  1500 THB/Hour
+                {chooseTimeSlot.price} THB/Hour
                 </div>
                 <div className="px-1">
                   <AiFillDollarCircle className="my-auto text-base" />
