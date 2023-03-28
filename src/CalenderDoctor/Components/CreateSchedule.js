@@ -22,6 +22,7 @@ import {
 import { BsChevronDown } from "react-icons/bs";
 
 const CreateSchedule = ({
+  timeSlots,
   setOpenCreateSchedule,
   openCreateSchedule,
   setUpdated,
@@ -66,9 +67,9 @@ const CreateSchedule = ({
   };
   const { setSending, SendingPopup } = useSendingPopup();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
-  useSubmitResult({
-    successAction: () => {
-      setOpenCreateSchedule(false);
+    useSubmitResult({
+      successAction: () => {
+        setOpenCreateSchedule(false);
         setUpdated(!updated);
       },
       failedAction: () => {},
@@ -87,7 +88,7 @@ const CreateSchedule = ({
     setSubmitFailPopUp,
     setSubmitSuccessPopUp,
     setDatePickerDisabled,
-    clearTimeslotInput
+    clearTimeslotInput,
   });
 
   const {
@@ -97,6 +98,7 @@ const CreateSchedule = ({
     confirmRemove,
     duplicatedTime,
   } = useAddOrRemoveTimeSlot({
+    timeSlots,
     newTimeSlots,
     idxToDelete,
     setNewTimeSlots,
@@ -125,7 +127,7 @@ const CreateSchedule = ({
             className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
             onClick={() => {
               document.querySelector("#create-schedule").reset();
-              clearTimeslotInput()
+              clearTimeslotInput();
               setOpenTimeSlotForm(false);
               setDatePickerDisabled(false);
               setNewTimeSlots([]);
@@ -252,8 +254,9 @@ const CreateSchedule = ({
               <button
                 type="button"
                 onClick={() => {
-                  clearTimeslotInput()
-                  setOpenTimeSlotForm(false)}}
+                  clearTimeslotInput();
+                  setOpenTimeSlotForm(false);
+                }}
                 className={`text-red-600 opacity-60 hover:text-red-500`}
               >
                 <BiXCircle className="border-slate-300" />
@@ -273,9 +276,9 @@ const CreateSchedule = ({
             <BiPlusCircle className="text-3xl" /> Add Time slot
           </button>
         </div>
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 flex w-full flex-col">
+        <div className="fixed bottom-24 left-1/2 flex w-full -translate-x-1/2 flex-col">
           <p
-            className={`text-center text-red-400 opacity-0 pointer-events-none
+            className={`pointer-events-none text-center text-red-400 opacity-0
                 ${
                   (!isDateAvailable || duplicatedTime) &&
                   openTimeSlotForm &&

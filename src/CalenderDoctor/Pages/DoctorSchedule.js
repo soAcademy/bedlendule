@@ -27,6 +27,7 @@ const DoctorSchedule = ({ setPage }) => {
   const [price, setPrice] = useState();
   const [idxToDelete, setIdxToDelete] = useState();
   const [schedules, setSchedules] = useState([]);
+  const [timeSlots, setTimeSlots] = useState([]);
   const [scheduleToEdit, setScheduleToEdit] = useState([]);
   const [newTimeSlots, setNewTimeSlots] = useState([]);
   const [openTimeSlotForm, setOpenTimeSlotForm] = useState(false);
@@ -55,6 +56,7 @@ const DoctorSchedule = ({ setPage }) => {
     confirmSubmit,
     setConfirmSubmit,
   } = useUpdateSchedule({
+    timeSlots,
     setPrice,
     idxToDelete,
     newTimeSlots,
@@ -90,10 +92,15 @@ const DoctorSchedule = ({ setPage }) => {
       .request(config)
       .then((response) => {
         console.log("data", response.data);
-        const _schedules = response.data.sort((a,b)=>new Date(a.timeslots.at(-1).startTime).getTime() - new Date(b.timeslots.at(-1).startTime).getTime())
-        console.log('_schedules', _schedules)
+        const _schedules = response.data.sort(
+          (a, b) =>
+            new Date(a.timeslots.at(-1).startTime).getTime() -
+            new Date(b.timeslots.at(-1).startTime).getTime()
+        );
+        console.log("_schedules", _schedules);
         setFetching(false);
         setSchedules(_schedules);
+        setTimeSlots(_schedules.map((e) => e.timeslots).flat());
       })
       .catch((error) => {
         console.log(error);
@@ -203,7 +210,6 @@ const DoctorSchedule = ({ setPage }) => {
                       </button>
                     </div>
                     {schedule.timeslots?.map((timeslot, idx) => {
-                      console.log("timeslot", timeslot);
                       return (
                         <div
                           key={idx}
@@ -441,6 +447,7 @@ const DoctorSchedule = ({ setPage }) => {
         ${!openCreateSchedule ? "pointer-events-none opacity-0 " : ""}`}
       ></div>
       <CreateSchedule
+        timeSlots={timeSlots}
         updated={updated}
         setUpdated={setUpdated}
         openCreateSchedule={openCreateSchedule}
