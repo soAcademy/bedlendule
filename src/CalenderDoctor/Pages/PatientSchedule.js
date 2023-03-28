@@ -11,8 +11,9 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import ConfirmPopup from "../Components/ConfirmPopup";
 import useSendingPopup from "../Hooks/useSendingPopup";
 import useSubmitResult from "../Hooks/useSubmitResult";
-import { MdClose } from "react-icons/md";
+import { MdClose, MdDone } from "react-icons/md";
 import { Rating } from "primereact/rating";
+import { AiOutlineStar } from "react-icons/ai";
 
 const UserSchedule = ({ setPage, page }) => {
   const [fetching, setFetching] = useState(false);
@@ -500,7 +501,7 @@ const UserSchedule = ({ setPage, page }) => {
         </div>
       </div>
       {openDoctorDetail && (
-        <div className="shader">
+        <div className="shader top-6">
           <div className="popup flex h-fit w-11/12 flex-col items-center">
             <MdClose
               className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
@@ -517,60 +518,107 @@ const UserSchedule = ({ setPage, page }) => {
                 </div>
               ) : (
                 doctorDetail && (
-                  <div className="flex w-full flex-col  ">
-                    <div className="w-full text-center text-2xl">
-                      {doctorDetail.firstName} &nbsp;{" "}
-                      {doctorDetail.lastName}
+                  <div className="flex w-full flex-col text-slate-600">
+                    <img
+                      src={doctorDetail.profilePictureUrl}
+                      className="h-[150px] rounded-lg object-contain"
+                      alt="doctor-profile"
+                    />
+                    <p className="text-center text-2xl">
+                      {doctorDetail.firstName} &nbsp; {doctorDetail.lastName}
+                    </p>
+                    <p className="mx-auto w-fit rounded-lg bg-red-50 p-1 px-2 text-sm text-red-400">
+                      {doctorDetail.licenseId}
+                    </p>
+                    <div className="flex justify-center space-x-4">
+                      <div className="my-2 flex items-center justify-center gap-3">
+                        <div className="rounded-lg border bg-indigo-100 p-2 text-2xl font-bold text-blue-600 ">
+                          <MdDone />
+                        </div>{" "}
+                        <div className="">
+                          <p className="text-start text-xl">
+                            {doctorDetail.schedules.reduce(
+                              (acc, e) =>
+                                acc +
+                                e.timeslots.filter(
+                                  (timeslot) =>
+                                    new Date(timeslot.finishTime) <
+                                      new Date() &&
+                                    timeslot.request?.status === "CHOSEN"
+                                ).length,
+                              0
+                            )}
+                          </p>
+                          <p className="text-sm text-slate-500">Cases Done</p>
+                        </div>
+                      </div>
+                      <div className="my-2 flex items-center justify-center gap-3">
+                        <div className="rounded-lg border bg-indigo-100 p-2 text-2xl font-bold text-blue-600 ">
+                          <AiOutlineStar />
+                        </div>{" "}
+                        <div className="">
+                          <p className="text-start text-xl">
+                            {doctorDetail.reviews.reduce(
+                              (acc, e) => acc + e.score,
+                              0
+                            ) / doctorDetail.reviews.length}
+                          </p>
+                          <p className="text-sm text-slate-500">Rate Given</p>
+                        </div>
+                      </div>
                     </div>
-
-                    <div className="mx-auto  pt-2">
-                      <Rating
-                        readOnly
-                        value={doctorDetail.reviewScore}
-                        cancel={false}
-                        className=""
-                      />
+                    <p className="mt-3 text-start text-xl text-slate-600">
+                      About
+                    </p>
+                    <div className="mx-auto h-40 w-full rounded-lg border-2 border-slate-400 p-2 text-start">
+                      {doctorDetail.background}
                     </div>
-
-                    <div className="mx-auto my-2">
+                    <p className="mt-4 text-start text-xl text-slate-600">
+                      Review
+                    </p>
+                    <div className="no-scrollbar h-80 overflow-scroll">
+                      {doctorDetail.reviews.map((e) => (
+                        <>
+                          <div
+                            className="my-2 flex flex-col rounded-lg border border-slate-200 p-4 px-4
+                      text-sm shadow-md"
+                          >
+                            <div className="no-scrollbar my-2 mx-auto max-h-24 w-full overflow-scroll text-start text-sm">
+                              {e.review}
+                            </div>
+                            <Rating
+                            onIcon={
                       <img
-                        src={doctorDetail.profilePictureUrl}
-                        className="h-[200px] rounded-lg"
-                        alt="doctor-profile"
+                        src="/rating-icon-active.png"
+                        onError={(e) =>
+                          (e.target.src =
+                            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                        }
+                        alt="custom-active"
+                        width="12px"
+                        height="12px"
                       />
-                    </div>
-                    <div className=" mx-auto my-5 w-[80%] rounded-lg border-2  border-slate-400 pt-2">
-                      <div className="text-center text-xl">Details</div>
-
-                      <ul className="p-[20px] text-slate-600">
-                        <li>
-                          Username:
-                          <span className="text-slate-500 underline underline-offset-2">
-                            {" "}
-                            Marry@
-                          </span>
-                        </li>
-                        <li>
-                          Email:
-                          <span className="text-slate-500 underline underline-offset-2">
-                            {doctorDetail.email}
-                          </span>
-                        </li>
-                        <li>
-                          License ID:
-                          <span className="text-slate-500 underline underline-offset-2">
-                            {" "}
-                            {doctorDetail.licenseId}
-                          </span>
-                        </li>
-                        <li>
-                          Contact :
-                          <span className="text-slate-500 underline underline-offset-2">
-                            {" "}
-                            {doctorDetail.phoneNumber}
-                          </span>
-                        </li>
-                      </ul>
+                    }
+                    offIcon={
+                      <img
+                        src="/rating-icon-inactive.png"
+                        onError={(e) =>
+                          (e.target.src =
+                            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                        }
+                        alt="custom-inactive"
+                        width="12px"
+                        height="12px"
+                      />
+                    }
+                              className="mb-2 self-end"
+                              value={e.score}
+                              readOnly
+                              cancel={false}
+                            />
+                          </div>
+                        </>
+                      ))}
                     </div>
                   </div>
                 )
