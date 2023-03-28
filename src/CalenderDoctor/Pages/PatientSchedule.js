@@ -11,11 +11,15 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import ConfirmPopup from "../Components/ConfirmPopup";
 import useSendingPopup from "../Hooks/useSendingPopup";
 import useSubmitResult from "../Hooks/useSubmitResult";
-import { MdClose } from "react-icons/md";
+import { MdClose, MdDone } from "react-icons/md";
 import { Rating } from "primereact/rating";
+import { AiOutlineStar } from "react-icons/ai";
 
 const UserSchedule = ({ setPage, page }) => {
   const [fetching, setFetching] = useState(false);
+  const [doctorUUID, setDoctorUUID] = useState();
+  const [doctorDetail, setDoctorDetail] = useState();
+  const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
   const [openRemoveRequest, setOpenRemoveRequest] = useState(false);
   const [openChooseDoctors, setOpenChooseDoctors] = useState(false);
   const [openCreateRequest, setOpenCreateRequest] = useState();
@@ -37,47 +41,48 @@ const UserSchedule = ({ setPage, page }) => {
     useSubmitResult({
       successAction: () => {
         setOpenRemoveRequest(false);
+        setOpenChooseDoctors(false);
         setUpdated(!updated);
       },
       failedAction: () => {
         setOpenRemoveRequest(false);
+        setOpenChooseDoctors(false);
         setUpdated(!updated);
       },
     });
 
   const chooseDoctor = () => {
-    setConfirmChoosing(false)
-    setSending(true)
+    setConfirmChoosing(false);
+    setSending(true);
     let data = JSON.stringify({
-      "requestId": requestToExecute.id,
-      "timeSlotId": timeSlotId
+      requestId: requestToExecute.id,
+      timeSlotId: timeSlotId,
     });
-    console.log('data', data)
+    console.log("data", data);
     let config = {
-      method: 'post',
+      method: "post",
       maxBodyLength: Infinity,
-      url: 'https://bedlendule-backend.vercel.app/bedlendule/chooseDoctor',
-      headers: { 
-        'Content-Type': 'application/json'
+      url: "https://bedlendule-backend.vercel.app/bedlendule/chooseDoctor",
+      headers: {
+        "Content-Type": "application/json",
       },
-      data : data
+      data: data,
     };
-    
-    axios.request(config)
-    .then((response) => {
-      setSending(false);
-      response.status === 200
-        ? setSubmitSuccessPopUp(true)
-        : setSubmitFailPopUp(true);
-        console.log('chooseDoctor Response', response.data)
-    })
-    .catch((error) => {
-      console.log(error);
+
+    axios
+      .request(config)
+      .then((response) => {
+        setSending(false);
+        response.status === 200
+          ? setSubmitSuccessPopUp(true)
+          : setSubmitFailPopUp(true);
+      })
+      .catch((error) => {
+        console.log(error);
         setSending(false);
         setSubmitFailPopUp(true);
-    });
-    
-  }
+      });
+  };
   const deleteRequest = () => {
     setOpenRemoveRequest(false);
     setSending(true);
@@ -138,6 +143,35 @@ const UserSchedule = ({ setPage, page }) => {
         setFetching(false);
       });
   }, [updated]);
+
+  useEffect(() => {
+    let data = JSON.stringify({
+      uuid: doctorUUID,
+    });
+
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+    setFetching(true);
+
+    axios
+      .request(config)
+      .then((response) => {
+        console.log("doctorDetail", response.data);
+        setFetching(false);
+        setDoctorDetail(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        setFetching(false);
+      });
+  }, [doctorUUID]);
   return (
     <>
       <div
@@ -208,7 +242,6 @@ const UserSchedule = ({ setPage, page }) => {
                     key={idx}
                     className={`mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9] p-2 text-slate-600 md:w-1/2
                     ${
-                      request.doctorTimeslot.length > 0 &&
                       request.status === "CHOSEN" &&
                       "border-[#beda9f] bg-[#f1fae4] text-slate-600"
                     }`}
@@ -252,9 +285,7 @@ const UserSchedule = ({ setPage, page }) => {
                       <button
                         onClick={() => {
                           setRequestToExecute(request);
-                          console.log(
-                            request
-                          );
+                          console.log(request);
                           setOpenChooseDoctors(true);
                         }}
                         className={`button float-right my-auto h-fit p-2 text-xs text-white
@@ -359,6 +390,7 @@ const UserSchedule = ({ setPage, page }) => {
       ${!openCreateRequest ? "pointer-events-none opacity-0" : ""}`}
       ></div>
       <CreateRequest
+        requests={requests}
         updated={updated}
         setUpdated={setUpdated}
         openCreateRequest={openCreateRequest}
@@ -372,7 +404,6 @@ const UserSchedule = ({ setPage, page }) => {
         setState={setOpenRemoveRequest}
       />
       {/* )} */}
-      
       <div
         className={`shader fixed left-0 z-50 flex w-full
   flex-col font-kanit shadow-xl duration-300
@@ -417,7 +448,13 @@ const UserSchedule = ({ setPage, page }) => {
           </div>
           {requestToExecute?.doctorTimeslot.map((e) => (
             <div className="flex items-center justify-between">
-              <div className="my-2 w-3/4 rounded-xl border border-[#cfe6eb] p-2 px-3 shadow-md">
+              <div
+                onClick={() => {
+                  setOpenDoctorDetail(true);
+                  setDoctorUUID(e.doctorUUID);
+                }}
+                className="my-2 min-h-[80px] w-3/4 cursor-pointer rounded-xl border border-[#cfe6eb] p-2 px-3 shadow-md"
+              >
                 <div className="flex justify-between">
                   <p className="text-lg text-[#3f6fb6]">
                     {e.firstName} {e.lastName}
@@ -467,6 +504,152 @@ const UserSchedule = ({ setPage, page }) => {
           ))}
         </div>
       </div>
+      {openDoctorDetail && (
+        <div className="shader top-6">
+          <div className="popup flex h-fit w-11/12 flex-col items-center">
+            <MdClose
+              className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
+              onClick={() => setOpenDoctorDetail(false)}
+            />
+            {
+              fetching ? (
+                <div className="flex w-full items-center justify-center">
+                  <ProgressSpinner
+                    style={{ width: "50px", height: "50px" }}
+                    strokeWidth="8"
+                    animationDuration="0.7s"
+                  />
+                </div>
+              ) : (
+                doctorDetail && (
+                  <div className="flex w-full flex-col text-slate-600">
+                    <img
+                      src={doctorDetail.profilePictureUrl}
+                      className="h-[150px] rounded-lg object-contain"
+                      alt="doctor-profile"
+                    />
+                    <p className="text-center text-2xl">
+                      {doctorDetail.firstName} &nbsp; {doctorDetail.lastName}
+                    </p>
+                    <p className="mx-auto w-fit rounded-lg bg-red-50 p-1 px-2 text-sm text-red-400">
+                      {doctorDetail.licenseId}
+                    </p>
+                    <div className="flex justify-center space-x-4">
+                      <div className="my-2 flex items-center justify-center gap-3">
+                        <div className="rounded-lg border bg-indigo-100 p-2 text-2xl font-bold text-blue-600 ">
+                          <MdDone />
+                        </div>{" "}
+                        <div className="">
+                          <p className="text-start text-xl">
+                            {doctorDetail.schedules.reduce(
+                              (acc, e) =>
+                                acc +
+                                e.timeslots.filter(
+                                  (timeslot) =>
+                                    new Date(timeslot.finishTime) <
+                                      new Date() &&
+                                    timeslot.request?.status === "CHOSEN"
+                                ).length,
+                              0
+                            )}
+                          </p>
+                          <p className="text-sm text-slate-500">Cases Done</p>
+                        </div>
+                      </div>
+                      <div className="my-2 flex items-center justify-center gap-3">
+                        <div className="rounded-lg border bg-indigo-100 p-2 text-2xl font-bold text-blue-600 ">
+                          <AiOutlineStar />
+                        </div>{" "}
+                        <div className="">
+                          <p className="text-start text-xl">
+                            {doctorDetail.reviews.reduce(
+                              (acc, e) => acc + e.score,
+                              0
+                            ) / doctorDetail.reviews.length}
+                          </p>
+                          <p className="text-sm text-slate-500">Rate Given</p>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="mt-3 text-start text-xl text-slate-600">
+                      About
+                    </p>
+                    <div className="mx-auto h-40 w-full rounded-lg border-2 border-slate-400 p-2 text-start">
+                      {doctorDetail.background}
+                    </div>
+                    <p className="mt-4 text-start text-xl text-slate-600">
+                      Review
+                    </p>
+                    <div className="no-scrollbar h-80 overflow-scroll">
+                      {doctorDetail.reviews.map((e) => (
+                        <>
+                          <div
+                            className="my-2 flex flex-col rounded-lg border border-slate-200 p-4 px-4
+                      text-sm shadow-md"
+                          >
+                            <div className="no-scrollbar my-2 mx-auto max-h-24 w-full overflow-scroll text-start text-sm">
+                              {e.review}
+                            </div>
+                            <Rating
+                            onIcon={
+                      <img
+                        src="/rating-icon-active.png"
+                        onError={(e) =>
+                          (e.target.src =
+                            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                        }
+                        alt="custom-active"
+                        width="12px"
+                        height="12px"
+                      />
+                    }
+                    offIcon={
+                      <img
+                        src="/rating-icon-inactive.png"
+                        onError={(e) =>
+                          (e.target.src =
+                            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                        }
+                        alt="custom-inactive"
+                        width="12px"
+                        height="12px"
+                      />
+                    }
+                              className="mb-2 self-end"
+                              value={e.score}
+                              readOnly
+                              cancel={false}
+                            />
+                          </div>
+                        </>
+                      ))}
+                    </div>
+                  </div>
+                )
+              )
+              // (
+              // <div className="shader">
+              //   <div className="popup flex h-fit w-11/12 flex-col items-center">
+              //     <MdClose
+              //       className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
+              //       onClick={() => setOpenDoctorDetail(false)}
+              //     />
+              //       <img
+              //         src={doctorDetail.profilePictureUrl}
+              //         alt="doctor-profile"
+              //         className="h-[100px] w-[75px] border-2 object-cover"
+              //       />
+              //       <p>
+              //         {doctorDetail.firstName} {doctorDetail.lastName}
+              //       </p>
+              //       <div></div>
+              //     </div>
+              //   </div>
+              // )
+            }
+          </div>
+        </div>
+      )}
       <ConfirmPopup
         title={"Confirm Choosing Therapist"}
         description={"Would you like to proceed with this therapist?"}
@@ -478,7 +661,6 @@ const UserSchedule = ({ setPage, page }) => {
       <SendingPopup />
       <ResultPopup />
     </>
-    
   );
 };
 

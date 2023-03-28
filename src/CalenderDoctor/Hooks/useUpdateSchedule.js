@@ -4,6 +4,7 @@ import useSendingPopup from "./useSendingPopup";
 import useSubmitResult from "./useSubmitResult";
 const useUpdateSchedule = ({
   idxToDelete,
+  timeSlots,
   newTimeSlots,
   setNewTimeSlots,
   setConfirmRemove,
@@ -25,7 +26,7 @@ const useUpdateSchedule = ({
     setIsEditOpen(false);
     setConfirmSubmit(false);
   };
-  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: closeEditPanel,
       failedAction: closeEditPanel,
@@ -55,18 +56,21 @@ const useUpdateSchedule = ({
     if (
       newTimeSlots.findIndex(
         (timeslot) =>
-          _startTime >= new Date(timeslot.startTime) &&
-          _startTime < new Date(timeslot.finishTime)
+          (_startTime >= new Date(timeslot.startTime) &&
+            _startTime < new Date(timeslot.finishTime)) ||
+          (_finishTime <= new Date(timeslot.finishTime) &&
+            _finishTime > new Date(timeslot.startTime)) ||
+          (_finishTime >= new Date(timeslot.finishTime) &&
+            _startTime <= new Date(timeslot.startTime))
       ) !== -1 ||
-      newTimeSlots.findIndex(
+      timeSlots.findIndex(
         (timeslot) =>
-          _finishTime <= new Date(timeslot.finishTime) &&
-          _finishTime > new Date(timeslot.startTime)
-      ) !== -1 ||
-      newTimeSlots.findIndex(
-        (timeslot) =>
-          _finishTime >= new Date(timeslot.finishTime) &&
-          _startTime <= new Date(timeslot.startTime)
+          (_startTime >= new Date(timeslot.startTime) &&
+            _startTime < new Date(timeslot.finishTime)) ||
+          (_finishTime <= new Date(timeslot.finishTime) &&
+            _finishTime > new Date(timeslot.startTime)) ||
+          (_finishTime >= new Date(timeslot.finishTime) &&
+            _startTime <= new Date(timeslot.startTime))
       ) !== -1
     ) {
       setDuplicatedTime(true);
@@ -110,9 +114,10 @@ const useUpdateSchedule = ({
         setRemovingTimeSlotIds([]);
         setUpdated(!updated);
         setSending(false);
-        setSubmitSuccessPopup(true);
+        setSubmitSuccessPopUp(true);
       })
       .catch((error) => {
+        console.log("error", error);
         setSending(false);
         setSubmitFailPopUp(true);
       });

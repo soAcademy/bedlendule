@@ -15,7 +15,7 @@ const useDoctorCalendarProps = () => {
       .then(function async(response) {
         setOpenRequests(
           response.data.map((e) =>
-            new Date(e.startTime).toLocaleDateString("en", { timeZone: "UTC" })
+            new Date(e.startTime).toLocaleDateString()
           )
         );
       })

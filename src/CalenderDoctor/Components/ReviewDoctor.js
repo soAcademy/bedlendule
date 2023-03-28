@@ -12,7 +12,7 @@ const ReviewDoctor = ({
   requestId,
   setUpdated,
   updated,
-  timeSlotId
+  timeSlotId,
 }) => {
   const [score, setScore] = useState(0);
   const [review, setReview] = useState();
@@ -35,17 +35,17 @@ const ReviewDoctor = ({
   const handleSubmit = (event) => {
     event.preventDefault();
     setConfirmReview(true);
-    const _data = { review: review, score: score, requestId: requestId };
+    const _data = { review, score, requestId, timeSlotId };
     console.log("formData", _data);
   };
   const submitReview = () => {
     setSending(true);
-    setConfirmReview(false)
+    setConfirmReview(false);
     let data = JSON.stringify({
       requestId: requestId,
       score: score,
       review: review,
-      timeSlotId: timeSlotId
+      timeSlotId: timeSlotId,
     });
 
     let config = {
@@ -95,6 +95,30 @@ const ReviewDoctor = ({
         <div className="">
           <div className="flex text-center md:px-[200px]">
             <Rating
+            onIcon={
+              <img
+                src="/rating-icon-active.png"
+                onError={(e) =>
+                  (e.target.src =
+                    "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                }
+                alt="custom-active"
+                width="12px"
+                height="12px"
+              />
+            }
+            offIcon={
+              <img
+                src="/rating-icon-inactive.png"
+                onError={(e) =>
+                  (e.target.src =
+                    "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                }
+                alt="custom-inactive"
+                width="12px"
+                height="12px"
+              />
+            }
               id="rating"
               className="mx-auto"
               value={score}

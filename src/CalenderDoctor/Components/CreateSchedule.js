@@ -17,15 +17,18 @@ import useDateTimepicker from "../Hooks/useDateTimePicker";
 import CreateScheduleForm from "./CreateScheduleForm";
 import {
   useAddOrRemoveTimeSlot,
-  useSubmitSchedule,
+  useCreateSchedule,
 } from "../Hooks/useCreateSchedule";
+import { BsChevronDown } from "react-icons/bs";
 
 const CreateSchedule = ({
+  timeSlots,
   setOpenCreateSchedule,
   openCreateSchedule,
   setUpdated,
   updated,
 }) => {
+  const [datePickerDisabled, setDatePickerDisabled] = useState(false);
   const [price, setPrice] = useState();
   const [popupState, setPopupState] = useState(false);
   const [openTimeSlotForm, setOpenTimeSlotForm] = useState(false);
@@ -44,8 +47,26 @@ const CreateSchedule = ({
     handleStartTimeChange,
     handleFinishTimeChange,
   } = useDateTimepicker();
+  const clearTimeslotInput = () => {
+    setDate(new Date());
+    setStartTime(
+      new Date(
+        new Date(new Date().toLocaleDateString()).getTime() +
+          1800000 * Math.ceil(new Date().getMinutes() / 30) +
+          3600000 * (new Date().getHours() + 1)
+      )
+    );
+    setFinishTime(
+      new Date(
+        new Date(new Date().toLocaleDateString()).getTime() +
+          1800000 * (1 + Math.ceil(new Date().getMinutes() / 30)) +
+          3600000 * (new Date().getHours() + 1)
+      )
+    );
+    setPrice();
+  };
   const { setSending, SendingPopup } = useSendingPopup();
-  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: () => {
         setOpenCreateSchedule(false);
@@ -53,7 +74,7 @@ const CreateSchedule = ({
       },
       failedAction: () => {},
     });
-  const { handleSubmit, submitForm } = useSubmitSchedule({
+  const { handleSubmit, submitForm } = useCreateSchedule({
     newTimeSlots,
     setPopupState,
     formData,
@@ -65,17 +86,19 @@ const CreateSchedule = ({
     setDate,
     setNewTimeSlots,
     setSubmitFailPopUp,
-    setSubmitSuccessPopup,
+    setSubmitSuccessPopUp,
+    setDatePickerDisabled,
+    clearTimeslotInput,
   });
 
   const {
     addTimeSlot,
     removeTimeslot,
-    datePickerDisabled,
     setConfirmRemove,
     confirmRemove,
     duplicatedTime,
   } = useAddOrRemoveTimeSlot({
+    timeSlots,
     newTimeSlots,
     idxToDelete,
     setNewTimeSlots,
@@ -85,6 +108,7 @@ const CreateSchedule = ({
     price,
     setPrice,
     setOpenTimeSlotForm,
+    setDatePickerDisabled,
   });
 
   return (
@@ -99,6 +123,17 @@ const CreateSchedule = ({
         }`}
       >
         <div className="">
+          <BsChevronDown
+            className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
+            onClick={() => {
+              document.querySelector("#create-schedule").reset();
+              clearTimeslotInput();
+              setOpenTimeSlotForm(false);
+              setDatePickerDisabled(false);
+              setNewTimeSlots([]);
+              setOpenCreateSchedule(false);
+            }}
+          />
           <CreateScheduleForm
             handleSubmit={handleSubmit}
             setFormData={setFormData}
@@ -186,7 +221,10 @@ const CreateSchedule = ({
                 id="price"
                 type="number"
                 placeholder="Price"
-                onChange={(e) => setPrice(e.target.value)}
+                value={price ?? ""}
+                onChange={(e) => {
+                  setPrice(e.target.value);
+                }}
                 className="mx-auto h-11 w-1/3 items-center rounded-md border-2 border-double text-center drop-shadow"
               ></input>
             </div>
@@ -204,7 +242,7 @@ const CreateSchedule = ({
               <button
                 type="button"
                 disabled={
-                  isDateAvailable && startTime && finishTime && price
+                  isDateAvailable && startTime && finishTime && price && date
                     ? false
                     : true
                 }
@@ -215,7 +253,10 @@ const CreateSchedule = ({
               </button>
               <button
                 type="button"
-                onClick={() => setOpenTimeSlotForm(false)}
+                onClick={() => {
+                  clearTimeslotInput();
+                  setOpenTimeSlotForm(false);
+                }}
                 className={`text-red-600 opacity-60 hover:text-red-500`}
               >
                 <BiXCircle className="border-slate-300" />
@@ -235,24 +276,18 @@ const CreateSchedule = ({
             <BiPlusCircle className="text-3xl" /> Add Time slot
           </button>
         </div>
-        <div className="fixed bottom-7 left-1/2 -translate-x-1/2 flex flex-col w-full">
+        <div className="fixed bottom-24 left-1/2 flex w-full -translate-x-1/2 flex-col">
           <p
-            className={`text-center text-red-400 opacity-0 
+            className={`pointer-events-none text-center text-red-400 opacity-0
                 ${
-                  (!isDateAvailable || duplicatedTime) && openTimeSlotForm &&
+                  (!isDateAvailable || duplicatedTime) &&
+                  openTimeSlotForm &&
                   "animate-pulse opacity-100"
                 } 
                 `}
           >
             The selected time is not available
           </p>
-          <button
-            disabled={newTimeSlots.length > 0 ? false : true}
-            className={`button mx-auto p-4 disabled:bg-slate-300`}
-            type="submit"
-          >
-            CREATE SCHEDULE
-          </button>
         </div>
         <ConfirmPopup
           title={"CREATE SCHEDULE"}

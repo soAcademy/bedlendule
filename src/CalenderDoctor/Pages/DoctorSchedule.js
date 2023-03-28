@@ -27,6 +27,7 @@ const DoctorSchedule = ({ setPage }) => {
   const [price, setPrice] = useState();
   const [idxToDelete, setIdxToDelete] = useState();
   const [schedules, setSchedules] = useState([]);
+  const [timeSlots, setTimeSlots] = useState([]);
   const [scheduleToEdit, setScheduleToEdit] = useState([]);
   const [newTimeSlots, setNewTimeSlots] = useState([]);
   const [openTimeSlotForm, setOpenTimeSlotForm] = useState(false);
@@ -55,6 +56,7 @@ const DoctorSchedule = ({ setPage }) => {
     confirmSubmit,
     setConfirmSubmit,
   } = useUpdateSchedule({
+    timeSlots,
     setPrice,
     idxToDelete,
     newTimeSlots,
@@ -90,8 +92,15 @@ const DoctorSchedule = ({ setPage }) => {
       .request(config)
       .then((response) => {
         console.log("data", response.data);
+        const _schedules = response.data.sort(
+          (a, b) =>
+            new Date(a.timeslots.at(-1).startTime).getTime() -
+            new Date(b.timeslots.at(-1).startTime).getTime()
+        );
+        console.log("_schedules", _schedules);
         setFetching(false);
-        setSchedules(response.data);
+        setSchedules(_schedules);
+        setTimeSlots(_schedules.map((e) => e.timeslots).flat());
       })
       .catch((error) => {
         console.log(error);
@@ -130,7 +139,7 @@ const DoctorSchedule = ({ setPage }) => {
                   <p>REQUEST</p>
                 </div>
                 <div className="mx-2 flex items-center gap-2 rounded-md px-4 py-1 shadow-md">
-                  <div className="h-4 w-4 rounded-full bg-[#E1A5BB]"></div>
+                  <div className="h-4 w-4 rounded-full bg-slate-300"></div>
                   <p>NO REQUEST</p>
                 </div>
               </div>
@@ -194,7 +203,8 @@ const DoctorSchedule = ({ setPage }) => {
                           setNewTimeSlots(schedule.timeslots);
                           setIsEditOpen(true);
                         }}
-                        className="float-right text-2xl text-slate-500 hover:text-slate-400"
+                        className={`float-right text-2xl text-slate-500 hover:text-slate-400
+                        ${schedule.title === "Patient Request" && "hidden"}`}
                       >
                         <BiEditAlt />
                       </button>
@@ -203,12 +213,17 @@ const DoctorSchedule = ({ setPage }) => {
                       return (
                         <div
                           key={idx}
-                          className={`flex items-center justify-between rounded-lg border-2 bg-slate-100 p-2 text-slate-400 ${
-                            timeslot.request &&
-                            "border-[#beda9f] bg-[#f1fae4] text-slate-600"
+                          className={`flex items-center justify-between rounded-lg border-2 bg-slate-100 p-2 text-slate-400 
+                          ${
+                            timeslot.request?.status === "CHOSEN" &&
+                            "border-[#beda9f] bg-[#e0f2e6] text-slate-600"
+                          } 
+                          ${
+                            timeslot.request?.status === "ACCEPTED" &&
+                            "border-sky-400 bg-sky-100"
                           }`}
                         >
-                          <div>
+                          <div className="w-3/4">
                             <p>
                               {timeslot.request
                                 ? timeslot.request?.patient.firstName +
@@ -230,7 +245,9 @@ const DoctorSchedule = ({ setPage }) => {
                                 .slice(0, 5)}
                             </p>
                           </div>
-                          <div>฿ {timeslot.price}</div>
+                          <div className="w-1/5 text-end">
+                            ฿ {timeslot.price}
+                          </div>
                         </div>
                       );
                     })}
@@ -430,6 +447,7 @@ const DoctorSchedule = ({ setPage }) => {
         ${!openCreateSchedule ? "pointer-events-none opacity-0 " : ""}`}
       ></div>
       <CreateSchedule
+        timeSlots={timeSlots}
         updated={updated}
         setUpdated={setUpdated}
         openCreateSchedule={openCreateSchedule}

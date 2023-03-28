@@ -120,6 +120,30 @@ const SelectDoctor = ({
               </div>
               <div className="w-[20%] ">
                 <Rating
+                onIcon={
+                  <img
+                    src="/rating-icon-active.png"
+                    onError={(e) =>
+                      (e.target.src =
+                        "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                    }
+                    alt="custom-active"
+                    width="12px"
+                    height="12px"
+                  />
+                }
+                offIcon={
+                  <img
+                    src="/rating-icon-inactive.png"
+                    onError={(e) =>
+                      (e.target.src =
+                        "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                    }
+                    alt="custom-inactive"
+                    width="12px"
+                    height="12px"
+                  />
+                }
                   value={
                     doctor.doctorUUID.reviews.reduce(
                       (acc, r) => acc + r.score,

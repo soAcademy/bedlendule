@@ -1,5 +1,5 @@
 import { BsChevronDown } from "react-icons/bs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useCreateRequest from "../Hooks/useCreateRequest";
 import useSubmitResult from "../Hooks/useSubmitResult";
 import useSendingPopup from "../Hooks/useSendingPopup";
@@ -12,6 +12,7 @@ import {
 } from "./DateTimePicker";
 
 const CreateRequest = ({
+  requests,
   setOpenCreateRequest,
   openCreateRequest,
   setUpdated,
@@ -19,7 +20,9 @@ const CreateRequest = ({
 }) => {
   const {
     date,
+    setDate,
     isDateAvailable,
+    setIsDateAvailable,
     startTime,
     setStartTime,
     finishTime,
@@ -45,6 +48,7 @@ const CreateRequest = ({
     popupState,
     setPopupState,
     setSending,
+    setDate,
     setStartTime,
     setFinishTime,
     setSubmitFailPopUp,
@@ -60,6 +64,34 @@ const CreateRequest = ({
     "DEMENTIA",
     "PHOBIAS",
   ];
+  useEffect(() => {
+    const _date = date?.toLocaleDateString()
+    const _startTime = new Date(
+      _date +
+        " " +
+        startTime?.toLocaleTimeString("en-GB").split(" ")[0].slice(0, 5)
+    );
+    console.log('_startTime', _startTime)
+    const _finishTime = new Date(
+      _date +
+        " " +
+        finishTime?.toLocaleTimeString("en-GB").split(" ")[0].slice(0, 5)
+    );
+    console.log('_finishTime', _finishTime)
+    if (
+      requests.findIndex(
+        (request) =>
+          (_startTime >= new Date(request.startTime) &&
+            _startTime < new Date(request.finishTime)) ||
+          (_finishTime <= new Date(request.finishTime) &&
+            _finishTime > new Date(request.startTime)) ||
+          (_finishTime >= new Date(request.finishTime) &&
+            _startTime <= new Date(request.startTime))
+      ) !== -1 
+    ) {
+      setIsDateAvailable(false);
+    }
+  }, [requests, startTime, finishTime, date]);
 
   return (
     <div
@@ -68,7 +100,7 @@ const CreateRequest = ({
     ${openCreateRequest ? "" : "pointer-events-none opacity-0"}`}
     >
       <div
-        className={`fixed top-24 left-0 w-full h-screen bg-white p-6 duration-200 ${
+        className={`fixed top-24 left-0 h-screen w-full bg-white p-6 duration-200 ${
           openCreateRequest ? "" : "translate-y-full"
         }`}
       >
@@ -174,7 +206,7 @@ const CreateRequest = ({
           >
             The selected time is not available
           </p>
-          <div className="fixed bottom-7 left-1/2 -translate-x-1/2 flex ">
+          <div className="fixed bottom-7 left-1/2 flex -translate-x-1/2 ">
             <button
               disabled={isDateAvailable ? false : true}
               className={`button mx-auto p-4 disabled:bg-slate-300`}

@@ -12,7 +12,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [appointmentPopup, setAppointmentPopup] = useState(false);
   const [doctorDetail, setDoctorDetail] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState();
   const [currentTime, setCurrentTime] = useState();
   const [doctorName, setDoctorName] = useState([]);
   const [schedules, setSchedules] = useState([]);
@@ -39,6 +39,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
       },
       data: _data,
     };
+    setLoading(true);
 
     axios(config).then((response) => {
       setLoading(false);
