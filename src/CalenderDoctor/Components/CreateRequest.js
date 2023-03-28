@@ -20,6 +20,7 @@ const CreateRequest = ({
 }) => {
   const {
     date,
+    setDate,
     isDateAvailable,
     setIsDateAvailable,
     startTime,
@@ -47,6 +48,7 @@ const CreateRequest = ({
     popupState,
     setPopupState,
     setSending,
+    setDate,
     setStartTime,
     setFinishTime,
     setSubmitFailPopUp,
@@ -63,17 +65,17 @@ const CreateRequest = ({
     "PHOBIAS",
   ];
   useEffect(() => {
-    const _date = date.toLocaleDateString()
+    const _date = date?.toLocaleDateString()
     const _startTime = new Date(
       _date +
         " " +
-        startTime.toLocaleTimeString("en-GB").split(" ")[0].slice(0, 5)
+        startTime?.toLocaleTimeString("en-GB").split(" ")[0].slice(0, 5)
     );
     console.log('_startTime', _startTime)
     const _finishTime = new Date(
       _date +
         " " +
-        finishTime.toLocaleTimeString("en-GB").split(" ")[0].slice(0, 5)
+        finishTime?.toLocaleTimeString("en-GB").split(" ")[0].slice(0, 5)
     );
     console.log('_finishTime', _finishTime)
     if (

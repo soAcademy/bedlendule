@@ -12,15 +12,15 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [appointmentPopup, setAppointmentPopup] = useState(false);
   const [doctorDetail, setDoctorDetail] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState();
   const [currentTime, setCurrentTime] = useState();
-  const [doctorName,setDoctorName] = useState([]);
+  const [doctorName, setDoctorName] = useState([]);
 
   console.log("currentTime", currentTime);
-  console.log("selectedDoctor",selectedDoctor.doctorUUID)
-  console.log("doctorName",doctorName)
-  console.log("appointmentPopup selectDoctor",appointmentPopup)
- 
+  console.log("selectedDoctor", selectedDoctor.doctorUUID);
+  console.log("doctorName", doctorName);
+  console.log("appointmentPopup selectDoctor", appointmentPopup);
+
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
@@ -63,7 +63,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
     return setCurrentTime(_doctorTimeslots);
   };
 
-
   useEffect(() => {
     const _data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
@@ -78,26 +77,35 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
       },
       data: _data,
     };
+    setLoading(true);
 
     axios(config).then((response) => {
       setLoading(false);
       // console.log("response.data>>", response.data);
       setDoctorDetail(response.data);
       currentTime2(response.data);
-      setDoctorName(selectedDoctor.doctorUUID)
+      setDoctorName(selectedDoctor.doctorUUID);
     });
   }, [selectedDoctor]);
 
   return (
     <>
-      
+      <button
+          className="fixed right-5 top-6 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
+          onClick={() => setPage("doctorLists")}
+        >
+          <IoIosReturnLeft />
+        </button>
+      {loading ? (
+        <div className="fixed top-1/2 flex w-full items-center justify-center">
+          <ProgressSpinner
+            style={{ width: "50px", height: "50px" }}
+            strokeWidth="8"
+            animationDuration="0.7s"
+          />
+        </div>
+      ) : (
         <div className="fixed top-10 flex w-full flex-col  ">
-          <button
-            className="fixed right-5 top-7 rounded-lg text-2xl font-light text-slate-400 hover:bg-slate-50 hover:text-slate-300"
-            onClick={() => setPage("doctorLists")}
-          >
-            <IoIosReturnLeft className="shadow-lg rounded-lg w-[40px]"/>
-          </button>
           <div className="w-full text-center text-2xl">
             {selectedDoctor.doctorUUID?.firstName} &nbsp;{" "}
             {selectedDoctor.doctorUUID?.lastName}
@@ -112,19 +120,11 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
             />
           </div>
 
-          <div className="mx-auto my-2  ">
-            {loading && (
-              <div className="absolute top-[150px] right-[340px] ">
-                <ProgressSpinner
-                  style={{ width: "50px", height: "50px" }}
-                  strokeWidth="8"
-                />
-              </div>
-            )}
+          <div className="mx-auto my-2">
             <img
               src={doctorDetail?.profilePictureUrl}
               className="h-[200px] rounded-lg"
-              alt="doctorURL"
+              alt="doctor-profile"
             />
           </div>
           <div className=" mx-auto my-5 w-[80%] rounded-lg border-2  border-slate-400 pt-2">
@@ -166,13 +166,12 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
                 <ul
                   className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
                   onClick={() => {
-                    setChooseTimeSlot(r)
-                    ;setAppointmentPopup(!appointmentPopup)
-                   ;
+                    setChooseTimeSlot(r);
+                    setAppointmentPopup(!appointmentPopup);
                   }}
                 >
                   <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
-                    <div className="absolute top-[-10px] w-[50px] bg-white px-1 text-slate-400 rounded-lg">
+                    <div className="absolute top-[-10px] w-[50px] rounded-lg bg-white px-1 text-slate-400">
                       From
                     </div>
                     <div className="mx-auto flex">
@@ -185,7 +184,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
                     </div>
                   </li>
                   <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                    <div className="absolute top-[-10px] bg-white px-1 text-slate-400 rounded-lg">
+                    <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
                       To
                     </div>
                     <div className="mx-auto flex">
@@ -198,7 +197,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
                     </div>
                   </li>
                   <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                    <div className="absolute top-[-10px] bg-white px-1 text-slate-400 rounded-lg">
+                    <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
                       Rate
                     </div>
                     <div className=" mx-auto flex">
@@ -215,8 +214,9 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
             )}
           </div>
         </div>
-      
-      {appointmentPopup&& (
+      )}
+
+      {appointmentPopup && (
         <Appointment
           chooseTimeSlot={chooseTimeSlot}
           doctorName={doctorName}

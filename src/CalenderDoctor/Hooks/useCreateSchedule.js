@@ -15,12 +15,16 @@ export const useCreateSchedule = ({
   setSubmitFailPopUp,
   setSubmitSuccessPopUp,
   setDatePickerDisabled,
-  clearTimeslotInput
+  clearTimeslotInput,
 }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const doctorUUID = "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b";
     const form = event.target;
+    console.log(
+      "newTimeSlots",
+      newTimeSlots.map((e) => ({}))
+    );
     const data = {
       uuid: doctorUUID,
       title: form["title"].value,
@@ -49,16 +53,16 @@ export const useCreateSchedule = ({
       .request(config)
       .then((response) => {
         document.querySelector("#create-schedule").reset();
-        clearTimeslotInput()
+        clearTimeslotInput();
         setNewTimeSlots([]);
-        setDatePickerDisabled(false)
+        setDatePickerDisabled(false);
         setSending(false);
         response.status === 200
           ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
       })
       .catch((error) => {
-        console.log('error', error)
+        console.log("error", error);
         setSending(false);
         setSubmitFailPopUp(true);
       });
@@ -68,6 +72,7 @@ export const useCreateSchedule = ({
 };
 
 export const useAddOrRemoveTimeSlot = ({
+  timeSlots,
   newTimeSlots,
   idxToDelete,
   setNewTimeSlots,
@@ -77,7 +82,7 @@ export const useAddOrRemoveTimeSlot = ({
   price,
   setPrice,
   setOpenTimeSlotForm,
-  setDatePickerDisabled
+  setDatePickerDisabled,
 }) => {
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [duplicatedTime, setDuplicatedTime] = useState(false);
@@ -102,25 +107,29 @@ export const useAddOrRemoveTimeSlot = ({
       finishTime: _finishTime.toISOString(),
       price: Number(price),
     };
+    console.log("timeSlots", timeSlots);
     if (
       newTimeSlots.findIndex(
         (timeslot) =>
-          _startTime >= new Date(timeslot.startTime) &&
-          _startTime < new Date(timeslot.finishTime)
+          (_startTime >= new Date(timeslot.startTime) &&
+            _startTime < new Date(timeslot.finishTime)) ||
+          (_finishTime <= new Date(timeslot.finishTime) &&
+            _finishTime > new Date(timeslot.startTime)) ||
+          (_finishTime >= new Date(timeslot.finishTime) &&
+            _startTime <= new Date(timeslot.startTime))
       ) !== -1 ||
-      newTimeSlots.findIndex(
+      timeSlots.findIndex(
         (timeslot) =>
-          _finishTime <= new Date(timeslot.finishTime) &&
-          _finishTime > new Date(timeslot.startTime)
-      ) !== -1 ||
-      newTimeSlots.findIndex(
-        (timeslot) =>
-          _finishTime >= new Date(timeslot.finishTime) &&
-          _startTime <= new Date(timeslot.startTime)
+          (_startTime >= new Date(timeslot.startTime) &&
+            _startTime < new Date(timeslot.finishTime)) ||
+          (_finishTime <= new Date(timeslot.finishTime) &&
+            _finishTime > new Date(timeslot.startTime)) ||
+          (_finishTime >= new Date(timeslot.finishTime) &&
+            _startTime <= new Date(timeslot.startTime))
       ) !== -1
     ) {
       setDuplicatedTime(true);
-      setTimeout(() => setDuplicatedTime(false), 5000);
+      setTimeout(() => setDuplicatedTime(false), 3000);
     } else {
       console.log("newTimeSlots[0].startTime", newTimeSlots[0]);
       const _timeslots = [
@@ -129,8 +138,8 @@ export const useAddOrRemoveTimeSlot = ({
           [newAddingTimeSlot["startTime"], newAddingTimeSlot],
         ]).values(),
       ];
-      console.log(price)
-      setPrice()
+      console.log(price);
+      setPrice();
       setNewTimeSlots(_timeslots);
       setOpenTimeSlotForm(false);
       setDatePickerDisabled(true);
