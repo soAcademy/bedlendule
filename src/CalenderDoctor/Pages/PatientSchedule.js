@@ -28,7 +28,6 @@ const UserSchedule = ({ setPage, page }) => {
   const [insidePage, setInsidePage] = useState("patientSchedule");
   const { date, setDate, dateTemplate, disabledDates } =
     usePatientCalendarProps();
-    console.log('disabledDates', disabledDates)
   const { sending, setSending, SendingPopup } = useSendingPopup();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
@@ -68,7 +67,6 @@ const UserSchedule = ({ setPage, page }) => {
       response.status === 200
         ? setSubmitSuccessPopUp(true)
         : setSubmitFailPopUp(true);
-        console.log('chooseDoctor Response', response.data)
     })
     .catch((error) => {
       console.log(error);
@@ -207,7 +205,6 @@ const UserSchedule = ({ setPage, page }) => {
                     key={idx}
                     className={`mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9] p-2 text-slate-600 md:w-1/2
                     ${
-                      request.doctorTimeslot.length > 0 &&
                       request.status === "CHOSEN" &&
                       "border-[#beda9f] bg-[#f1fae4] text-slate-600"
                     }`}

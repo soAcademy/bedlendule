@@ -90,8 +90,10 @@ const DoctorSchedule = ({ setPage }) => {
       .request(config)
       .then((response) => {
         console.log("data", response.data);
+        const _schedules = response.data.sort((a,b)=>new Date(a.timeslots.at(-1).startTime).getTime() - new Date(b.timeslots.at(-1).startTime).getTime())
+        console.log('_schedules', _schedules)
         setFetching(false);
-        setSchedules(response.data);
+        setSchedules(_schedules);
       })
       .catch((error) => {
         console.log(error);
@@ -201,12 +203,18 @@ const DoctorSchedule = ({ setPage }) => {
                       </button>
                     </div>
                     {schedule.timeslots?.map((timeslot, idx) => {
+                      console.log("timeslot", timeslot);
                       return (
                         <div
                           key={idx}
-                          className={`flex items-center justify-between rounded-lg border-2 bg-slate-100 p-2 text-slate-400 ${
-                            timeslot.request &&
-                            "border-[#beda9f] bg-[#f1fae4] text-slate-600"
+                          className={`flex items-center justify-between rounded-lg border-2 bg-slate-100 p-2 text-slate-400 
+                          ${
+                            timeslot.request?.status === "CHOSEN" &&
+                            "border-[#beda9f] bg-[#e0f2e6] text-slate-600"
+                          } 
+                          ${
+                            timeslot.request?.status === "ACCEPTED" &&
+                            "border-sky-400 bg-sky-100"
                           }`}
                         >
                           <div className="w-3/4">
@@ -231,7 +239,9 @@ const DoctorSchedule = ({ setPage }) => {
                                 .slice(0, 5)}
                             </p>
                           </div>
-                          <div className="w-1/5 text-end">฿ {timeslot.price}</div>
+                          <div className="w-1/5 text-end">
+                            ฿ {timeslot.price}
+                          </div>
                         </div>
                       );
                     })}
