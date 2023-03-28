@@ -115,7 +115,7 @@ const DoctorSchedule = ({ setPage }) => {
               value={date}
               disabledDates={disabledDates.map((e) => new Date(e))}
               onChange={(e) => {
-                setDate(e.value.toLocaleDateString());
+                setDate(e.value.toISOString());
                 setInsidePage("selectRequest");
               }}
               minDate={new Date()}
