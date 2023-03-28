@@ -1,20 +1,14 @@
 import { BsChevronDown } from "react-icons/bs";
 
 const CreateScheduleForm = ({
-  setOpenCreateSchedule,
   newTimeSlots,
   handleSubmit
 }) => {
   return (
     <form className="" id="create-schedule" onSubmit={handleSubmit}>
-      <BsChevronDown
-        className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
-        onClick={() => setOpenCreateSchedule(false)}
-      />
       <p className="pt-4 text-center text-3xl font-bold text-slate-500">
         CREATE SCHEDULE
       </p>
-
       <div className="my-2 w-full items-center gap-2">
         Title:
         <input

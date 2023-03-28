@@ -87,7 +87,7 @@ const SelectDoctor = ({
             value={date}
             disabledDates={disabledDates.map((e) => new Date(e))}
             onChange={(e) => {
-              setDate(e.value.toISOString());
+              setDate(e.value.toLocaleDateString());
             }}
             minDate={new Date()}
             locale="en"

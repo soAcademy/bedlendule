@@ -14,12 +14,13 @@ export const useCreateSchedule = ({
   setNewTimeSlots,
   setSubmitFailPopUp,
   setSubmitSuccessPopUp,
+  setDatePickerDisabled,
+  clearTimeslotInput
 }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const doctorUUID = "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b";
     const form = event.target;
-    console.log('form', form["description"])
     const data = {
       uuid: doctorUUID,
       title: form["title"].value,
@@ -48,23 +49,9 @@ export const useCreateSchedule = ({
       .request(config)
       .then((response) => {
         document.querySelector("#create-schedule").reset();
-        setStartTime(
-          new Date(
-            new Date(new Date().toLocaleDateString()).getTime() +
-              1800000 * Math.ceil(new Date().getMinutes() / 30) +
-              3600000 * (new Date().getHours() + 1)
-          )
-        );
-        setFinishTime(
-          new Date(
-            new Date(new Date().toLocaleDateString()).getTime() +
-              1800000 * (1 + Math.ceil(new Date().getMinutes() / 30)) +
-              3600000 * (new Date().getHours() + 1)
-          )
-        );
-        setPrice();
-        setDate();
+        clearTimeslotInput()
         setNewTimeSlots([]);
+        setDatePickerDisabled(false)
         setSending(false);
         response.status === 200
           ? setSubmitSuccessPopUp(true)
@@ -90,9 +77,9 @@ export const useAddOrRemoveTimeSlot = ({
   price,
   setPrice,
   setOpenTimeSlotForm,
+  setDatePickerDisabled
 }) => {
   const [confirmRemove, setConfirmRemove] = useState(false);
-  const [datePickerDisabled, setDatePickerDisabled] = useState(false);
   const [duplicatedTime, setDuplicatedTime] = useState(false);
   const removeTimeslot = () => {
     const _newTimeSlots = newTimeSlots.filter((e, idx) => idx !== idxToDelete);
@@ -142,17 +129,16 @@ export const useAddOrRemoveTimeSlot = ({
           [newAddingTimeSlot["startTime"], newAddingTimeSlot],
         ]).values(),
       ];
-      console.log("_timeslots", _timeslots);
+      console.log(price)
+      setPrice()
       setNewTimeSlots(_timeslots);
       setOpenTimeSlotForm(false);
       setDatePickerDisabled(true);
-      setPrice();
     }
   };
   return {
     addTimeSlot,
     removeTimeslot,
-    datePickerDisabled,
     setConfirmRemove,
     confirmRemove,
     duplicatedTime,
