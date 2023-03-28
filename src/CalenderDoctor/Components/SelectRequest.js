@@ -130,7 +130,8 @@ const SelectRequest = ({
             value={date}
             disabledDates={disabledDates.map((e) => new Date(e))}
             onChange={(e) => {
-              setDate(e.value.toLocaleDateString());
+              console.log('e.value', e.value)
+              setDate(e.value.toISOString());
             }}
             minDate={new Date()}
             locale="en"
@@ -157,10 +158,10 @@ const SelectRequest = ({
             </div>
             <div className="text-[#4C4E64]">
               <p className="my-2 text-xl font-bold">{request.title}</p>
-              <p>Available : {request.startTime.split("T")[0]}</p>
+              <p>Available : {new Date(request.startTime).toLocaleDateString()}</p>
               <p>
-                From: {request.startTime.split("T")[1].slice(0, 5)} -{" "}
-                {request.finishTime.split("T")[1].slice(0, 5)}
+                From: {new Date(request.startTime).toLocaleString("TH").split(" ")[1].slice(0,5)} -{" "}
+                {new Date(request.finishTime).toLocaleString("TH").split(" ")[1].slice(0,5)}
               </p>
               <p>
                 Location : {request.meetingType} ({request.location})

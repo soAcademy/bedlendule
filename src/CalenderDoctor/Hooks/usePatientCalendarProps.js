@@ -18,7 +18,7 @@ const usePatientCalendarProps = () => {
         const _timeslots = [
           ...new Set(
             response.data.map((e) =>
-              new Date(e.startTime).toLocaleDateString("en")
+              new Date(e.startTime).toLocaleDateString()
             )
           ),
         ];
