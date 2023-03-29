@@ -5,6 +5,8 @@ import "primereact/resources/themes/saga-green/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import Landing from "./Pages/Landing";
+import Registration from "./Pages/Registration";
+import Login from "./Pages/Login";
 import PatientSchedule from "./Pages/PatientSchedule";
 import DoctorSchedule from "./Pages/DoctorSchedule";
 import { BsArrowLeft } from "react-icons/bs";
@@ -17,7 +19,7 @@ export const ConfirmPopupContext = createContext();
 
 export const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
-  const [page, setPage] = useState("landing"); // landing
+  const [page, setPage] = useState("login"); // landing
   const [type, setType] = useState("doctor"); //อย่าลืมเปลี่ยนเป็น doctor
   localStorage.setItem("doctorUUID", "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b");
   localStorage.setItem("patientUUID", "c646e99a-9a64-497a-87fd-6972bd7bf387");
@@ -33,13 +35,11 @@ export const Home = () => {
           setPage={setPage}
           className="cursor-pointer"
         />
-        {page === "landing" && <Landing setPage={setPage} type={type} />}
-        {page === "home" && type === "patient" && (
-          <PatientSchedule setPage={setPage} />
-        )}
-        {page === "home" && type === "doctor" && (
-          <DoctorSchedule setPage={setPage} />
-        )}
+        {page === "landing" && <Landing setPage={setPage} />}
+        {page === "login" && <Login setPage={setPage} />}
+        {page === "signup" && <Registration setPage={setPage} />}
+        {page === "patient" && <PatientSchedule setPage={setPage} />}
+        {page === "doctor" && <DoctorSchedule setPage={setPage} />}
         {page === "createRequest" && <CreateRequest setPage={setPage} />}
         {page === "setting" && (
           <button
