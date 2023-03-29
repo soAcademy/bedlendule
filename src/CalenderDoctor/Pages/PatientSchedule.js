@@ -30,6 +30,9 @@ const UserSchedule = ({ setPage, page }) => {
   const [openReview, setOpenReview] = useState(false);
   const [requestToExecute, setRequestToExecute] = useState();
   const [insidePage, setInsidePage] = useState("patientSchedule");
+
+  const [testDate,setTestDate]= useState();
+
   const { date, setDate, dateTemplate, disabledDates } =
     usePatientCalendarProps();
 
@@ -168,6 +171,8 @@ const UserSchedule = ({ setPage, page }) => {
         });
     }
   }, [doctorUUID]);
+
+  console.log("testDate",testDate);
   return (
     <>
       <div
@@ -184,6 +189,7 @@ const UserSchedule = ({ setPage, page }) => {
             onChange={(e) => {
               setDate(e.value.toISOString());
               setInsidePage("selectDoctor");
+              setTestDate(e.value.toLocaleDateString());
             }}
             disabledDates={disabledDates.map((e) => new Date(e))}
             minDate={new Date()}
@@ -378,6 +384,7 @@ const UserSchedule = ({ setPage, page }) => {
           setDate={setDate}
           disabledDates={disabledDates}
           dateTemplate={dateTemplate}
+          testDate={testDate}
         />
       </div>
       <div

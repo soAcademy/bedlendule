@@ -12,6 +12,7 @@ const SelectDoctor = ({
   setDate,
   disabledDates,
   dateTemplate,
+  testDate
 }) => {
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState([]);
@@ -167,7 +168,7 @@ const SelectDoctor = ({
             : "pointer-events-none opacity-0"
         } `}
       >
-        <SelectDoctorDetail setPage={setPage} selectedDoctor={selectedDoctor} date={date}/>
+        <SelectDoctorDetail setPage={setPage} selectedDoctor={selectedDoctor} date={date} testDate={testDate}/>
       </div>
     </>
   );

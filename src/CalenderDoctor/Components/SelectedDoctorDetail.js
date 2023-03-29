@@ -7,7 +7,7 @@ import axios from "axios";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IoIosReturnLeft } from "react-icons/io";
 
-const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
+const SelectDoctorDetail = ({ setPage, selectedDoctor, date ,testDate}) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [appointmentPopup, setAppointmentPopup] = useState(false);
   const [doctorDetail, setDoctorDetail] = useState([]);
@@ -15,6 +15,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
   const [doctorName, setDoctorName] = useState([]);
   const [dataForm, setDataForm] = useState([]);
 
+  const chosenTestDate = Number(testDate?.substring(0,2))
   const chosenDate = Number(date?.substring(8, 10));
   const patientUUID = "9ab93e34-b805-429d-962a-c723d8d8bca8";
   const scoreFromReview =
@@ -24,6 +25,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
   console.log("chosenDate", chosenDate);
   console.log("selectedDoctor555", selectedDoctor);
   console.log("dataFormState", dataForm);
+  console.log("chosenTestDate",chosenTestDate);
 
   // get doctor detail by UUID
   useEffect(() => {
@@ -97,7 +99,11 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
       console.log("cleanData<>", cleanData);
       const pickDateFilter = cleanData.map((r) =>
         r.reqeustData.map(
-          (c) => Number(c.startTime.substring(8, 10)) == [chosenDate]
+          (c) => {
+            console.log("pickDateFilter date",Number(c.startTime.substring(8, 10)));
+          return  Number(c.startTime.substring(8, 10)) == [chosenTestDate]
+          
+          }
         )
       );
       console.log("pickDateFilter",pickDateFilter);
@@ -119,9 +125,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
         .filter((r) => r !== undefined)
        
       console.log("readyData", readyData);
-      console.log(
-        "testMap",
-        readyData.map((r) => r.location))
+    
     
      
       const dataForm2 = readyData.map((r) =>{
