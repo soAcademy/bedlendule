@@ -18,16 +18,19 @@ const SelectDoctor = ({
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
 
-  const findFreeDoctor = (freeDoctor) => {
-    const filter = freeDoctor.map((doctor) =>
+  const findFreeDoctor = (allDoctors) => {
+    console.log("allDoctors",allDoctors);
+    const freeDoctor = allDoctors.map((doctor) =>
       doctor.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
-    // console.log("filter", filter);
-    const indexes = filter
+    console.log("freeDoctor", freeDoctor);
+    const indexes = freeDoctor
       .map((r, idx) => (r.length >= 1 ? idx : -1))
       .filter((idx) => idx !== -1);
+      console.log("indexes",indexes);
 
-    const results = indexes.map((idx) => freeDoctor[idx]);
+    const results = indexes.map((idx) => allDoctors[idx]);
+    console.log("results",results);
 
     return results;
   };
@@ -49,7 +52,7 @@ const SelectDoctor = ({
     axios(config)
       .then((response) => {
         setFetching(false);
-        // console.log("SelectDoctorData", response.data);
+        console.log("response.data", response.data);
         const _data = findFreeDoctor(response.data);
         // console.log("_data", _data);
         setDoctors(_data);
@@ -164,7 +167,7 @@ const SelectDoctor = ({
             : "pointer-events-none opacity-0"
         } `}
       >
-        <SelectDoctorDetail setPage={setPage} selectedDoctor={selectedDoctor} />
+        <SelectDoctorDetail setPage={setPage} selectedDoctor={selectedDoctor} date={date}/>
       </div>
     </>
   );
