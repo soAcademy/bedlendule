@@ -26,12 +26,12 @@ const Nav = ({ page, setPage, type, setType }) => {
           <li
             onClick={() => {
               setIsSideBarOpen(false);
-              setPage("home");
+              setPage("login");
             }}
             className={`+ cursor-pointer rounded-lg p-2 hover:bg-slate-200 
             ${page === "patientSchedule" && "bg-slate-200"}`}
           >
-            HOME
+            LOGIN
           </li>
           <li
             onClick={() => {
@@ -56,22 +56,20 @@ const Nav = ({ page, setPage, type, setType }) => {
           <li
             onClick={() => {
               setIsSideBarOpen(false);
-              setType("doctor");
-              setPage("home");
+              setPage("doctor");
             }}
             className={`+ cursor-pointer rounded-lg p-2 hover:bg-slate-200
-              ${type === "doctor" && "bg-slate-200"}`}
+              ${page === "doctor" && "bg-slate-200"}`}
           >
             Doctor
           </li>
           <li
             onClick={() => {
               setIsSideBarOpen(false);
-              setType("patient");
-              setPage("home");
+              setPage("patient");
             }}
             className={`+ cursor-pointer rounded-lg p-2 hover:bg-slate-200
-              ${type === "patient" && "bg-slate-200"}`}
+              ${page === "patient" && "bg-slate-200"}`}
           >
             Patient
           </li>
