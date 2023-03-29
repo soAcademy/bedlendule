@@ -6,7 +6,7 @@ import "primeicons/primeicons.css";
 
 function Registration() {
   return (
-    <div className="mx-auto mt-12">
+    <div className="mt-12 mx-auto max-w-4xl">
       <div className="flex items-center justify-center">
         <img src="/doctorLogo.png" alt="Logo" className="h-40" />
       </div>
@@ -15,9 +15,9 @@ function Registration() {
         <p className="text-gray-600">Create your account</p>
       </div>
 
-      <form>
-        <div className="flex flex-wrap justify-center">
-          <div className="flex h-[45px] w-1/4 items-center rounded-lg border-2 border-slate-500">
+      <form className="px-8">
+        <div className="flex justify-center gap-2">
+          <div className="flex h-[45px] w-2/5 items-center rounded-lg border-2 border-slate-500">
             <input
               type="text"
               className="mx-2 h-[41px] w-full rounded-lg"
@@ -25,18 +25,18 @@ function Registration() {
               placeholder="First name"
             />
           </div>
-          <div className="mx-1 flex h-[45px] w-1/3 items-center rounded-lg border-2 border-slate-500">
+          <div className="flex h-[45px] w-3/5 items-center rounded-lg border-2 border-slate-500">
             <input
               type="text"
-              className="mx-2 h-[41px] w-full rounded-lg"
+              className="mx-1 h-[41px] w-full rounded-lg"
               id="last-name"
               placeholder="Last name"
             />
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-center">
-          <div className="my-2 flex h-[45px] w-3/5 items-center rounded-lg border-2 border-slate-500">
+        <div className="flex justify-center">
+          <div className="my-2 flex h-[45px] w-full items-center rounded-lg border-2 border-slate-500">
             {/* <label htmlFor="phone-number">Phone Number</label> */}
             <input
               type="text"
@@ -47,8 +47,8 @@ function Registration() {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-center">
-          <div className="flex h-[45px] w-3/5 items-center rounded-lg border-2 border-slate-500">
+        <div className="flex justify-center">
+          <div className="flex h-[45px] w-full items-center rounded-lg border-2 border-slate-500">
             <input
               type="email"
               className="mx-2 h-[41px] w-full rounded-lg"
@@ -58,8 +58,8 @@ function Registration() {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-center">
-          <div className="my-2 flex h-[45px] w-3/5 items-center rounded-lg border-2 border-slate-500">
+        <div className="flex justify-center">
+          <div className="my-2 flex h-[45px] w-full items-center rounded-lg border-2 border-slate-500">
             <input
               type="text"
               className="mx-2 h-[41px] w-full rounded-lg"
@@ -69,8 +69,8 @@ function Registration() {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-center">
-          <div className="flex h-[45px] w-3/5 items-center rounded-lg border-2 border-slate-500">
+        <div className="flex justify-center">
+          <div className="flex h-[45px] w-full items-center rounded-lg border-2 border-slate-500">
             <input
               type="password"
               className="mx-2 h-[41px] w-full rounded-lg"
@@ -80,8 +80,8 @@ function Registration() {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-center">
-          <div className="my-2 flex h-[45px] w-3/5 items-center rounded-lg border-2 border-slate-500">
+        <div className="flex justify-center">
+          <div className="my-2 flex h-[45px] w-full items-center rounded-lg border-2 border-slate-500">
             <input
               type="password"
               className="mx-2 h-[41px] w-full rounded-lg"
@@ -91,7 +91,7 @@ function Registration() {
           </div>
         </div>
 
-        <div className="my-4 flex flex-wrap justify-center">
+        <div className="my-4 flex justify-center">
           <div className="items-center rounded-lg">
             {/* <label htmlFor="account-type">Account Type</label> */}
             <div>
@@ -117,8 +117,8 @@ function Registration() {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-center">
-          <div className="flex h-[40px] w-3/5 items-center rounded-lg">
+        <div className="flex justify-center">
+          <div className="flex h-[40px] w-full items-center rounded-lg">
             <label>
               <input type="checkbox" /> By registering, you are agreeing to our
               Terms of use and Privacy Policy
@@ -126,12 +126,12 @@ function Registration() {
           </div>
         </div>
 
-        <div className="my-4 flex flex-wrap justify-center">
+        <div className="my-4 flex justify-center">
           <Button label="Register" icon="pi pi-check" iconPos="right" />
         </div>
       </form>
       <div className="already-have-account">
-        <div className="my-4 flex flex-wrap justify-center">
+        <div className="my-4 flex justify-center">
           <p>
             Already have an account? <a href="#">Login</a>
           </p>
