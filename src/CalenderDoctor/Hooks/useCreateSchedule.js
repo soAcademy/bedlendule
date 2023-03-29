@@ -21,10 +21,6 @@ export const useCreateSchedule = ({
     event.preventDefault();
     const doctorUUID = localStorage.getItem('doctorUUID');;
     const form = event.target;
-    console.log(
-      "newTimeSlots",
-      newTimeSlots.map((e) => ({}))
-    );
     const data = {
       uuid: doctorUUID,
       title: form["title"].value,
@@ -107,7 +103,6 @@ export const useAddOrRemoveTimeSlot = ({
       finishTime: _finishTime.toISOString(),
       price: Number(price),
     };
-    console.log("timeSlots", timeSlots);
     if (
       newTimeSlots.findIndex(
         (timeslot) =>
@@ -131,14 +126,12 @@ export const useAddOrRemoveTimeSlot = ({
       setDuplicatedTime(true);
       setTimeout(() => setDuplicatedTime(false), 3000);
     } else {
-      console.log("newTimeSlots[0].startTime", newTimeSlots[0]);
       const _timeslots = [
         ...new Map([
           ...newTimeSlots.map((item) => [item["startTime"], item]),
           [newAddingTimeSlot["startTime"], newAddingTimeSlot],
         ]).values(),
       ];
-      console.log(price);
       setPrice();
       setNewTimeSlots(_timeslots);
       setOpenTimeSlotForm(false);

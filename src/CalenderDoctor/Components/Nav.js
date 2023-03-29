@@ -8,7 +8,6 @@ const Nav = ({ page, setPage, type, setType }) => {
       <div className="z-50 flex h-[50px] w-full flex-row bg-[#C5E1A5] px-2 drop-shadow-md">
         <button
           onClick={() => {
-            console.log(!isSideBarOpen);
             setIsSideBarOpen(!isSideBarOpen);
           }}
           className="p-2 text-xl text-slate-400"

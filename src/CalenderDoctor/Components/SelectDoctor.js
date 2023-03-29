@@ -24,7 +24,6 @@ const SelectDoctor = ({
     const filter = freeDoctor.map((doctor) =>
       doctor.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
-    console.log("filter", filter);
     const indexes = filter
       .map((r, idx) => (r.length >= 1 ? idx : -1))
       .filter((idx) => idx !== -1);
@@ -38,7 +37,6 @@ const SelectDoctor = ({
     setDoctors([]);
     setFetching(true);
     const data = JSON.stringify({ date: date });
-    console.log("data", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -52,9 +50,7 @@ const SelectDoctor = ({
     axios(config)
       .then((response) => {
         setFetching(false);
-        console.log("SelectDoctorData", response.data);
         const _data = findFreeDoctor(response.data);
-        console.log("_data", _data);
         setDoctors(_data);
       })
       .catch((error) => {

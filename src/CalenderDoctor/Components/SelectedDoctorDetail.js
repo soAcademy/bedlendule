@@ -17,7 +17,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   const [schedules, setSchedules] = useState([]);
   const [location, setLocation] = useState([]);
 
-  console.log("selectedDoctor555", selectedDoctor);
 
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
@@ -28,7 +27,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
     const _data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
     });
-    // console.log("_data", _data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -42,7 +40,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
 
     axios(config).then((response) => {
       setLoading(false);
-      console.log("SelectDoctorData", response.data);
       setDoctorDetail(response.data);
       setDoctorName(selectedDoctor.doctorUUID);
     });
@@ -53,7 +50,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
     const _data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
     });
-    // console.log("_data", _data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -64,7 +60,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
       data: _data,
     };
     axios(config).then((response) => {
-      console.log("getScheduleByUUID", response.data);
       setSchedules(response.data);
       findTimeslot(response.data);
       findindexOfSchedules(response.data);
@@ -73,7 +68,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
 
   //get doctor Id for requestnull
   const findTimeslot = (schedules) => {
-    console.log("schedulesfindslot", schedules);
     const findRequestNull = selectedDoctor.timeslots?.filter(
       (timeslots) => timeslots.requestId === null
     );
@@ -98,12 +92,10 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   };
   //find index of scheduled which has timeslot(requestNull)
   const findindexOfSchedules = (schedules) => {
-    console.log("schedules888", schedules);
 
     const findRequestNull = selectedDoctor.timeslots
       ?.filter((timeslots) => timeslots.requestId === null)
       .map((r) => r.id);
-    console.log("requestNull", findRequestNull);
     const filter = schedules.map((r) =>
       r.timeslots.map((r, idx) => (r.id === findRequestNull[0] ? r : []))
     );
@@ -120,7 +112,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
       });
 
     const result = findRequestNull?.map((r) => ({ ...location, requestId: r }));
-    console.log("finalResult", result);
 
     return setLocation(result);
   };

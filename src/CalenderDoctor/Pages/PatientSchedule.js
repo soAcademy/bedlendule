@@ -30,11 +30,8 @@ const UserSchedule = ({ setPage, page }) => {
   const [openReview, setOpenReview] = useState(false);
   const [requestToExecute, setRequestToExecute] = useState();
   const [insidePage, setInsidePage] = useState("patientSchedule");
-  const { date, setDate, dateTemplate, disabledDates,timeSlots } =
+  const { date, setDate, dateTemplate, disabledDates } =
     usePatientCalendarProps();
-    console.log("disabledDates",disabledDates);
-    console.log("date",date);
-    console.log("timeSlots123",timeSlots);
 
   const { setSending, SendingPopup } = useSendingPopup();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
@@ -58,7 +55,6 @@ const UserSchedule = ({ setPage, page }) => {
       requestId: requestToExecute.id,
       timeSlotId: timeSlotId,
     });
-    console.log("data", data);
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -118,7 +114,7 @@ const UserSchedule = ({ setPage, page }) => {
     setFetching(true);
     setRequests([]);
     let data = JSON.stringify({
-      uuid: localStorage.getItem('patientUUID'),
+      uuid: localStorage.getItem("patientUUID"),
     });
 
     let config = {
@@ -134,9 +130,8 @@ const UserSchedule = ({ setPage, page }) => {
     axios
       .request(config)
       .then((response) => {
-        console.log("response.data", response.data);
-        setFetching(false);
         setRequests(response.data);
+        setFetching(false);
       })
       .catch((error) => {
         console.log(error);
@@ -145,32 +140,33 @@ const UserSchedule = ({ setPage, page }) => {
   }, [updated]);
 
   useEffect(() => {
-    let data = JSON.stringify({
-      uuid: doctorUUID,
-    });
-
-    let config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-    setFetching(true);
-
-    axios
-      .request(config)
-      .then((response) => {
-        console.log("doctorDetail", response.data);
-        setFetching(false);
-        setDoctorDetail(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-        setFetching(false);
+    if (doctorUUID) {
+      let data = JSON.stringify({
+        uuid: doctorUUID,
       });
+
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+      setFetching(true);
+
+      axios
+        .request(config)
+        .then((response) => {
+          setDoctorDetail(response.data);
+          setFetching(false);
+        })
+        .catch((error) => {
+          console.log(error);
+          setFetching(false);
+        });
+    }
   }, [doctorUUID]);
   return (
     <>
@@ -285,7 +281,6 @@ const UserSchedule = ({ setPage, page }) => {
                       <button
                         onClick={() => {
                           setRequestToExecute(request);
-                          console.log(request);
                           setOpenChooseDoctors(true);
                         }}
                         className={`button float-right my-auto h-fit p-2 text-xs text-white
@@ -591,30 +586,30 @@ const UserSchedule = ({ setPage, page }) => {
                               {e.review}
                             </div>
                             <Rating
-                            onIcon={
-                      <img
-                        src="/rating-icon-active.png"
-                        onError={(e) =>
-                          (e.target.src =
-                            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                        }
-                        alt="custom-active"
-                        width="12px"
-                        height="12px"
-                      />
-                    }
-                    offIcon={
-                      <img
-                        src="/rating-icon-inactive.png"
-                        onError={(e) =>
-                          (e.target.src =
-                            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                        }
-                        alt="custom-inactive"
-                        width="12px"
-                        height="12px"
-                      />
-                    }
+                              onIcon={
+                                <img
+                                  src="/rating-icon-active.png"
+                                  onError={(e) =>
+                                    (e.target.src =
+                                      "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                                  }
+                                  alt="custom-active"
+                                  width="12px"
+                                  height="12px"
+                                />
+                              }
+                              offIcon={
+                                <img
+                                  src="/rating-icon-inactive.png"
+                                  onError={(e) =>
+                                    (e.target.src =
+                                      "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                                  }
+                                  alt="custom-inactive"
+                                  width="12px"
+                                  height="12px"
+                                />
+                              }
                               className="mb-2 self-end"
                               value={e.score}
                               readOnly

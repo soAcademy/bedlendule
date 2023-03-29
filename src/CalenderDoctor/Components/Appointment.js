@@ -3,8 +3,6 @@ import { GiAlarmClock } from "react-icons/gi";
 import { MdClose } from "react-icons/md";
 
 const Appointment = ({ appointmentPopup,setAppointmentPopup, chooseTimeSlot, doctorName }) => {
-  console.log("chooseTimeSlot>>>", chooseTimeSlot);
-  console.log("appointmentPopup>>>>",appointmentPopup)
   const description =
     "You may not feel like it right now but thats my job. I want to hear every bit of what's going wrong and how it's impacting you now. At the same time we'll work on developing your belief in yourself in order to actually use the coping skills you probably already have.";
 
