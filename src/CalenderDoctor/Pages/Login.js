@@ -4,7 +4,7 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
-function Registration() {
+function Login() {
   return (
     <div className="mx-auto max-w-2xl">
       <div className="flex items-center justify-center">
@@ -72,4 +72,4 @@ function Registration() {
   );
 }
 
-export default Registration;
+export default Login;
