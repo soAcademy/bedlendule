@@ -36,7 +36,6 @@ const SelectDoctor = ({
     setDoctors([]);
     setFetching(true);
     const data = JSON.stringify({ date: date });
-    console.log("data", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,

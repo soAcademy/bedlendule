@@ -4,6 +4,7 @@ const useDoctorCalendarProps = () => {
   const [openRequests, setOpenRequests] = useState([]);
   const [datesArray, setDatesArray] = useState([]);
   const [disabledDates, setDisabledDates] = useState([]);
+  const doctorUUID = localStorage.getItem("doctorUUID");
   useEffect(() => {
     var config = {
       method: "post",
@@ -13,10 +14,14 @@ const useDoctorCalendarProps = () => {
 
     axios(config)
       .then(function async(response) {
+        const openRequestsNotAccepted = response.data.filter(
+          (request) =>
+            request.doctorTimeslot.findIndex(
+              (timeslot) => timeslot.schedule.uuid === doctorUUID
+            ) === -1
+        );
         setOpenRequests(
-          response.data.map((e) =>
-            new Date(e.startTime).toLocaleDateString()
-          )
+          openRequestsNotAccepted.map((e) => new Date(e.startTime).toLocaleDateString())
         );
       })
       .catch(function (error) {

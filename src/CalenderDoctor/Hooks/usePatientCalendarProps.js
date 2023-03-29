@@ -17,14 +17,9 @@ const usePatientCalendarProps = () => {
       .then(function async(response) {
         const _timeslots = [
           ...new Set(
-            response.data.map((e) =>
-              new Date(e.startTime).toLocaleDateString("en", {
-                timeZone: "Asia/Bangkok",
-              })
-            )
+            response.data.map((e) => new Date(e.startTime).toLocaleDateString())
           ),
         ];
-        // console.log("_timeslots",_timeslots);
         setTimeSlots(_timeslots);
       })
       .catch(function (error) {
@@ -33,29 +28,20 @@ const usePatientCalendarProps = () => {
   }, []);
 
   useEffect(() => {
-    // console.log("timeSlots456",timeSlots);
-    // console.log("datesArray456",datesArray);
     const _disabledDates = datesArray.filter((e) => !timeSlots.includes(e));
-    // console.log("_disabledDates",_disabledDates);
     setDisabledDates(_disabledDates);
   }, [timeSlots, datesArray]);
 
   const dateTemplate = (date) => {
     const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
-    if (!datesArray.includes(_date.toLocaleDateString("en", {
-      timeZone: "Asia/Bangkok",
-    }))) {
+    if (!datesArray.includes(_date.toLocaleDateString())) {
       const _datesArray = [
-        ...new Set([...datesArray, _date.toLocaleDateString("en", {
-          timeZone: "Asia/Bangkok",
-        })]),
+        ...new Set([...datesArray, _date.toLocaleDateString()]),
       ];
       setDatesArray(_datesArray);
     }
     if (
-      timeSlots?.includes(_date.toLocaleDateString("en", {
-        timeZone: "Asia/Bangkok",
-      })) &&
+      timeSlots?.includes(_date.toLocaleDateString()) &&
       _date.getTime() >= new Date(new Date().toDateString()).getTime()
     ) {
       return date.day === new Date().getDate() ? (

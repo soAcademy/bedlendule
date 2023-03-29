@@ -1,7 +1,6 @@
 import { Rating } from "primereact/rating";
 import { GiAlarmClock } from "react-icons/gi";
 import { AiFillDollarCircle } from "react-icons/ai";
-import { MdClose } from "react-icons/md";
 import { useState, useEffect } from "react";
 import Appointment from "./Appointment";
 import axios from "axios";
@@ -31,7 +30,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
     const _data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
     });
-    // console.log("_data", _data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -56,7 +54,6 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
     const _data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
     });
-    // console.log("_data", _data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,

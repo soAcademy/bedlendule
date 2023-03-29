@@ -75,7 +75,7 @@ const DoctorSchedule = ({ setPage }) => {
     setFetching(true);
     setSchedules([]);
     let data = JSON.stringify({
-      uuid: "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b",
+      uuid: localStorage.getItem('doctorUUID'),
     });
 
     let config = {
@@ -91,13 +91,11 @@ const DoctorSchedule = ({ setPage }) => {
     axios
       .request(config)
       .then((response) => {
-        console.log("data", response.data);
         const _schedules = response.data.sort(
           (a, b) =>
             new Date(a.timeslots.at(-1).startTime).getTime() -
             new Date(b.timeslots.at(-1).startTime).getTime()
         );
-        console.log("_schedules", _schedules);
         setFetching(false);
         setSchedules(_schedules);
         setTimeSlots(_schedules.map((e) => e.timeslots).flat());

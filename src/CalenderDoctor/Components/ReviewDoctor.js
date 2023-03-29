@@ -31,12 +31,10 @@ const ReviewDoctor = ({
     });
   const introduction =
     "Review doctor for others to learn more about your experience";
-  // console.log("score", score);
   const handleSubmit = (event) => {
     event.preventDefault();
     setConfirmReview(true);
     const _data = { review, score, requestId, timeSlotId };
-    console.log("formData", _data);
   };
   const submitReview = () => {
     setSending(true);
@@ -61,7 +59,6 @@ const ReviewDoctor = ({
     axios
       .request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
         setSending(false);
         response.status === 200
           ? setSubmitSuccessPopUp(true)

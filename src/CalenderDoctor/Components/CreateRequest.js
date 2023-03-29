@@ -71,13 +71,11 @@ const CreateRequest = ({
         " " +
         startTime?.toLocaleTimeString("en-GB").split(" ")[0].slice(0, 5)
     );
-    console.log('_startTime', _startTime)
     const _finishTime = new Date(
       _date +
         " " +
         finishTime?.toLocaleTimeString("en-GB").split(" ")[0].slice(0, 5)
     );
-    console.log('_finishTime', _finishTime)
     if (
       requests.findIndex(
         (request) =>
