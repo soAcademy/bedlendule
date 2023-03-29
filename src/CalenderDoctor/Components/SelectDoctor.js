@@ -5,7 +5,6 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import SelectDoctorDetail from "./SelectedDoctorDetail";
 import { IoIosReturnLeft } from "react-icons/io";
 import { Calendar } from "primereact/calendar";
-import Appointment from "./Appointment";
 
 const SelectDoctor = ({
   date,
@@ -19,12 +18,11 @@ const SelectDoctor = ({
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
 
-  
   const findFreeDoctor = (freeDoctor) => {
     const filter = freeDoctor.map((doctor) =>
       doctor.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
-    console.log("filter", filter);
+    // console.log("filter", filter);
     const indexes = filter
       .map((r, idx) => (r.length >= 1 ? idx : -1))
       .filter((idx) => idx !== -1);
@@ -52,9 +50,9 @@ const SelectDoctor = ({
     axios(config)
       .then((response) => {
         setFetching(false);
-        console.log("SelectDoctorData", response.data);
+        // console.log("SelectDoctorData", response.data);
         const _data = findFreeDoctor(response.data);
-        console.log("_data", _data);
+        // console.log("_data", _data);
         setDoctors(_data);
       })
       .catch((error) => {
@@ -75,7 +73,7 @@ const SelectDoctor = ({
           className="fixed right-5 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
           onClick={() => setInsidePage("patientSchedule")}
         >
-          <IoIosReturnLeft className=""/>
+          <IoIosReturnLeft className="" />
         </button>
         <div className="headingColor relative mt-8 text-center text-3xl font-bold ">
           SELECT DOCTOR
@@ -120,30 +118,30 @@ const SelectDoctor = ({
               </div>
               <div className="w-[20%] ">
                 <Rating
-                onIcon={
-                  <img
-                    src="/rating-icon-active.png"
-                    onError={(e) =>
-                      (e.target.src =
-                        "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                    }
-                    alt="custom-active"
-                    width="12px"
-                    height="12px"
-                  />
-                }
-                offIcon={
-                  <img
-                    src="/rating-icon-inactive.png"
-                    onError={(e) =>
-                      (e.target.src =
-                        "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                    }
-                    alt="custom-inactive"
-                    width="12px"
-                    height="12px"
-                  />
-                }
+                  onIcon={
+                    <img
+                      src="/rating-icon-active.png"
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                      }
+                      alt="custom-active"
+                      width="12px"
+                      height="12px"
+                    />
+                  }
+                  offIcon={
+                    <img
+                      src="/rating-icon-inactive.png"
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                      }
+                      alt="custom-inactive"
+                      width="12px"
+                      height="12px"
+                    />
+                  }
                   value={
                     doctor.doctorUUID.reviews.reduce(
                       (acc, r) => acc + r.score,
@@ -155,7 +153,7 @@ const SelectDoctor = ({
                 />
               </div>
             </div>
-            <div className="text-[#4C4E64] indent-8">{doctor.description}</div>
+            <div className="indent-8 text-[#4C4E64]">{doctor.description}</div>
           </div>
         ))}
       </div>

@@ -15,11 +15,13 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   const [loading, setLoading] = useState();
   const [currentTime, setCurrentTime] = useState();
   const [doctorName, setDoctorName] = useState([]);
-  const [schedules, setSchedules] = useState([]);
-  const [location, setLocation] = useState([]);
+  const [dataForm, setDataForm] = useState([]);
 
-  console.log("selectedDoctor555", selectedDoctor);
+  // console.log("selectedDoctor555", selectedDoctor);
+  console.log("dataForm", dataForm);
+  // console.log("mapDataForm",dataForm.map(r=>r.startTime))
 
+  const patientUUID = "9ab93e34-b805-429d-962a-c723d8d8bca8";
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
@@ -43,7 +45,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
 
     axios(config).then((response) => {
       setLoading(false);
-      console.log("SelectDoctorData", response.data);
+      // console.log("SelectDoctorData", response.data);
       setDoctorDetail(response.data);
       setDoctorName(selectedDoctor.doctorUUID);
     });
@@ -65,16 +67,14 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
       data: _data,
     };
     axios(config).then((response) => {
-      console.log("getScheduleByUUID", response.data);
-      setSchedules(response.data);
-      findTimeslot(response.data);
-      findindexOfSchedules(response.data);
+      // findTimeslot(response.data);
+      tranformData(response.data);
     });
   }, [selectedDoctor]);
 
   //get doctor Id for requestnull
   const findTimeslot = (schedules) => {
-    console.log("schedulesfindslot", schedules);
+    // console.log("schedulesfindslot", schedules);
     const findRequestNull = selectedDoctor.timeslots?.filter(
       (timeslots) => timeslots.requestId === null
     );
@@ -97,33 +97,52 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
     );
     return setCurrentTime(_doctorTimeslots);
   };
-  //find index of scheduled which has timeslot(requestNull)
-  const findindexOfSchedules = (schedules) => {
-    console.log("schedules888", schedules);
 
-    const findRequestNull = selectedDoctor.timeslots
+  //find index of scheduled which has timeslot(requestNull)
+  const tranformData = (schedules) => {
+    console.log("allSchedules",schedules);
+    const requestNullId = selectedDoctor.timeslots
       ?.filter((timeslots) => timeslots.requestId === null)
       .map((r) => r.id);
-    console.log("requestNull", findRequestNull);
-    const filter = schedules.map((r) =>
-      r.timeslots.map((r, idx) => (r.id === findRequestNull[0] ? r : []))
-    );
-
-    const boolean = filter.map((r) => r.map((a) => a.length === undefined));
-    const onlyTrue = boolean.map((r) => (r.includes(true) ? true : false));
-    const indexOfTrue = onlyTrue
-      .map((r, idx) => (r === true ? idx : -1))
-      .filter((c) => c > 0);
-    const location = indexOfTrue
-      .map((r) => schedules[r])
-      .map((r) => {
-        return { location: r.location, meetingType: r.meetingType };
+    // เอา index of request null Id มา map เอา location,meetingType เก็บแบบ array
+    const inputRequestId = (InputRequestNullId) => {
+      const a = InputRequestNullId.map((c, idx) =>
+        schedules.map((r) => r.timeslots.filter((r) => r.id === c))
+      );
+      const b = a.map((r) => r.findIndex((c) => c.length > 0));
+      const mapId = a.map((r) => {
+        return { data: r.filter((r) => r.length > 0) };
       });
 
-    const result = findRequestNull?.map((r) => ({ ...location, requestId: r }));
-    console.log("finalResult", result);
+      const requestAndLocationId = b.map((r) =>
+        mapId.map((timeData) => {
+          return { timeData, locationId: r };
+        })
+      );
+      const cleanData = requestAndLocationId[0].map((r) => {
+        return { location: r.locationId, reqeustData: r.timeData.data[0] };
+      });
+      console.log("cleanData<>", cleanData);
 
-    return setLocation(result);
+      const dataForm = cleanData.map((r) => {
+        return {
+          description:schedules[r.location].description,
+          location: schedules[r.location].location,
+          meetingType: schedules[r.location].meetingType,
+          timeslotId: r.reqeustData
+            .map((r) => r.id)
+            .slice(0, 1)
+            .pop(),
+          patientUUID: patientUUID,
+          startTime: r.reqeustData.map((r) => r.startTime).pop(),
+          finishTime: r.reqeustData.map((r) => r.finishTime).pop(),
+          price: r.reqeustData.map((r) => r.price).pop(),
+        };
+      });
+      // console.log("dataForm", dataForm);
+      return dataForm;
+    };
+    return setDataForm(inputRequestId(requestNullId));
   };
 
   return (
@@ -193,59 +212,55 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
           </ul>
         </div>
         <div className=" mx-auto w-[95%]">
-          {currentTime?.map((currentTime) =>
-            currentTime?.map((r) =>
-              r.map((r) => (
-                <ul
-                  className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
-                  onClick={() => {
-                    setChooseTimeSlot(r);
-                    setAppointmentPopup(!appointmentPopup);
-                  }}
-                >
-                  <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
-                    <div className="absolute top-[-10px] w-[50px] rounded-lg bg-white px-1 text-slate-400">
-                      From
-                    </div>
-                    <div className="mx-auto flex">
-                      <div className="underline underline-offset-2 ">
-                        {r.startTime}
-                      </div>
-                      <div className="px-1">
-                        <GiAlarmClock className="text-base" />
-                      </div>
-                    </div>
-                  </li>
-                  <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                    <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
-                      To
-                    </div>
-                    <div className="mx-auto flex">
-                      <div className="underline underline-offset-2">
-                        {r.finishTime}
-                      </div>
-                      <div className="px-1">
-                        <GiAlarmClock className="text-base" />
-                      </div>
-                    </div>
-                  </li>
-                  <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                    <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
-                      Rate
-                    </div>
-                    <div className=" mx-auto flex">
-                      <div className="underline underline-offset-2">
-                        {r.price} THB/Hour
-                      </div>
-                      <div className="px-1">
-                        <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              ))
-            )
-          )}
+          {dataForm?.map((r) => (
+            <ul
+              className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
+              onClick={() => {
+                setChooseTimeSlot(r);
+                setAppointmentPopup(!appointmentPopup);
+              }}
+            >
+              <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
+                <div className="absolute top-[-10px] w-[50px] rounded-lg bg-white px-1 text-slate-400">
+                  From
+                </div>
+                <div className="mx-auto flex">
+                  <div className="underline underline-offset-2 ">
+                    {r.startTime.substring(11,16)}
+                  </div>
+                  <div className="px-1">
+                    <GiAlarmClock className="text-base" />
+                  </div>
+                </div>
+              </li>
+              <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
+                <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
+                  To
+                </div>
+                <div className="mx-auto flex">
+                  <div className="underline underline-offset-2">
+                    {r.finishTime.substring(11,16)}
+                  </div>
+                  <div className="px-1">
+                    <GiAlarmClock className="text-base" />
+                  </div>
+                </div>
+              </li>
+              <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
+                <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
+                  Rate
+                </div>
+                <div className=" mx-auto flex">
+                  <div className="underline underline-offset-2">
+                    {r.price} THB/Hour
+                  </div>
+                  <div className="px-1">
+                    <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
+                  </div>
+                </div>
+              </li>
+            </ul>
+          ))}
         </div>
       </div>
 

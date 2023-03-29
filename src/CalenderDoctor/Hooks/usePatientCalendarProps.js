@@ -18,13 +18,9 @@ const usePatientCalendarProps = () => {
         const _timeslots = [
           ...new Set(
             response.data.map((e) =>
-<<<<<<< HEAD
               new Date(e.startTime).toLocaleDateString("en", {
                 timeZone: "Asia/Bangkok",
               })
-=======
-              new Date(e.startTime).toLocaleDateString()
->>>>>>> 97be6b4ec99d18d39cd2d5ac582d86995d1d5ead
             )
           ),
         ];
