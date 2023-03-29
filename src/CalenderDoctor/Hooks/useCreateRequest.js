@@ -3,14 +3,15 @@ import axios from "axios";
 
 const useCreateRequest = ({
   setSending,
+  setDate,
   setStartTime,
   setFinishTime,
   setSubmitFailPopUp,
-  setSubmitSuccessPopup,
+  setSubmitSuccessPopUp,
   setPopupState,
 }) => {
   const [formData, setFormData] = useState();
-  const patientUUID = "c646e99a-9a64-497a-87fd-6972bd7bf387";
+  const patientUUID = localStorage.getItem('patientUUID');
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = event.target;
@@ -48,11 +49,20 @@ const useCreateRequest = ({
       .request(config)
       .then((response) => {
         document.querySelector("#create-request").reset();
-        setStartTime();
-        setFinishTime();
+        setStartTime(new Date(
+          new Date(new Date().toLocaleDateString()).getTime() +
+            1800000 * Math.ceil(new Date().getMinutes() / 30) +
+            3600000 * (new Date().getHours() + 1)
+        ));
+        setFinishTime(new Date(
+          new Date(new Date().toLocaleDateString()).getTime() +
+            1800000 * (Math.ceil(new Date().getMinutes() / 30) + 1) +
+            3600000 * (new Date().getHours() + 1)
+        ));
+        setDate(new Date())
         setSending(false);
         response.status === 200
-          ? setSubmitSuccessPopup(true)
+          ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
       })
       .catch((error) => {

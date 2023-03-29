@@ -1,11 +1,8 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
-import { Rating } from "primereact/rating";
 import { ProgressSpinner } from "primereact/progressspinner";
-import SelectRequestDetail from "./SelectedRequestDetail";
 import { MdClose, MdOutlinePayments } from "react-icons/md";
 import { IoIosReturnLeft } from "react-icons/io";
-import { DatePicker } from "./DateTimePicker";
 import { Calendar } from "primereact/calendar";
 import ConfirmPopup from "./ConfirmPopup";
 import useSendingPopup from "../Hooks/useSendingPopup";
@@ -35,24 +32,21 @@ const SelectRequest = ({
   } = useSubmitResult({
     successAction: () => {
       setUpdated(!updated);
-      setInsidePage("doctorSchedule");
     },
     failedAction: () => {
       setUpdated(!updated);
-      setInsidePage("doctorSchedule");
     },
   });
+  const doctorUUID = localStorage.getItem('doctorUUID');
   const acceptRequest = () => {
     setConfirmPopup(false);
-    console.log("timeSlot.startTime", timeSlot.startTime);
     let data = JSON.stringify({
       requestId: requestId,
-      uuid: "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b",
+      uuid: doctorUUID,
       startTime: timeSlot.startTime,
       finishTime: timeSlot.finishTime,
     });
 
-    console.log("data", data);
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -67,7 +61,6 @@ const SelectRequest = ({
     axios
       .request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
         setSending(false);
         response.status === 200
           ? setSubmitSuccessPopUp(true)
@@ -75,7 +68,7 @@ const SelectRequest = ({
       })
       .catch((error) => {
         setSending(false);
-        setUpdated(!updated);
+        setSubmitFailPopUp(true);
         console.log(error);
       });
   };
@@ -96,8 +89,8 @@ const SelectRequest = ({
     axios(config)
       .then((response) => {
         setFetching(false);
-        console.log("response.data", response.data);
-        setRequests(response.data);
+        const _requests = response.data.filter(e=>e.doctorTimeslot.findIndex(timeslot=>timeslot.schedule.uuid === doctorUUID)===-1)
+        setRequests(_requests);
       })
       .catch((error) => {
         console.log(error);
@@ -157,10 +150,10 @@ const SelectRequest = ({
             </div>
             <div className="text-[#4C4E64]">
               <p className="my-2 text-xl font-bold">{request.title}</p>
-              <p>Available : {request.startTime.split("T")[0]}</p>
+              <p>Available : {new Date(request.startTime).toLocaleDateString()}</p>
               <p>
-                From: {request.startTime.split("T")[1].slice(0, 5)} -{" "}
-                {request.finishTime.split("T")[1].slice(0, 5)}
+                From: {new Date(request.startTime).toLocaleString("TH").split(" ")[1].slice(0,5)} -{" "}
+                {new Date(request.finishTime).toLocaleString("TH").split(" ")[1].slice(0,5)}
               </p>
               <p>
                 Location : {request.meetingType} ({request.location})
@@ -190,6 +183,9 @@ const SelectRequest = ({
             </div>
           </div>
         ))}
+        {requests.length === 0 && !fetching && (
+        <div className="text-center">No open request for you</div>
+        )}
       </div>
       <ConfirmPopup
         title={"Accept Request"}

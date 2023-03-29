@@ -12,33 +12,38 @@ const ReviewDoctor = ({
   requestId,
   setUpdated,
   updated,
+  timeSlotId,
 }) => {
   const [score, setScore] = useState(0);
   const [review, setReview] = useState();
   const [confirmReview, setConfirmReview] = useState(false);
   const { setSending, SendingPopup } = useSendingPopup();
-  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopup } =
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: () => {
+        setOpenReview(false);
+        setUpdated(!updated);
+      },
+      failedAction: () => {
         setOpenReview(false);
         setUpdated(!updated);
       },
     });
   const introduction =
     "Review doctor for others to learn more about your experience";
-  // console.log("score", score);
   const handleSubmit = (event) => {
     event.preventDefault();
     setConfirmReview(true);
-    const _data = { review: review, score: score, requestId: requestId };
-    console.log("formData", _data);
+    const _data = { review, score, requestId, timeSlotId };
   };
   const submitReview = () => {
     setSending(true);
+    setConfirmReview(false);
     let data = JSON.stringify({
       requestId: requestId,
       score: score,
       review: review,
+      timeSlotId: timeSlotId,
     });
 
     let config = {
@@ -54,15 +59,14 @@ const ReviewDoctor = ({
     axios
       .request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
         setSending(false);
         response.status === 200
-          ? setSubmitSuccessPopup(true)
+          ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
       })
       .catch((error) => {
         console.log(error);
-        setSending(true);
+        setSending(false);
         setSubmitFailPopUp(true);
       });
   };
@@ -88,6 +92,30 @@ const ReviewDoctor = ({
         <div className="">
           <div className="flex text-center md:px-[200px]">
             <Rating
+            onIcon={
+              <img
+                src="/rating-icon-active.png"
+                onError={(e) =>
+                  (e.target.src =
+                    "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                }
+                alt="custom-active"
+                width="12px"
+                height="12px"
+              />
+            }
+            offIcon={
+              <img
+                src="/rating-icon-inactive.png"
+                onError={(e) =>
+                  (e.target.src =
+                    "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                }
+                alt="custom-inactive"
+                width="12px"
+                height="12px"
+              />
+            }
               id="rating"
               className="mx-auto"
               value={score}

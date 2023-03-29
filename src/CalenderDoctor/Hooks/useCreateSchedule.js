@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 
-export const useSubmitSchedule = ({
+export const useCreateSchedule = ({
   newTimeSlots,
   setPopupState,
   formData,
@@ -13,11 +13,13 @@ export const useSubmitSchedule = ({
   setDate,
   setNewTimeSlots,
   setSubmitFailPopUp,
-  setSubmitSuccessPopup,
+  setSubmitSuccessPopUp,
+  setDatePickerDisabled,
+  clearTimeslotInput,
 }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
-    const doctorUUID = "7ecf8aa7-0fe9-45da-b73b-6d6369dd29b0";
+    const doctorUUID = localStorage.getItem('doctorUUID');;
     const form = event.target;
     const data = {
       uuid: doctorUUID,
@@ -47,29 +49,16 @@ export const useSubmitSchedule = ({
       .request(config)
       .then((response) => {
         document.querySelector("#create-schedule").reset();
-        setStartTime(
-          new Date(
-            new Date(new Date().toLocaleDateString()).getTime() +
-              1800000 * Math.ceil(new Date().getMinutes() / 30) +
-              3600000 * (new Date().getHours() + 1)
-          )
-        );
-        setFinishTime(
-          new Date(
-            new Date(new Date().toLocaleDateString()).getTime() +
-              1800000 * (1 + Math.ceil(new Date().getMinutes() / 30)) +
-              3600000 * (new Date().getHours() + 1)
-          )
-        );
-        setPrice();
-        setDate();
+        clearTimeslotInput();
         setNewTimeSlots([]);
+        setDatePickerDisabled(false);
         setSending(false);
         response.status === 200
-          ? setSubmitSuccessPopup(true)
+          ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
       })
       .catch((error) => {
+        console.log("error", error);
         setSending(false);
         setSubmitFailPopUp(true);
       });
@@ -79,6 +68,7 @@ export const useSubmitSchedule = ({
 };
 
 export const useAddOrRemoveTimeSlot = ({
+  timeSlots,
   newTimeSlots,
   idxToDelete,
   setNewTimeSlots,
@@ -88,9 +78,9 @@ export const useAddOrRemoveTimeSlot = ({
   price,
   setPrice,
   setOpenTimeSlotForm,
+  setDatePickerDisabled,
 }) => {
   const [confirmRemove, setConfirmRemove] = useState(false);
-  const [datePickerDisabled, setDatePickerDisabled] = useState(false);
   const [duplicatedTime, setDuplicatedTime] = useState(false);
   const removeTimeslot = () => {
     const _newTimeSlots = newTimeSlots.filter((e, idx) => idx !== idxToDelete);
@@ -116,41 +106,41 @@ export const useAddOrRemoveTimeSlot = ({
     if (
       newTimeSlots.findIndex(
         (timeslot) =>
-          _startTime >= new Date(timeslot.startTime) &&
-          _startTime < new Date(timeslot.finishTime)
+          (_startTime >= new Date(timeslot.startTime) &&
+            _startTime < new Date(timeslot.finishTime)) ||
+          (_finishTime <= new Date(timeslot.finishTime) &&
+            _finishTime > new Date(timeslot.startTime)) ||
+          (_finishTime >= new Date(timeslot.finishTime) &&
+            _startTime <= new Date(timeslot.startTime))
       ) !== -1 ||
-      newTimeSlots.findIndex(
+      timeSlots.findIndex(
         (timeslot) =>
-          _finishTime <= new Date(timeslot.finishTime) &&
-          _finishTime > new Date(timeslot.startTime)
-      ) !== -1 ||
-      newTimeSlots.findIndex(
-        (timeslot) =>
-          _finishTime >= new Date(timeslot.finishTime) &&
-          _startTime <= new Date(timeslot.startTime)
+          (_startTime >= new Date(timeslot.startTime) &&
+            _startTime < new Date(timeslot.finishTime)) ||
+          (_finishTime <= new Date(timeslot.finishTime) &&
+            _finishTime > new Date(timeslot.startTime)) ||
+          (_finishTime >= new Date(timeslot.finishTime) &&
+            _startTime <= new Date(timeslot.startTime))
       ) !== -1
     ) {
       setDuplicatedTime(true);
-      setTimeout(() => setDuplicatedTime(false), 5000);
+      setTimeout(() => setDuplicatedTime(false), 3000);
     } else {
-      console.log("newTimeSlots[0].startTime", newTimeSlots[0]);
       const _timeslots = [
         ...new Map([
           ...newTimeSlots.map((item) => [item["startTime"], item]),
           [newAddingTimeSlot["startTime"], newAddingTimeSlot],
         ]).values(),
       ];
-      console.log("_timeslots", _timeslots);
+      setPrice();
       setNewTimeSlots(_timeslots);
       setOpenTimeSlotForm(false);
       setDatePickerDisabled(true);
-      setPrice();
     }
   };
   return {
     addTimeSlot,
     removeTimeslot,
-    datePickerDisabled,
     setConfirmRemove,
     confirmRemove,
     duplicatedTime,

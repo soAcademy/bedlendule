@@ -17,11 +17,7 @@ const usePatientCalendarProps = () => {
       .then(function async(response) {
         const _timeslots = [
           ...new Set(
-            response.data.map((e) =>
-              new Date(e.startTime).toLocaleDateString("en", {
-                timeZone: "UTC",
-              })
-            )
+            response.data.map((e) => new Date(e.startTime).toLocaleDateString())
           ),
         ];
         setTimeSlots(_timeslots);
