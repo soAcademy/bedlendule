@@ -5,6 +5,7 @@ import "primereact/resources/themes/saga-green/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import Landing from "./Pages/Landing";
+import Registration from "./Pages/Registration";
 import PatientSchedule from "./Pages/PatientSchedule";
 import DoctorSchedule from "./Pages/DoctorSchedule";
 import { BsArrowLeft } from "react-icons/bs";
@@ -17,6 +18,7 @@ export const ConfirmPopupContext = createContext();
 
 export const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
+  const [registration, setRegistration] = useState("registration");
   const [page, setPage] = useState("landing"); // landing
   const [type, setType] = useState("doctor"); //อย่าลืมเปลี่ยนเป็น doctor
   localStorage.setItem("doctorUUID", "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b");
