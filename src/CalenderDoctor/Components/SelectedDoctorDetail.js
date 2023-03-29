@@ -7,23 +7,23 @@ import axios from "axios";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IoIosReturnLeft } from "react-icons/io";
 
-const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
+const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [appointmentPopup, setAppointmentPopup] = useState(false);
   const [doctorDetail, setDoctorDetail] = useState([]);
   const [loading, setLoading] = useState();
-  const [currentTime, setCurrentTime] = useState();
   const [doctorName, setDoctorName] = useState([]);
   const [dataForm, setDataForm] = useState([]);
 
-  // console.log("selectedDoctor555", selectedDoctor);
-  console.log("dataForm", dataForm);
-  // console.log("mapDataForm",dataForm.map(r=>r.startTime))
-
+  const chosenDate = Number(date?.substring(8, 10));
   const patientUUID = "9ab93e34-b805-429d-962a-c723d8d8bca8";
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
+
+  console.log("chosenDate", chosenDate);
+  console.log("selectedDoctor555", selectedDoctor);
+  console.log("dataFormState", dataForm);
 
   // get doctor detail by UUID
   useEffect(() => {
@@ -69,38 +69,13 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
     });
   }, [selectedDoctor]);
 
-  //get doctor Id for requestnull
-  const findTimeslot = (schedules) => {
-    // console.log("schedulesfindslot", schedules);
-    const findRequestNull = selectedDoctor.timeslots?.filter(
-      (timeslots) => timeslots.requestId === null
-    );
-    const idRequestNull = findRequestNull?.map((r) => r.id);
-    const times = idRequestNull?.map((a) =>
-      schedules?.map((r) => r.timeslots?.filter((c) => c.id === a))
-    );
-    const _arrayTimes = times?.map((r) => r?.filter((c) => c.length > 0));
-
-    const _doctorTimeslots = _arrayTimes?.map((r) =>
-      r.map((c) =>
-        c.map((r) => {
-          return {
-            startTime: r.startTime.substring(11, 16),
-            finishTime: r.finishTime.substring(11, 16),
-            price: r.price,
-          };
-        })
-      )
-    );
-    return setCurrentTime(_doctorTimeslots);
-  };
-
   //find index of scheduled which has timeslot(requestNull)
   const tranformData = (schedules) => {
-    console.log("allSchedules",schedules);
+    console.log("allSchedules", schedules);
     const requestNullId = selectedDoctor.timeslots
       ?.filter((timeslots) => timeslots.requestId === null)
       .map((r) => r.id);
+    console.log("requestNullId", requestNullId);
     // เอา index of request null Id มา map เอา location,meetingType เก็บแบบ array
     const inputRequestId = (InputRequestNullId) => {
       const a = InputRequestNullId.map((c, idx) =>
@@ -120,28 +95,58 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
         return { location: r.locationId, reqeustData: r.timeData.data[0] };
       });
       console.log("cleanData<>", cleanData);
+      const pickDateFilter = cleanData.map((r) =>
+        r.reqeustData.map(
+          (c) => Number(c.startTime.substring(8, 10)) == [chosenDate]
+        )
+      );
+      console.log("pickDateFilter",pickDateFilter);
 
-      const dataForm = cleanData.map((r) => {
-        return {
-          description:schedules[r.location].description,
-          location: schedules[r.location].location,
-          meetingType: schedules[r.location].meetingType,
-          timeslotId: r.reqeustData
-            .map((r) => r.id)
-            .slice(0, 1)
-            .pop(),
-          patientUUID: patientUUID,
-          startTime: r.reqeustData.map((r) => r.startTime).pop(),
-          finishTime: r.reqeustData.map((r) => r.finishTime).pop(),
-          price: r.reqeustData.map((r) => r.price).pop(),
-        };
-      });
-      // console.log("dataForm", dataForm);
-      return dataForm;
+      const findIndex = pickDateFilter.map((r,idx)=>r.map(r=>r === true ? idx : null)).flat()
+      console.log("findIndex",findIndex);
+      const currentSlotTime = findIndex.map(index =>cleanData[index] )
+      console.log("currentSlotTime",currentSlotTime)
+
+      // const currentSlotTime = pickDateFilter.map((r) => {
+      //   console.log("r", r);
+      //   return r.map((c, idx) => (c === true ? cleanData[idx] : null));
+      // });
+      // // console.log("currentSlotTime", currentSlotTime);
+
+
+      // console.log("true22",cleanData.map(r=>r.false))
+      const readyData = currentSlotTime
+        .filter((r) => r !== undefined)
+       
+      console.log("readyData", readyData);
+      console.log(
+        "testMap",
+        readyData.map((r) => r.location))
+    
+     
+      const dataForm2 = readyData.map((r) =>{
+        
+          return {
+            description: schedules[r.location].description,
+            location: schedules[r.location].location,
+            meetingType: schedules[r.location].meetingType,
+            timeslotId: r.reqeustData
+              .map((r) => r.id)
+              .slice(0, 1)
+              .pop(),
+            patientUUID: patientUUID,
+            startTime: r.reqeustData.map((r) => r.startTime).pop(),
+            finishTime: r.reqeustData.map((r) => r.finishTime).pop(),
+            price: r.reqeustData.map((r) => r.price).pop(),
+          };
+        }
+      );
+      console.log("dataForm2", dataForm2);
+      return dataForm2;
     };
     return setDataForm(inputRequestId(requestNullId));
   };
-
+ 
   return (
     <>
       <div className="fixed top-10 flex w-full flex-col  ">
@@ -209,55 +214,56 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
           </ul>
         </div>
         <div className=" mx-auto w-[95%]">
-          {dataForm?.map((r) => (
-            <ul
-              className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
-              onClick={() => {
-                setChooseTimeSlot(r);
-                setAppointmentPopup(!appointmentPopup);
-              }}
-            >
-              <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
-                <div className="absolute top-[-10px] w-[50px] rounded-lg bg-white px-1 text-slate-400">
-                  From
-                </div>
-                <div className="mx-auto flex">
-                  <div className="underline underline-offset-2 ">
-                    {r.startTime.substring(11,16)}
+          {dataForm.map((r) =>
+              <ul
+                className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
+                onClick={() => {
+                  setChooseTimeSlot(r);
+                  setAppointmentPopup(!appointmentPopup);
+                }}
+              >
+                <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
+                  <div className="absolute top-[-10px] w-[50px] rounded-lg bg-white px-1 text-slate-400">
+                    From
                   </div>
-                  <div className="px-1">
-                    <GiAlarmClock className="text-base" />
+                  <div className="mx-auto flex">
+                    <div className="underline underline-offset-2 ">
+                      {r.startTime.substring(11, 16)}
+                    </div>
+                    <div className="px-1">
+                      <GiAlarmClock className="text-base" />
+                    </div>
                   </div>
-                </div>
-              </li>
-              <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
-                  To
-                </div>
-                <div className="mx-auto flex">
-                  <div className="underline underline-offset-2">
-                    {r.finishTime.substring(11,16)}
+                </li>
+                <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
+                  <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
+                    To
                   </div>
-                  <div className="px-1">
-                    <GiAlarmClock className="text-base" />
+                  <div className="mx-auto flex">
+                    <div className="underline underline-offset-2">
+                      {r.finishTime.substring(11, 16)}
+                    </div>
+                    <div className="px-1">
+                      <GiAlarmClock className="text-base" />
+                    </div>
                   </div>
-                </div>
-              </li>
-              <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
-                  Rate
-                </div>
-                <div className=" mx-auto flex">
-                  <div className="underline underline-offset-2">
-                    {r.price} THB/Hour
+                </li>
+                <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
+                  <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
+                    Rate
                   </div>
-                  <div className="px-1">
-                    <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
+                  <div className=" mx-auto flex">
+                    <div className="underline underline-offset-2">
+                      {r.price} THB/Hour
+                    </div>
+                    <div className="px-1">
+                      <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
+                    </div>
                   </div>
-                </div>
-              </li>
-            </ul>
-          ))}
+                </li>
+              </ul>
+         
+          )}
         </div>
       </div>
 
