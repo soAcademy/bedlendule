@@ -24,7 +24,7 @@ const Login = ({ setPage }) => {
     e.preventDefault();
     setLogginIn(true);
     let data = JSON.stringify({
-      username: e.target["username"].value,
+      username: e.target["username"].value.toLowerCase(),
       password: e.target["password"].value,
     });
     let config = {
@@ -38,10 +38,10 @@ const Login = ({ setPage }) => {
 
     axios(config)
       .then((response) => {
-        console.log(response.data);
+        console.log("res",response.data);
         localStorage.setItem("access-token",response.data.access_token);
         document.querySelector("#password").value = "";
-        setPage("patient")
+        response.data.type === 'PATIENT' ? setPage("patient") : setPage("doctor")
         setAuthenticated(true);
         show();
         setLogginIn(false);
