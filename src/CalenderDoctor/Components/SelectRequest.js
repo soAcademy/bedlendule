@@ -37,18 +37,16 @@ const SelectRequest = ({
       setUpdated(!updated);
     },
   });
-  const doctoruuid = "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b"
+  const doctorUUID = localStorage.getItem('doctorUUID');
   const acceptRequest = () => {
     setConfirmPopup(false);
-    console.log("timeSlot.startTime", timeSlot.startTime);
     let data = JSON.stringify({
       requestId: requestId,
-      uuid: doctoruuid,
+      uuid: doctorUUID,
       startTime: timeSlot.startTime,
       finishTime: timeSlot.finishTime,
     });
 
-    console.log("data", data);
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -63,7 +61,6 @@ const SelectRequest = ({
     axios
       .request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
         setSending(false);
         response.status === 200
           ? setSubmitSuccessPopUp(true)
@@ -92,8 +89,7 @@ const SelectRequest = ({
     axios(config)
       .then((response) => {
         setFetching(false);
-        console.log('response.data', response.data)
-        const _requests = response.data.filter(e=>e.doctorTimeslot.findIndex(timeslot=>timeslot.schedule.uuid === doctoruuid)===-1)
+        const _requests = response.data.filter(e=>e.doctorTimeslot.findIndex(timeslot=>timeslot.schedule.uuid === doctorUUID)===-1)
         setRequests(_requests);
       })
       .catch((error) => {
@@ -127,7 +123,6 @@ const SelectRequest = ({
             value={date}
             disabledDates={disabledDates.map((e) => new Date(e))}
             onChange={(e) => {
-              console.log('e.value', e.value)
               setDate(e.value.toISOString());
             }}
             minDate={new Date()}
@@ -188,6 +183,9 @@ const SelectRequest = ({
             </div>
           </div>
         ))}
+        {requests.length === 0 && !fetching && (
+        <div className="text-center">No open request for you</div>
+        )}
       </div>
       <ConfirmPopup
         title={"Accept Request"}

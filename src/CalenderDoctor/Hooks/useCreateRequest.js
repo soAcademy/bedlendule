@@ -11,7 +11,7 @@ const useCreateRequest = ({
   setPopupState,
 }) => {
   const [formData, setFormData] = useState();
-  const patientUUID = "c646e99a-9a64-497a-87fd-6972bd7bf387";
+  const patientUUID = localStorage.getItem('patientUUID');
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = event.target;

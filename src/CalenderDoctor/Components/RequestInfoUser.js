@@ -10,8 +10,6 @@ import { Rating } from "primereact/rating";
 const DoctorProfileUserSide = () => {
   const [reviewScore, setReviewScore] = useState(0);
   const [profile, setProfile] = useState([]);
-  console.log("profile", profile);
-  console.log("email", profile?.email);
   const mockDoctordata = [
     {
       name: "David Goodman",
@@ -53,7 +51,6 @@ const DoctorProfileUserSide = () => {
     axios
       .request(config)
       .then((response) => {
-        console.log(JSON.stringify(response.data));
         setProfile(response.data);
       })
       .catch((error) => {

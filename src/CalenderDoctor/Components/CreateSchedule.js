@@ -192,7 +192,6 @@ const CreateSchedule = ({
                       title={"Removing Timeslot"}
                       description={"Confirm Removal"}
                       action={() => {
-                        console.log(newTimeSlots);
                         removeTimeslot();
                       }}
                       state={confirmRemove}

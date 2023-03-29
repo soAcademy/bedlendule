@@ -76,7 +76,6 @@ const useUpdateSchedule = ({
       setDuplicatedTime(true);
       setTimeout(() => setDuplicatedTime(false), 5000);
     } else {
-      console.log("newTimeSlots[0].startTime", newTimeSlots[0]);
       const _timeslots = [
         ...new Map([
           ...newTimeSlots.map((item) => [item["startTime"], item]),
