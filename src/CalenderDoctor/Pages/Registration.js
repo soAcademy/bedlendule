@@ -6,9 +6,9 @@ import "primeicons/primeicons.css";
 
 function Registration() {
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="mx-auto mt-12">
       <div className="flex items-center justify-center">
-        <img src="/doctorLogo.png" alt="Logo" className="h-64" />
+        <img src="/doctorLogo.png" alt="Logo" className="h-40" />
       </div>
       <div className="mb-6 text-center">
         <h2 className="text-xl font-medium text-blue-600">REGISTER</h2>

@@ -4,11 +4,11 @@ import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
-function Login() {
+function Login({setPage}) {
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="w-full fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
       <div className="flex items-center justify-center">
-        <img src="/doctorLogo.png" alt="Logo" className="h-64" />
+        <img src="/doctorLogo.png" alt="Logo" className="h-40" />
       </div>
       <div className="mb-6 text-center">
         <h2 className="text-2xl font-bold text-blue-600">WELCOME BACK</h2>
@@ -40,10 +40,10 @@ function Login() {
 
         <div className="my-2 flex flex-wrap justify-center">
           <div className="flex h-[40px] w-3/5 items-center rounded-lg">
-            <label>
+            {/* <label>
               <input type="checkbox" /> Remember your password?
-            </label>
-            <div className="mx-6 font-bold">
+            </label> */}
+            <div className="m-2 font-bold">
               <a href="#"> Forget Password? </a>
             </div>
           </div>
@@ -51,6 +51,7 @@ function Login() {
 
         <div className="my-4 flex flex-wrap justify-center">
           <Button
+          type="button"
             label="Login"
             icon="pi pi-check"
             iconPos="right"
@@ -62,7 +63,7 @@ function Login() {
         <div className="my-4 flex flex-wrap justify-center">
           <p>
             Don't have an account?{" "}
-            <a className="font-bold underline underline-offset-1" href="#">
+            <a onClick={(e)=>setPage("signup")} className="font-bold underline underline-offset-1" href="#">
               Sign Up
             </a>
           </p>

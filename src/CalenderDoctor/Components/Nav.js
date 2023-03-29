@@ -26,12 +26,12 @@ const Nav = ({ page, setPage, type, setType }) => {
           <li
             onClick={() => {
               setIsSideBarOpen(false);
-              setPage("home");
+              setPage("login");
             }}
             className={`+ cursor-pointer rounded-lg p-2 hover:bg-slate-200 
             ${page === "patientSchedule" && "bg-slate-200"}`}
           >
-            HOME
+            LOGIN
           </li>
           <li
             onClick={() => {
