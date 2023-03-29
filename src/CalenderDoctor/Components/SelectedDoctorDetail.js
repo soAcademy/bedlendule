@@ -1,7 +1,6 @@
 import { Rating } from "primereact/rating";
 import { GiAlarmClock } from "react-icons/gi";
 import { AiFillDollarCircle } from "react-icons/ai";
-import { MdClose } from "react-icons/md";
 import { useState, useEffect } from "react";
 import Appointment from "./Appointment";
 import axios from "axios";

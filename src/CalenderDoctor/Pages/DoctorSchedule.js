@@ -75,7 +75,7 @@ const DoctorSchedule = ({ setPage }) => {
     setFetching(true);
     setSchedules([]);
     let data = JSON.stringify({
-      uuid: "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b",
+      uuid: localStorage.getItem('doctorUUID'),
     });
 
     let config = {

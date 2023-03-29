@@ -19,7 +19,7 @@ export const useCreateSchedule = ({
 }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
-    const doctorUUID = "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b";
+    const doctorUUID = localStorage.getItem('doctorUUID');;
     const form = event.target;
     console.log(
       "newTimeSlots",

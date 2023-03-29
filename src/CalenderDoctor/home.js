@@ -19,8 +19,9 @@ export const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
   const [page, setPage] = useState("landing"); // landing
   const [type, setType] = useState("doctor"); //อย่าลืมเปลี่ยนเป็น doctor
-  console.log("page and type",page,type) 
-
+  console.log("page and type", page, type);
+  localStorage.setItem("doctorUUID", "d3d7e1bc-fa8a-48e5-9617-7970d60fb15b");
+  localStorage.setItem("patientUUID", "c646e99a-9a64-497a-87fd-6972bd7bf387");
   return (
     <ConfirmPopupContext.Provider
       value={{ confirmPopupToggle, setConfirmPopupToggle }}

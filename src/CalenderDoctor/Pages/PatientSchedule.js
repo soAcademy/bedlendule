@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Calendar } from "primereact/calendar";
-import { BiEditAlt, BiTrash } from "react-icons/bi";
+import { BiTrash } from "react-icons/bi";
 import { HiLocationMarker } from "react-icons/hi";
 import usePatientCalendarProps from "../Hooks/usePatientCalendarProps";
 import CreateRequest from "../Components/CreateRequest";
@@ -36,7 +36,7 @@ const UserSchedule = ({ setPage, page }) => {
     console.log("date",date);
     console.log("timeSlots123",timeSlots);
 
-  const { sending, setSending, SendingPopup } = useSendingPopup();
+  const { setSending, SendingPopup } = useSendingPopup();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: () => {
@@ -118,7 +118,7 @@ const UserSchedule = ({ setPage, page }) => {
     setFetching(true);
     setRequests([]);
     let data = JSON.stringify({
-      uuid: "c646e99a-9a64-497a-87fd-6972bd7bf387",
+      uuid: localStorage.getItem('patientUUID'),
     });
 
     let config = {
