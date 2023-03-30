@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Checkbox } from "primereact/button";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -10,6 +11,7 @@ const Login = ({ setPage }) => {
   const [authenticated, setAuthenticated] = useState(false);
   const [loginFail, setLoginFail] = useState();
   const [logginIn, setLogginIn] = useState(false);
+  const redirect = useNavigate();
   const toast = useRef(null);
 
   const show = () => {
@@ -38,12 +40,13 @@ const Login = ({ setPage }) => {
 
     axios(config)
       .then((response) => {
-        console.log("res",response.data);
-        localStorage.setItem("access-token",response.data.access_token);
+        localStorage.setItem("access-token", response.data.access_token);
         document.querySelector("#password").value = "";
-        response.data.type === 'PATIENT' ? setPage("patient") : setPage("doctor")
-        setAuthenticated(true);
+        localStorage.setItem("type", response.data.type);
+        localStorage.setItem("uuid", response.data.uuid);
+        redirect("/schedule");
         show();
+        setAuthenticated(true);
         setLogginIn(false);
       })
       .catch((error) => {

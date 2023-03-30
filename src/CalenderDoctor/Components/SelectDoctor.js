@@ -5,22 +5,21 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import SelectDoctorDetail from "./SelectedDoctorDetail";
 import { IoIosReturnLeft } from "react-icons/io";
 import { Calendar } from "primereact/calendar";
-import Appointment from "./Appointment";
+import { useNavigate, useParams } from "react-router-dom";
+import { useContext } from "react";
+import { DisabledatesContext } from "../home";
+import usePatientCalendarProps from "../Hooks/usePatientCalendarProps";
 
-const SelectDoctor = ({
-  date,
-  setInsidePage,
-  setDate,
-  disabledDates,
-  dateTemplate,
-}) => {
-  console.log("date",date)
+const SelectDoctor = () => {
+  usePatientCalendarProps()
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState([]);
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
-
-  
+  const date = useParams();
+  const { disabledDates, dateTemplate } =
+    useContext(DisabledatesContext);
+  const redirect = useNavigate()
   const findFreeDoctor = (freeDoctor) => {
     const filter = freeDoctor.map((doctor) =>
       doctor.timeslots.filter((timeslots) => timeslots.requestId === null)
@@ -37,7 +36,8 @@ const SelectDoctor = ({
   useEffect(() => {
     setDoctors([]);
     setFetching(true);
-    const data = JSON.stringify({ date: date });
+    const data = JSON.stringify(date);
+    console.log("data", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -61,18 +61,12 @@ const SelectDoctor = ({
 
   return (
     <>
-      <div
-        className={`mt-4 p-2 duration-200 ${
-          page === "doctorLists"
-            ? "opacity-100"
-            : "pointer-events-none opacity-0"
-        } `}
-      >
+      <div>
         <button
-          className="fixed right-5 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
-          onClick={() => setInsidePage("patientSchedule")}
+          className="z-40 absolute right-10 top-15 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
+          onClick={() => redirect(-1)}
         >
-          <IoIosReturnLeft className=""/>
+          <IoIosReturnLeft className="" />
         </button>
         <div className="headingColor relative mt-8 text-center text-3xl font-bold ">
           SELECT DOCTOR
@@ -83,9 +77,13 @@ const SelectDoctor = ({
             placeholder="Select date"
             className="z-0 w-1/2 rounded-lg border-2 md:w-8/12"
             value={date}
-            disabledDates={disabledDates.map((e) => new Date(e))}
+            disabledDates={disabledDates?.map((e) => new Date(e))}
             onChange={(e) => {
-              setDate(new Date(e.value.toLocaleDateString()).toISOString());
+              redirect(
+                `../schedule/selectdoctor/${e.value
+                  .toLocaleDateString()
+                  .replace(/\//g, "-")}`
+              );
             }}
             minDate={new Date()}
             locale="en"
@@ -117,30 +115,30 @@ const SelectDoctor = ({
               </div>
               <div className="w-[20%] ">
                 <Rating
-                onIcon={
-                  <img
-                    src="/rating-icon-active.png"
-                    onError={(e) =>
-                      (e.target.src =
-                        "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                    }
-                    alt="custom-active"
-                    width="12px"
-                    height="12px"
-                  />
-                }
-                offIcon={
-                  <img
-                    src="/rating-icon-inactive.png"
-                    onError={(e) =>
-                      (e.target.src =
-                        "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                    }
-                    alt="custom-inactive"
-                    width="12px"
-                    height="12px"
-                  />
-                }
+                  onIcon={
+                    <img
+                      src="/rating-icon-active.png"
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                      }
+                      alt="custom-active"
+                      width="12px"
+                      height="12px"
+                    />
+                  }
+                  offIcon={
+                    <img
+                      src="/rating-icon-inactive.png"
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                      }
+                      alt="custom-inactive"
+                      width="12px"
+                      height="12px"
+                    />
+                  }
                   value={
                     doctor.doctorUUID.reviews.reduce(
                       (acc, r) => acc + r.score,
@@ -152,7 +150,7 @@ const SelectDoctor = ({
                 />
               </div>
             </div>
-            <div className="text-[#4C4E64] indent-8">{doctor.description}</div>
+            <div className="indent-8 text-[#4C4E64]">{doctor.description}</div>
           </div>
         ))}
       </div>
