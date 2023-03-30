@@ -21,8 +21,12 @@ import {
 import useDateTimepicker from "../Hooks/useDateTimePicker";
 import SelectRequest from "../Components/SelectRequest";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { DisabledatesContext } from "../home";
 
-const DoctorSchedule = ({ setPage }) => {
+const DoctorSchedule = () => {
+  useDoctorCalendarProps();
   const [fetching, setFetching] = useState(false);
   const [price, setPrice] = useState();
   const [idxToDelete, setIdxToDelete] = useState();
@@ -35,7 +39,11 @@ const DoctorSchedule = ({ setPage }) => {
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [openCreateSchedule, setOpenCreateSchedule] = useState(false);
   const [insidePage, setInsidePage] = useState("doctorSchedule");
-  const { dateTemplate, disabledDates } = useDoctorCalendarProps();
+  const {
+    disabledDates,
+    dateTemplate,
+    // date, setDate
+  } = useContext(DisabledatesContext);
   const {
     handleStartTimeChange,
     handleFinishTimeChange,
@@ -71,11 +79,13 @@ const DoctorSchedule = ({ setPage }) => {
     setUpdated,
   });
 
+  const redirect = useNavigate();
+
   useEffect(() => {
     setFetching(true);
     setSchedules([]);
     let data = JSON.stringify({
-      uuid: localStorage.getItem('doctorUUID'),
+      uuid: localStorage.getItem("uuid"),
     });
 
     let config = {
@@ -122,9 +132,13 @@ const DoctorSchedule = ({ setPage }) => {
               value={date}
               disabledDates={disabledDates.map((e) => new Date(e))}
               onChange={(e) => {
-                setDate(e.value.toISOString());
-                setInsidePage("selectRequest");
+                redirect(
+                  `selectrequest/${e.value
+                    .toLocaleDateString()
+                    .replace(/\//g, "-")}`
+                );
               }}
+              showOtherMonths={false}
               minDate={new Date()}
               inline
               locale="en"
@@ -460,14 +474,6 @@ const DoctorSchedule = ({ setPage }) => {
       />
       <SendingPopup />
       <ResultPopup />
-      <SelectRequest
-        date={date}
-        insidePage={insidePage}
-        setInsidePage={setInsidePage}
-        setDate={setDate}
-        disabledDates={disabledDates}
-        dateTemplate={dateTemplate}
-      />
     </>
   );
 };

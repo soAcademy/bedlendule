@@ -1,10 +1,11 @@
 import { FaAlignJustify } from "react-icons/fa";
+import { Link, useLocation } from "react-router-dom";
 import React, { useState } from "react";
 const Nav = ({ page, setPage, type, setType }) => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
-
+  const location = useLocation();
   return (
-    <div className="fixed top-0 w-full z-[9999]">
+    <div className="z-[9999] w-full">
       <div className="z-50 flex h-[50px] w-full flex-row bg-[#C5E1A5] px-2 drop-shadow-md">
         <button
           onClick={() => {
@@ -19,60 +20,78 @@ const Nav = ({ page, setPage, type, setType }) => {
         </div>
       </div>
       <section
-        className={`fixed top-[50px] left-0 z-40 w-2/3 h-full bg-slate-50 py-6 px-3 shadow-xl duration-200
+        className={`fixed top-[50px] left-0 z-40 h-full w-2/3 bg-slate-50 py-6 px-3 shadow-xl duration-200
       ${!isSideBarOpen && "-translate-x-full"}`}
       >
-        <ul className="w-full space-y-2">
-          <li
+        <ul className="flex w-full flex-col space-y-2">
+          <Link
+            to="login"
             onClick={() => {
               setIsSideBarOpen(false);
-              setPage("login");
             }}
             className={`+ cursor-pointer rounded-lg p-2 hover:bg-slate-200 
-            ${page === "patientSchedule" && "bg-slate-200"}`}
+            ${
+              location.pathname === "/login" &&
+              "pointer-events-none bg-slate-200"
+            }
+            ${localStorage.getItem("access-token") && "hidden"}`}
           >
             LOGIN
-          </li>
-          <li
+          </Link>
+          <Link
+            to={"schedule"}
             onClick={() => {
               setIsSideBarOpen(false);
-              setPage("setting");
             }}
             className={`cursor-pointer rounded-lg p-2 hover:bg-slate-200
-              ${page === "setting" && "bg-slate-200"}`}
+            ${
+              location.pathname === "/schedule" &&
+              "pointer-events-none bg-slate-200"
+            }
+            ${!localStorage.getItem("access-token") && "hidden"}`}
+          >
+            SCHEDULE
+          </Link>
+          <Link
+            to={"setting"}
+            onClick={() => {
+              setIsSideBarOpen(false);
+            }}
+            className={`cursor-pointer rounded-lg p-2 hover:bg-slate-200
+            ${
+              location.pathname === "/setting" &&
+              "pointer-events-none bg-slate-200"
+            }`}
           >
             SETTING
-          </li>
-          <li
+          </Link>
+          <Link
+            to={"faqs"}
             onClick={() => {
               setIsSideBarOpen(false);
-              setPage("FAQS");
             }}
-            className={`+ cursor-pointer rounded-lg p-2 hover:bg-slate-200
-              ${page === "FAQS" && "bg-slate-200"}`}
+            className={`cursor-pointer rounded-lg p-2 hover:bg-slate-200
+            ${
+              location.pathname === "/faqs" &&
+              "pointer-events-none bg-slate-200"
+            }
+            `}
           >
             FAQS
-          </li>
-          <li
+          </Link>
+          <Link
+            to={"login"}
             onClick={() => {
               setIsSideBarOpen(false);
-              setPage("doctor");
+              localStorage.removeItem("access-token");
+              localStorage.removeItem("type")
+              localStorage.removeItem("uuid")
             }}
-            className={`+ cursor-pointer rounded-lg p-2 hover:bg-slate-200
-              ${page === "doctor" && "bg-slate-200"}`}
+            className={`cursor-pointer rounded-lg p-2 hover:bg-slate-200
+              ${!localStorage.getItem("access-token") && "hidden"}`}
           >
-            Doctor
-          </li>
-          <li
-            onClick={() => {
-              setIsSideBarOpen(false);
-              setPage("patient");
-            }}
-            className={`+ cursor-pointer rounded-lg p-2 hover:bg-slate-200
-              ${page === "patient" && "bg-slate-200"}`}
-          >
-            Patient
-          </li>
+            Log out
+          </Link>
         </ul>
       </section>
     </div>
