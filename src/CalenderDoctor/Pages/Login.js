@@ -44,7 +44,7 @@ const Login = ({ setPage }) => {
         document.querySelector("#password").value = "";
         localStorage.setItem("type", response.data.type);
         localStorage.setItem("uuid", response.data.uuid);
-        redirect("/schedule");
+        redirect("/");
         show();
         setAuthenticated(true);
         setLogginIn(false);
