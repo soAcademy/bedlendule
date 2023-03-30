@@ -63,7 +63,7 @@ const SelectDoctor = () => {
     <>
       <div>
         <button
-          className="z-40 absolute right-10 top-15 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
+          className="z-40 top-13 absolute right-4 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
           onClick={() => redirect(-1)}
         >
           <IoIosReturnLeft className="" />
