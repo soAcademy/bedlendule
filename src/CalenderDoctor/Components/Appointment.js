@@ -17,6 +17,7 @@ const Appointment = ({
 
   console.log("processing",processing)
   console.log("booktimeSlot", booktimeSlot);
+  console.log("Appointment....");
 
   const tranformData = (selectTimeSlot) => {
     const _result = {
