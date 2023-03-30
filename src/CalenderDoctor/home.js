@@ -35,13 +35,13 @@ export const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
   const [page, setPage] = useState(); // landing
   const [type, setType] = useState(); //อย่าลืมเปลี่ยนเป็น doctor
-  
+
   window.onload = () => {
     const accessToken = localStorage.getItem("access-token");
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "http://localhost:5555/bedlendule/verifySession",
+      url: "https://bedlendule-backend.vercel.app/bedlendule/verifySession",
       headers: {
         "access-token": accessToken,
         "Content-Type": "application/json",
@@ -52,9 +52,11 @@ export const Home = () => {
       .then((response) => {
         if (response.status === 250) {
           redirect("/login");
-        } else if (response.status === 200) {
+        } else if (response.status === 200 && response.data.uuid) {
           localStorage.setItem("type", response.data.type);
           localStorage.setItem("uuid", response.data.uuid);
+        } else {
+          redirect("/login")
         }
       })
       .catch((error) => {
@@ -62,6 +64,23 @@ export const Home = () => {
       });
   };
 
+
+  let config = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: "https://bedlendule-backend.vercel.app/bedlendule/getPublicToken",
+    headers: {},
+  };
+
+  axios
+    .request(config)
+    .then((response) => {
+      localStorage.setItem("access-token", response.data.access_token);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+    
   useEffect(() => {
     console.log("page", page);
   }, [page]);
@@ -155,6 +174,7 @@ export const Home = () => {
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="login" element={<Login />} />
+                <Route path="signup" element={<Registration />} />
                 <Route path="schedule" element={<Schedule />}></Route>
                 <Route
                   exact path="schedule/selectdoctor/:date"
