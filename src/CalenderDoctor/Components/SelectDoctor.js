@@ -44,6 +44,7 @@ const SelectDoctor = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByDate",
       headers: {
         "Content-Type": "application/json",
+        'access-token': localStorage.getItem('access-token')
       },
       data: data,
     };

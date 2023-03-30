@@ -94,6 +94,7 @@ const DoctorSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByUUID",
       headers: {
         "Content-Type": "application/json",
+        'access-token': localStorage.getItem('access-token')
       },
       data: data,
     };

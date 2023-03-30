@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Checkbox } from "primereact/button";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -34,6 +34,7 @@ const Login = ({ setPage }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/login",
       headers: {
         "Content-Type": "application/json",
+        'access-token': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -110,13 +111,11 @@ const Login = ({ setPage }) => {
           <div className="my-4 flex flex-wrap justify-center">
             <p>
               Don't have an account?{" "}
-              <a
-                onClick={(e) => setPage("signup")}
+              <Link to="/signup"
                 className="font-bold underline underline-offset-1"
-                href="#"
               >
                 Sign Up
-              </a>
+              </Link>
             </p>
           </div>
           <p

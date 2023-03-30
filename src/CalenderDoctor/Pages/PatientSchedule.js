@@ -63,6 +63,7 @@ const UserSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/chooseDoctor",
       headers: {
         "Content-Type": "application/json",
+        'access-token': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -94,6 +95,7 @@ const UserSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/deleteRequest",
       headers: {
         "Content-Type": "application/json",
+        'access-token': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -125,6 +127,7 @@ const UserSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getRequestsByUUID",
       headers: {
         "Content-Type": "application/json",
+        'access-token': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -153,6 +156,7 @@ const UserSchedule = () => {
         url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
         headers: {
           "Content-Type": "application/json",
+          'access-token': localStorage.getItem('access-token')
         },
         data: data,
       };

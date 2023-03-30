@@ -34,7 +34,7 @@ const Nav = ({ page, setPage, type, setType }) => {
               location.pathname === "/login" &&
               "pointer-events-none bg-slate-200"
             }
-            ${localStorage.getItem("access-token") && "hidden"}`}
+            ${localStorage.getItem("uuid") && "hidden"}`}
           >
             LOGIN
           </Link>
@@ -48,7 +48,7 @@ const Nav = ({ page, setPage, type, setType }) => {
               location.pathname === "/schedule" &&
               "pointer-events-none bg-slate-200"
             }
-            ${!localStorage.getItem("access-token") && "hidden"}`}
+            ${!localStorage.getItem("uuid") && "hidden"}`}
           >
             SCHEDULE
           </Link>
@@ -83,12 +83,12 @@ const Nav = ({ page, setPage, type, setType }) => {
             to={"login"}
             onClick={() => {
               setIsSideBarOpen(false);
-              localStorage.removeItem("access-token");
+              localStorage.removeItem("uuid");
               localStorage.removeItem("type")
               localStorage.removeItem("uuid")
             }}
             className={`cursor-pointer rounded-lg p-2 hover:bg-slate-200
-              ${!localStorage.getItem("access-token") && "hidden"}`}
+              ${!localStorage.getItem("uuid") && "hidden"}`}
           >
             Log out
           </Link>

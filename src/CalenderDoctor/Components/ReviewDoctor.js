@@ -52,6 +52,7 @@ const ReviewDoctor = ({
       url: "https://bedlendule-backend.vercel.app/bedlendule/createReview",
       headers: {
         "Content-Type": "application/json",
+        'access-token': localStorage.getItem('access-token')
       },
       data: data,
     };

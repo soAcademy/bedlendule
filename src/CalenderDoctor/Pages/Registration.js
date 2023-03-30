@@ -6,8 +6,9 @@ import "primeicons/primeicons.css";
 import { useState } from "react";
 import { enforceFormat, formatToPhone } from "../Functions/validateForm";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
-const Registration = ({setPage}) => {
+const Registration = () => {
   const [sending, setSending] = useState();
   const [input, setInput] = useState({
     password: "",
@@ -20,6 +21,8 @@ const Registration = ({setPage}) => {
     confirmPassword: "",
     phoneNumber: "",
   });
+
+
   const onInputChange = (e) => {
     const { name, value } = e.target;
     setInput((prev) => ({
@@ -94,13 +97,14 @@ const Registration = ({setPage}) => {
         form["last-name"].value.slice(0, 1).toUpperCase() +
         form["last-name"].value.slice(1).toLowerCase(),
     };
-    console.log(userData)
+    console.log(userData);
     let config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "http://localhost:5555/bedlendule/createUser",
+      url: "https://bedlendule-backend.vercel.app/bedlendule/createUser",
       headers: {
         "Content-Type": "application/json",
+        'access-token': localStorage.getItem('access-token'),
       },
       data: userData,
     };
@@ -257,7 +261,10 @@ const Registration = ({setPage}) => {
       <div className="already-have-account">
         <div className="my-4 flex justify-center">
           <p>
-            Already have an account? <button onClick={()=>setPage("login")}>Login</button>
+            Already have an account?{" "}
+            <Link to="/login" className="font-bold underline">
+              Login
+            </Link>
           </p>
         </div>
       </div>
