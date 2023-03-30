@@ -7,7 +7,7 @@ import { useState } from "react";
 import { enforceFormat, formatToPhone } from "../Functions/validateForm";
 import axios from "axios";
 
-const Registration = () => {
+const Registration = ({setPage}) => {
   const [sending, setSending] = useState();
   const [input, setInput] = useState({
     password: "",
@@ -257,7 +257,7 @@ const Registration = () => {
       <div className="already-have-account">
         <div className="my-4 flex justify-center">
           <p>
-            Already have an account? <a href="#">Login</a>
+            Already have an account? <button onClick={()=>setPage("login")}>Login</button>
           </p>
         </div>
       </div>
