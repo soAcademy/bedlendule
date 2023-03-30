@@ -5,31 +5,40 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import SelectDoctorDetail from "./SelectedDoctorDetail";
 import { IoIosReturnLeft } from "react-icons/io";
 import { Calendar } from "primereact/calendar";
-
+// ส่ง date เพื่อเข้ามาหาว่าวันนี้มี doctor คนไหนบ้าง
 const SelectDoctor = ({
   date,
   setInsidePage,
   setDate,
   disabledDates,
   dateTemplate,
-  testDate
+
 }) => {
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState([]);
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
-
+ 
+  console.log("SelectDoctor.... date:",date)
+  console.log("doctors...",doctors);
+  console.log("date:");
+  console.log("new date", new Date(date));
+  
   const findFreeDoctor = (allDoctors) => {
+    
     console.log("allDoctors",allDoctors);
+    // allDoctor = schedule by date
+    // หา requestnull เพื่อหาหมอที่ว่าง
     const freeDoctor = allDoctors.map((doctor) =>
       doctor.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
     console.log("freeDoctor", freeDoctor);
+    // หา index ของ หมอที่ว่าง
     const indexes = freeDoctor
       .map((r, idx) => (r.length >= 1 ? idx : -1))
       .filter((idx) => idx !== -1);
       console.log("indexes",indexes);
-
+    // เอา index มาแมพเอา doctor data เพื่อส่งข้อมูลไปแมพหน้า select Doctor detail
     const results = indexes.map((idx) => allDoctors[idx]);
     console.log("results",results);
 
@@ -106,7 +115,7 @@ const SelectDoctor = ({
             />
           </div>
         )}
-
+    
         {doctors.map((doctor) => (
           <div
             className="mx-auto my-4 flex w-[90%] cursor-pointer flex-col rounded-lg border-2 border-slate-400 bg-[#F0F3EC] p-4 hover:bg-[#C5E1A5]"
@@ -168,7 +177,7 @@ const SelectDoctor = ({
             : "pointer-events-none opacity-0"
         } `}
       >
-        <SelectDoctorDetail setPage={setPage} selectedDoctor={selectedDoctor} date={date} testDate={testDate}/>
+        <SelectDoctorDetail setPage={setPage} selectedDoctor={selectedDoctor} date={date} />
       </div>
     </>
   );

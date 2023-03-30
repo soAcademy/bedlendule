@@ -7,7 +7,7 @@ import axios from "axios";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IoIosReturnLeft } from "react-icons/io";
 
-const SelectDoctorDetail = ({ setPage, selectedDoctor, date ,testDate}) => {
+const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [appointmentPopup, setAppointmentPopup] = useState(false);
   const [doctorDetail, setDoctorDetail] = useState([]);
@@ -15,18 +15,19 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date ,testDate}) => {
   const [doctorName, setDoctorName] = useState([]);
   const [dataForm, setDataForm] = useState([]);
 
-  const chosenTestDate = Number(testDate?.substring(0,2))
-  const chosenDate = Number(date?.substring(8, 10));
+  
+  const chosenDate = new Date(date);
   const patientUUID = "9ab93e34-b805-429d-962a-c723d8d8bca8";
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
 
-  console.log("chosenDate", chosenDate);
-  console.log("selectedDoctor555", selectedDoctor);
-  console.log("dataFormState", dataForm);
-  console.log("chosenTestDate",chosenTestDate);
-
+  // console.log("chosenDate", chosenDate);
+  // console.log("selectedDoctor<>", selectedDoctor);
+  // console.log("dataFormState", dataForm);
+  // console.log("chosenTestDate", chosenTestDate);
+  // console.log("SelectedDoctorDetails...");
+  // console.log("UUID:", selectedDoctor.doctorUUID?.uuid);
   // get doctor detail by UUID
   useEffect(() => {
     const _data = JSON.stringify({
@@ -45,7 +46,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date ,testDate}) => {
 
     axios(config).then((response) => {
       setLoading(false);
-      // console.log("SelectDoctorData", response.data);
+      console.log("response.data...", response.data);
       setDoctorDetail(response.data);
       setDoctorName(selectedDoctor.doctorUUID);
     });
@@ -56,6 +57,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date ,testDate}) => {
     const _data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
     });
+    console.log("UUID data", _data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -66,7 +68,9 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date ,testDate}) => {
       data: _data,
     };
     axios(config).then((response) => {
-      // findTimeslot(response.data);
+      // ได้ schedule ทั้งหมดของหมอ 1 คน 
+      console.log("ScheduleByUUID response.data:", response.data);
+      // เอาไปเข้า function เพื่อ filter หาเวลาที่ว่าง 
       tranformData(response.data);
     });
   }, [selectedDoctor]);
@@ -74,6 +78,9 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date ,testDate}) => {
   //find index of scheduled which has timeslot(requestNull)
   const tranformData = (schedules) => {
     console.log("allSchedules", schedules);
+    //หาวันว่างโดย filter requestId = null 
+    // โดยมี input เป็น selectDoctor ที่มี requestnull ติดมาด้วย
+    // ที่เหลือต้อง หา id ของ requestNull เพื่อสุดท้ายจะเอาไปหา index ของ schedules >> เพื่อจะได้ข้อมูลทั้งหมดส่งไปทำ booktimeslot 
     const requestNullId = selectedDoctor.timeslots
       ?.filter((timeslots) => timeslots.requestId === null)
       .map((r) => r.id);
@@ -98,59 +105,52 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date ,testDate}) => {
       });
       console.log("cleanData<>", cleanData);
       const pickDateFilter = cleanData.map((r) =>
-        r.reqeustData.map(
-          (c) => {
-            console.log("pickDateFilter date",Number(c.startTime.substring(8, 10)));
-          return  Number(c.startTime.substring(8, 10)) == [chosenTestDate]
-          
-          }
-        )
-      );
-      console.log("pickDateFilter",pickDateFilter);
-
-      const findIndex = pickDateFilter.map((r,idx)=>r.map(r=>r === true ? idx : null)).flat()
-      console.log("findIndex",findIndex);
-      const currentSlotTime = findIndex.map(index =>cleanData[index] )
-      console.log("currentSlotTime",currentSlotTime)
-
-      // const currentSlotTime = pickDateFilter.map((r) => {
-      //   console.log("r", r);
-      //   return r.map((c, idx) => (c === true ? cleanData[idx] : null));
-      // });
-      // // console.log("currentSlotTime", currentSlotTime);
-
-
-      // console.log("true22",cleanData.map(r=>r.false))
-      const readyData = currentSlotTime
-        .filter((r) => r !== undefined)
-       
-      console.log("readyData", readyData);
-    
-    
-     
-      const dataForm2 = readyData.map((r) =>{
+        r.reqeustData.map((c,idx) => {
+          console.log("startTime +idx",idx,c.startTime.substring(8,10))
+          console.log("chosenDate:",chosenDate);
+          // console.log("startTime: ",new Date(c.startTime.substring(0,19)));
+          const dateType = new Date(c.startTime.substring(0,19));
+          console.log("dateType: ",dateType);
+          console.log("typeAll",typeof chosenDate);
         
-          return {
-            description: schedules[r.location].description,
-            location: schedules[r.location].location,
-            meetingType: schedules[r.location].meetingType,
-            timeslotId: r.reqeustData
-              .map((r) => r.id)
-              .slice(0, 1)
-              .pop(),
-            patientUUID: patientUUID,
-            startTime: r.reqeustData.map((r) => r.startTime).pop(),
-            finishTime: r.reqeustData.map((r) => r.finishTime).pop(),
-            price: r.reqeustData.map((r) => r.price).pop(),
-          };
-        }
+          return dateType >= chosenDate;
+        })
       );
+      console.log("pickDateFilter", pickDateFilter);
+
+      const findIndex = pickDateFilter
+        .map((r, idx) => r.map((r) => (r === true ? idx : null)))
+        .flat();
+      console.log("findIndex", findIndex);
+      const currentSlotTime = findIndex.map((index) => cleanData[index]);
+      console.log("currentSlotTime", currentSlotTime);
+
+     
+      const readyData = currentSlotTime.filter((r) => r !== undefined);
+
+      console.log("readyData", readyData);
+
+      const dataForm2 = readyData.map((r) => {
+        return {
+          description: schedules[r.location].description,
+          location: schedules[r.location].location,
+          meetingType: schedules[r.location].meetingType,
+          timeslotId: r.reqeustData
+            .map((r) => r.id)
+            .slice(0, 1)
+            .pop(),
+          patientUUID: patientUUID,
+          startTime: r.reqeustData.map((r) => r.startTime).pop(),
+          finishTime: r.reqeustData.map((r) => r.finishTime).pop(),
+          price: r.reqeustData.map((r) => r.price).pop(),
+        };
+      });
       console.log("dataForm2", dataForm2);
       return dataForm2;
     };
     return setDataForm(inputRequestId(requestNullId));
   };
- 
+
   return (
     <>
       <div className="fixed top-10 flex w-full flex-col  ">
@@ -218,56 +218,55 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date ,testDate}) => {
           </ul>
         </div>
         <div className=" mx-auto w-[95%]">
-          {dataForm.map((r) =>
-              <ul
-                className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
-                onClick={() => {
-                  setChooseTimeSlot(r);
-                  setAppointmentPopup(!appointmentPopup);
-                }}
-              >
-                <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
-                  <div className="absolute top-[-10px] w-[50px] rounded-lg bg-white px-1 text-slate-400">
-                    From
+          {dataForm.map((r) => (
+            <ul
+              className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
+              onClick={() => {
+                setChooseTimeSlot(r);
+                setAppointmentPopup(!appointmentPopup);
+              }}
+            >
+              <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
+                <div className="absolute top-[-10px] w-[50px] rounded-lg bg-white px-1 text-slate-400">
+                  From
+                </div>
+                <div className="mx-auto flex">
+                  <div className="underline underline-offset-2 ">
+                    {r.startTime.substring(11, 16)}
                   </div>
-                  <div className="mx-auto flex">
-                    <div className="underline underline-offset-2 ">
-                      {r.startTime.substring(11, 16)}
-                    </div>
-                    <div className="px-1">
-                      <GiAlarmClock className="text-base" />
-                    </div>
+                  <div className="px-1">
+                    <GiAlarmClock className="text-base" />
                   </div>
-                </li>
-                <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                  <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
-                    To
+                </div>
+              </li>
+              <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
+                <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
+                  To
+                </div>
+                <div className="mx-auto flex">
+                  <div className="underline underline-offset-2">
+                    {r.finishTime.substring(11, 16)}
                   </div>
-                  <div className="mx-auto flex">
-                    <div className="underline underline-offset-2">
-                      {r.finishTime.substring(11, 16)}
-                    </div>
-                    <div className="px-1">
-                      <GiAlarmClock className="text-base" />
-                    </div>
+                  <div className="px-1">
+                    <GiAlarmClock className="text-base" />
                   </div>
-                </li>
-                <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                  <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
-                    Rate
+                </div>
+              </li>
+              <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
+                <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
+                  Rate
+                </div>
+                <div className=" mx-auto flex">
+                  <div className="underline underline-offset-2">
+                    {r.price} THB/Hour
                   </div>
-                  <div className=" mx-auto flex">
-                    <div className="underline underline-offset-2">
-                      {r.price} THB/Hour
-                    </div>
-                    <div className="px-1">
-                      <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
-                    </div>
+                  <div className="px-1">
+                    <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
                   </div>
-                </li>
-              </ul>
-         
-          )}
+                </div>
+              </li>
+            </ul>
+          ))}
         </div>
       </div>
 

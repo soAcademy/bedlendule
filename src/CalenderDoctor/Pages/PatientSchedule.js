@@ -189,7 +189,7 @@ const UserSchedule = ({ setPage, page }) => {
             onChange={(e) => {
               setDate(e.value.toISOString());
               setInsidePage("selectDoctor");
-              setTestDate(e.value.toLocaleDateString());
+            
             }}
             disabledDates={disabledDates.map((e) => new Date(e))}
             minDate={new Date()}
@@ -384,7 +384,7 @@ const UserSchedule = ({ setPage, page }) => {
           setDate={setDate}
           disabledDates={disabledDates}
           dateTemplate={dateTemplate}
-          testDate={testDate}
+        
         />
       </div>
       <div
