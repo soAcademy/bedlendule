@@ -14,6 +14,7 @@ const SelectDoctor = ({
   disabledDates,
   dateTemplate,
 }) => {
+  console.log("date",date)
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState([]);
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
@@ -84,7 +85,7 @@ const SelectDoctor = ({
             value={date}
             disabledDates={disabledDates.map((e) => new Date(e))}
             onChange={(e) => {
-              setDate(e.value.toISOString());
+              setDate(new Date(e.value.toLocaleDateString()).toISOString());
             }}
             minDate={new Date()}
             locale="en"

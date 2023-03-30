@@ -182,7 +182,7 @@ const UserSchedule = ({ setPage, page }) => {
             className="z-0 w-10/12 shadow-lg"
             value={date}
             onChange={(e) => {
-              setDate(e.value.toISOString());
+              setDate(new Date(e.value.toLocaleDateString()).toISOString());
               setInsidePage("selectDoctor");
             }}
             disabledDates={disabledDates.map((e) => new Date(e))}
