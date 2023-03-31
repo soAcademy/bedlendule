@@ -20,7 +20,7 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
   const redirect = useNavigate();
 
   
-  const chosenDate = new Date(date);
+  // const chosenDate = new Date(date);
   const patientUUID = "9ab93e34-b805-429d-962a-c723d8d8bca8";
  
 
@@ -79,81 +79,82 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
       // ได้ schedule ทั้งหมดของหมอ 1 คน 
       console.log("ScheduleByUUID response.data:", response.data);
       // เอาไปเข้า function เพื่อ filter หาเวลาที่ว่าง 
-      tranformData(response.data);
+      // tranformData(response.data);
     });
   }, [selectedDoctor]);
 
   //find index of scheduled which has timeslot(requestNull)
-  const findindexOfSchedules = (schedules) => {
-    const findRequestNull = selectedDoctor.timeslots
-      ?.filter((timeslots) => timeslots.requestId === null)
-      .map((r) => r.id);
-    console.log("requestNullId", requestNullId);
-    // เอา index of request null Id มา map เอา location,meetingType เก็บแบบ array
-    const inputRequestId = (InputRequestNullId) => {
-      const a = InputRequestNullId.map((c, idx) =>
-        schedules.map((r) => r.timeslots.filter((r) => r.id === c))
-      );
-      const b = a.map((r) => r.findIndex((c) => c.length > 0));
-      const mapId = a.map((r) => {
-        return { data: r.filter((r) => r.length > 0) };
-      });
+  // const findindexOfSchedules = (schedules) => {
+  //   const findRequestNull = selectedDoctor.timeslots
+  //     ?.filter((timeslots) => timeslots.requestId === null)
+  //     .map((r) => r.id);
+  //   // console.log("requestNullId", requestNullId);
 
-      const requestAndLocationId = b.map((r) =>
-        mapId.map((timeData) => {
-          return { timeData, locationId: r };
-        })
-      );
-      const cleanData = requestAndLocationId[0].map((r) => {
-        return { location: r.locationId, reqeustData: r.timeData.data[0] };
-      });
-      console.log("cleanData<>", cleanData);
-      const pickDateFilter = cleanData.map((r) =>
-        r.reqeustData.map((c,idx) => {
-          console.log("startTime +idx",idx,c.startTime.substring(8,10))
-          console.log("chosenDate:",chosenDate);
-          // console.log("startTime: ",new Date(c.startTime.substring(0,19)));
-          const dateType = new Date(c.startTime.substring(0,19));
-          console.log("dateType: ",dateType);
-          console.log("typeAll",typeof chosenDate);
+  //   // เอา index of request null Id มา map เอา location,meetingType เก็บแบบ array
+  //   const inputRequestId = (InputRequestNullId) => {
+  //     const a = InputRequestNullId.map((c, idx) =>
+  //       schedules.map((r) => r.timeslots.filter((r) => r.id === c))
+  //     );
+  //     const b = a.map((r) => r.findIndex((c) => c.length > 0));
+  //     const mapId = a.map((r) => {
+  //       return { data: r.filter((r) => r.length > 0) };
+  //     });
+
+  //     const requestAndLocationId = b.map((r) =>
+  //       mapId.map((timeData) => {
+  //         return { timeData, locationId: r };
+  //       })
+  //     );
+  //     const cleanData = requestAndLocationId[0].map((r) => {
+  //       return { location: r.locationId, reqeustData: r.timeData.data[0] };
+  //     });
+  //     console.log("cleanData<>", cleanData);
+  //     const pickDateFilter = cleanData.map((r) =>
+  //       r.reqeustData.map((c,idx) => {
+  //         console.log("startTime +idx",idx,c.startTime.substring(8,10))
+  //         // console.log("chosenDate:",chosenDate);
+  //         // console.log("startTime: ",new Date(c.startTime.substring(0,19)));
+  //         const dateType = new Date(c.startTime.substring(0,19));
+  //         console.log("dateType: ",dateType);
+  //         console.log("typeAll",typeof chosenDate);
         
-          return dateType >= chosenDate;
-        })
-      );
-      console.log("pickDateFilter", pickDateFilter);
+  //         return dateType >= chosenDate;
+  //       })
+  //     );
+  //     console.log("pickDateFilter", pickDateFilter);
 
-      const findIndex = pickDateFilter
-        .map((r, idx) => r.map((r) => (r === true ? idx : null)))
-        .flat();
-      console.log("findIndex", findIndex);
-      const currentSlotTime = findIndex.map((index) => cleanData[index]);
-      console.log("currentSlotTime", currentSlotTime);
+  //     const findIndex = pickDateFilter
+  //       .map((r, idx) => r.map((r) => (r === true ? idx : null)))
+  //       .flat();
+  //     console.log("findIndex", findIndex);
+  //     const currentSlotTime = findIndex.map((index) => cleanData[index]);
+  //     console.log("currentSlotTime", currentSlotTime);
 
      
-      const readyData = currentSlotTime.filter((r) => r !== undefined);
+  //     const readyData = currentSlotTime.filter((r) => r !== undefined);
 
-      console.log("readyData", readyData);
+  //     console.log("readyData", readyData);
 
-      const dataForm2 = readyData.map((r) => {
-        return {
-          description: schedules[r.location].description,
-          location: schedules[r.location].location,
-          meetingType: schedules[r.location].meetingType,
-          timeslotId: r.reqeustData
-            .map((r) => r.id)
-            .slice(0, 1)
-            .pop(),
-          patientUUID: patientUUID,
-          startTime: r.reqeustData.map((r) => r.startTime).pop(),
-          finishTime: r.reqeustData.map((r) => r.finishTime).pop(),
-          price: r.reqeustData.map((r) => r.price).pop(),
-        };
-      });
-      console.log("dataForm2", dataForm2);
-      return dataForm2;
-    };
-    return setDataForm(inputRequestId(requestNullId));
-  };
+  //     const dataForm2 = readyData.map((r) => {
+  //       return {
+  //         description: schedules[r.location].description,
+  //         location: schedules[r.location].location,
+  //         meetingType: schedules[r.location].meetingType,
+  //         timeslotId: r.reqeustData
+  //           .map((r) => r.id)
+  //           .slice(0, 1)
+  //           .pop(),
+  //         patientUUID: patientUUID,
+  //         startTime: r.reqeustData.map((r) => r.startTime).pop(),
+  //         finishTime: r.reqeustData.map((r) => r.finishTime).pop(),
+  //         price: r.reqeustData.map((r) => r.price).pop(),
+  //       };
+  //     });
+  //     console.log("dataForm2", dataForm2);
+  //     return dataForm2;
+  //   };
+  //   return setDataForm(inputRequestId(requestNullId));
+  // };
 
   return (
     <div className="shader">
@@ -222,7 +223,7 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
           </ul>
         </div>
         <div className=" mx-auto w-[95%]">
-          {dataForm.map((r) => (
+          {/* {dataForm.map((r) => (
             <ul
               className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
               onClick={() => {
@@ -270,7 +271,7 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
                 </div>
               </li>
             </ul>
-          ))}
+          ))} */}
         </div>
       </div>
 

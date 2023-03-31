@@ -188,7 +188,7 @@ const UserSchedule = () => {
     }
   }, [doctorUUID]);
 
-  console.log("testDate",testDate);
+  // console.log("testDate",testDate);
   return (
     <>
       <div
