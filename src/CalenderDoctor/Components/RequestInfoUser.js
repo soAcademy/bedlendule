@@ -1,15 +1,14 @@
-import ConfirmPopup from "./ConfirmPopup";
-import { MdClose } from "react-icons/md";
-import { Calendar } from "primereact/calendar";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { AiFillStar } from "react-icons/ai";
 import { Rating } from "primereact/rating";
+import useRedirect from "../Hooks/useRedirect";
 
 const DoctorProfileUserSide = () => {
   const [reviewScore, setReviewScore] = useState(0);
   const [profile, setProfile] = useState([]);
+  const {redirectToLogin} = useRedirect()
   const mockDoctordata = [
     {
       name: "David Goodman",
@@ -44,6 +43,7 @@ const DoctorProfileUserSide = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
       headers: {
         "Content-Type": "application/json",
+        'authorization': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -55,6 +55,9 @@ const DoctorProfileUserSide = () => {
       })
       .catch((error) => {
         console.log(error);
+        if (error.response.status === 401) {
+          redirectToLogin()
+        }
       });
   }, []);
 

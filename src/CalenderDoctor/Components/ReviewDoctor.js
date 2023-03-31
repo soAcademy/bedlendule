@@ -5,6 +5,7 @@ import ConfirmPopup from "./ConfirmPopup";
 import axios from "axios";
 import useSendingPopup from "../Hooks/useSendingPopup";
 import useSubmitResult from "../Hooks/useSubmitResult";
+import useRedirect from "../Hooks/useRedirect";
 
 const ReviewDoctor = ({
   setOpenReview,
@@ -18,6 +19,7 @@ const ReviewDoctor = ({
   const [review, setReview] = useState();
   const [confirmReview, setConfirmReview] = useState(false);
   const { setSending, SendingPopup } = useSendingPopup();
+  const {redirectToLogin} = useRedirect()
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: () => {
@@ -52,6 +54,7 @@ const ReviewDoctor = ({
       url: "https://bedlendule-backend.vercel.app/bedlendule/createReview",
       headers: {
         "Content-Type": "application/json",
+        'authorization': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -68,6 +71,9 @@ const ReviewDoctor = ({
         console.log(error);
         setSending(false);
         setSubmitFailPopUp(true);
+        if (error.response.status === 401) {
+          redirectToLogin()
+        }
       });
   };
 

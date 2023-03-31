@@ -6,14 +6,18 @@ import Appointment from "./Appointment";
 import axios from "axios";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IoIosReturnLeft } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
+import { MdClose } from "react-icons/md";
 
-const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
+const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [appointmentPopup, setAppointmentPopup] = useState(false);
   const [doctorDetail, setDoctorDetail] = useState([]);
   const [loading, setLoading] = useState();
   const [doctorName, setDoctorName] = useState([]);
-  const [dataForm, setDataForm] = useState([]);
+  const [schedules, setSchedules] = useState([]);
+  const [location, setLocation] = useState([]);
+  const redirect = useNavigate();
 
   
   const chosenDate = new Date(date);
@@ -39,6 +43,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
       headers: {
         "Content-Type": "application/json",
+        authorization: localStorage.getItem("access-token"),
       },
       data: _data,
     };
@@ -64,6 +69,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByUUID",
       headers: {
         "Content-Type": "application/json",
+        authorization: localStorage.getItem("access-token"),
       },
       data: _data,
     };
@@ -76,12 +82,8 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
   }, [selectedDoctor]);
 
   //find index of scheduled which has timeslot(requestNull)
-  const tranformData = (schedules) => {
-    console.log("allSchedules", schedules);
-    //หาวันว่างโดย filter requestId = null 
-    // โดยมี input เป็น selectDoctor ที่มี requestnull ติดมาด้วย
-    // ที่เหลือต้อง หา id ของ requestNull เพื่อสุดท้ายจะเอาไปหา index ของ schedules >> เพื่อจะได้ข้อมูลทั้งหมดส่งไปทำ booktimeslot 
-    const requestNullId = selectedDoctor.timeslots
+  const findindexOfSchedules = (schedules) => {
+    const findRequestNull = selectedDoctor.timeslots
       ?.filter((timeslots) => timeslots.requestId === null)
       .map((r) => r.id);
     console.log("requestNullId", requestNullId);
@@ -152,20 +154,20 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
   };
 
   return (
-    <>
-      <div className="fixed top-10 flex w-full flex-col  ">
+    <div className="shader">
+      <div className="popup flex flex-col w-full">
         <button
-          className="fixed right-5 top-7 rounded-lg text-2xl font-light text-slate-400 hover:bg-slate-50 hover:text-slate-300"
-          onClick={() => setPage("doctorLists")}
+          className="top-13 absolute right-4 z-40 w-10 px-1 text-2xl font-light text-slate-400 hover:text-slate-300"
+          onClick={() => setOpenDoctorDetail(false)}
         >
-          <IoIosReturnLeft className="w-[40px] rounded-lg shadow-lg" />
+          <MdClose className="" />
         </button>
         <div className="w-full text-center text-2xl">
           {selectedDoctor.doctorUUID?.firstName} &nbsp;{" "}
           {selectedDoctor.doctorUUID?.lastName}
         </div>
 
-        <div className="mx-auto  pt-2">
+        <div className="mx-auto pt-2">
           <Rating
             readOnly
             value={scoreFromReview}
@@ -278,7 +280,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor, date }) => {
           appointmentPopup={appointmentPopup}
         />
       )}
-    </>
+    </div>
   );
 };
 export default SelectDoctorDetail;

@@ -5,31 +5,23 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import SelectDoctorDetail from "./SelectedDoctorDetail";
 import { IoIosReturnLeft } from "react-icons/io";
 import { Calendar } from "primereact/calendar";
-// ส่ง date เพื่อเข้ามาหาว่าวันนี้มี doctor คนไหนบ้าง
-const SelectDoctor = ({
-  date,
-  setInsidePage,
-  setDate,
-  disabledDates,
-  dateTemplate,
+import { useNavigate, useParams } from "react-router-dom";
+import { useContext } from "react";
+import { DisabledatesContext } from "../home";
+import usePatientCalendarProps from "../Hooks/usePatientCalendarProps";
 
-}) => {
+const SelectDoctor = () => {
+  usePatientCalendarProps();
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState([]);
+  const [openDoctorDetail,setOpenDoctorDetail]=useState(false)
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
- 
-  console.log("SelectDoctor.... date:",date)
-  console.log("doctors...",doctors);
-  console.log("date:");
-  console.log("new date", new Date(date));
-  
-  const findFreeDoctor = (allDoctors) => {
-    
-    console.log("allDoctors",allDoctors);
-    // allDoctor = schedule by date
-    // หา requestnull เพื่อหาหมอที่ว่าง
-    const freeDoctor = allDoctors.map((doctor) =>
+  const { date } = useParams();
+  const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
+  const redirect = useNavigate();
+  const findFreeDoctor = (freeDoctor) => {
+    const filter = freeDoctor.map((doctor) =>
       doctor.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
     console.log("freeDoctor", freeDoctor);
@@ -48,7 +40,8 @@ const SelectDoctor = ({
   useEffect(() => {
     setDoctors([]);
     setFetching(true);
-    const data = JSON.stringify({ date: date });
+    const data = JSON.stringify({ date: new Date(date) });
+    console.log("data", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -62,7 +55,7 @@ const SelectDoctor = ({
     axios(config)
       .then((response) => {
         setFetching(false);
-        console.log("response.data", response.data);
+        console.log(response.data);
         const _data = findFreeDoctor(response.data);
         // console.log("_data", _data);
         setDoctors(_data);
@@ -74,16 +67,10 @@ const SelectDoctor = ({
 
   return (
     <>
-      <div
-        className={`mt-4 p-2 duration-200 ${
-          page === "doctorLists"
-            ? "opacity-100"
-            : "pointer-events-none opacity-0"
-        } `}
-      >
+      <div>
         <button
-          className="fixed right-5 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
-          onClick={() => setInsidePage("patientSchedule")}
+          className="top-13 absolute right-4 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
+          onClick={() => redirect("/schedule/")}
         >
           <IoIosReturnLeft className="" />
         </button>
@@ -96,9 +83,13 @@ const SelectDoctor = ({
             placeholder="Select date"
             className="z-0 w-1/2 rounded-lg border-2 md:w-8/12"
             value={date}
-            disabledDates={disabledDates.map((e) => new Date(e))}
+            disabledDates={disabledDates?.map((e) => new Date(e))}
             onChange={(e) => {
-              setDate(e.value.toISOString());
+              redirect(
+                `../schedule/selectDoctor/${e.value
+                  .toLocaleDateString()
+                  .replace(/\//g, "-")}`
+              );
             }}
             minDate={new Date()}
             locale="en"
@@ -121,7 +112,7 @@ const SelectDoctor = ({
             className="mx-auto my-4 flex w-[90%] cursor-pointer flex-col rounded-lg border-2 border-slate-400 bg-[#F0F3EC] p-4 hover:bg-[#C5E1A5]"
             onClick={() => {
               setSelectedDoctor(doctor);
-              setPage("doctorDetail");
+              setOpenDoctorDetail(true);
             }}
           >
             <div className="flex ">
@@ -172,12 +163,12 @@ const SelectDoctor = ({
 
       <div
         className={`mt-4 p-2 opacity-0 duration-200 ${
-          page === "doctorDetail"
+          openDoctorDetail 
             ? "opacity-100"
             : "pointer-events-none opacity-0"
         } `}
       >
-        <SelectDoctorDetail setPage={setPage} selectedDoctor={selectedDoctor} date={date} />
+        <SelectDoctorDetail setOpenDoctorDetail={setOpenDoctorDetail} selectedDoctor={selectedDoctor} />
       </div>
     </>
   );

@@ -3,7 +3,9 @@ import { GiAlarmClock } from "react-icons/gi";
 import { AiFillDollarCircle } from "react-icons/ai";
 import { MdClose } from "react-icons/md";
 import { IoIosReturnLeft } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 const SelectedPatientDetail = ({ setPage }) => {
+  const redirect = useNavigate();
   const patiDetails = {
     firstName: "Marry",
     lastName: "Wakage",
@@ -36,11 +38,11 @@ const SelectedPatientDetail = ({ setPage }) => {
   return (
     <>
       <div className="mt-10 flex flex-col ">
-        <button
-          className="fixed right-5 top-7 rounded-lg text-2xl font-light text-slate-400 hover:bg-slate-50 hover:text-slate-300"
-          onClick={() => setPage("patientLists")}
+      <button
+          className="top-13 absolute right-4 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
+          onClick={() => redirect("/schedule/")}
         >
-          <MdClose />
+          <IoIosReturnLeft className="" />
         </button>
         <div className="w-full text-center text-2xl">
           {patiDetails.firstName} &nbsp; {patiDetails.lastName}

@@ -1,17 +1,20 @@
-const Landing = ({ setPage, type }) => {
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import useRedirect from "../Hooks/useRedirect";
+const Landing = () => {
+  const {redirectToLogin} = useRedirect();
+  const uuid = localStorage.getItem("uuid");
+  useEffect(() => {
+    !uuid && redirectToLogin();
+  }, [uuid]);
   return (
     <div className="flex h-screen flex-col items-center justify-center space-y-6">
-      <button
-        onClick={() =>
-          setPage("home")
-        }
-        className="button w-1/2 py-3"
-      >
+      <Link to="/schedule" className="button w-1/2 py-3">
         SCHEDULE
-      </button>
-      <button onClick={() => setPage("setting")} className="button w-1/2 py-3">
+      </Link>
+      <Link to="/setting" className="button w-1/2 py-3">
         SETTING
-      </button>
+      </Link>
     </div>
   );
 };

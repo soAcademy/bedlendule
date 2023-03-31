@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Calendar } from "primereact/calendar";
 import { BiTrash } from "react-icons/bi";
 import { HiLocationMarker } from "react-icons/hi";
@@ -6,7 +6,6 @@ import usePatientCalendarProps from "../Hooks/usePatientCalendarProps";
 import CreateRequest from "../Components/CreateRequest";
 import axios from "axios";
 import ReviewDoctor from "../Components/ReviewDoctor";
-import SelectDoctor from "../Components/SelectDoctor";
 import { ProgressSpinner } from "primereact/progressspinner";
 import ConfirmPopup from "../Components/ConfirmPopup";
 import useSendingPopup from "../Hooks/useSendingPopup";
@@ -14,8 +13,12 @@ import useSubmitResult from "../Hooks/useSubmitResult";
 import { MdClose, MdDone } from "react-icons/md";
 import { Rating } from "primereact/rating";
 import { AiOutlineStar } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
+import { DisabledatesContext } from "../home";
+import useRedirect from "../Hooks/useRedirect";
 
-const UserSchedule = ({ setPage, page }) => {
+const UserSchedule = () => {
+  usePatientCalendarProps();
   const [fetching, setFetching] = useState(false);
   const [doctorUUID, setDoctorUUID] = useState();
   const [doctorDetail, setDoctorDetail] = useState();
@@ -30,12 +33,9 @@ const UserSchedule = ({ setPage, page }) => {
   const [openReview, setOpenReview] = useState(false);
   const [requestToExecute, setRequestToExecute] = useState();
   const [insidePage, setInsidePage] = useState("patientSchedule");
-
-  const [testDate,setTestDate]= useState();
-
-  const { date, setDate, dateTemplate, disabledDates } =
-    usePatientCalendarProps();
-
+  const { disabledDates, dateTemplate, date, setDate } =
+    useContext(DisabledatesContext);
+  const { redirectToLogin, redirect } = useRedirect();
   const { setSending, SendingPopup } = useSendingPopup();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
@@ -64,6 +64,7 @@ const UserSchedule = ({ setPage, page }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/chooseDoctor",
       headers: {
         "Content-Type": "application/json",
+        authorization: localStorage.getItem("access-token"),
       },
       data: data,
     };
@@ -80,6 +81,9 @@ const UserSchedule = ({ setPage, page }) => {
         console.log(error);
         setSending(false);
         setSubmitFailPopUp(true);
+        if (error.response.status === 401) {
+          redirectToLogin();
+        }
       });
   };
   const deleteRequest = () => {
@@ -95,6 +99,7 @@ const UserSchedule = ({ setPage, page }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/deleteRequest",
       headers: {
         "Content-Type": "application/json",
+        authorization: localStorage.getItem("access-token"),
       },
       data: data,
     };
@@ -111,13 +116,16 @@ const UserSchedule = ({ setPage, page }) => {
         console.log(error);
         setSending(false);
         setSubmitFailPopUp(true);
+        if (error.response.status === 401) {
+          redirectToLogin();
+        }
       });
   };
   useEffect(() => {
     setFetching(true);
     setRequests([]);
     let data = JSON.stringify({
-      uuid: localStorage.getItem("patientUUID"),
+      uuid: localStorage.getItem("uuid"),
     });
 
     let config = {
@@ -126,6 +134,7 @@ const UserSchedule = ({ setPage, page }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getRequestsByUUID",
       headers: {
         "Content-Type": "application/json",
+        authorization: localStorage.getItem("access-token"),
       },
       data: data,
     };
@@ -139,6 +148,9 @@ const UserSchedule = ({ setPage, page }) => {
       .catch((error) => {
         console.log(error);
         setFetching(false);
+        if (error.response.status === 401) {
+          redirectToLogin();
+        }
       });
   }, [updated]);
 
@@ -154,6 +166,7 @@ const UserSchedule = ({ setPage, page }) => {
         url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
         headers: {
           "Content-Type": "application/json",
+          authorization: localStorage.getItem("access-token"),
         },
         data: data,
       };
@@ -168,6 +181,9 @@ const UserSchedule = ({ setPage, page }) => {
         .catch((error) => {
           console.log(error);
           setFetching(false);
+          if (error.response.status === 401) {
+            redirectToLogin();
+          }
         });
     }
   }, [doctorUUID]);
@@ -187,11 +203,13 @@ const UserSchedule = ({ setPage, page }) => {
             className="z-0 w-10/12 shadow-lg"
             value={date}
             onChange={(e) => {
-              setDate(e.value.toISOString());
-              setInsidePage("selectDoctor");
-            
+              redirect(
+                `selectDoctor/${e.value
+                  .toLocaleDateString()
+                  .replace(/\//g, "-")}`
+              );
             }}
-            disabledDates={disabledDates.map((e) => new Date(e))}
+            disabledDates={disabledDates?.map((e) => new Date(e))}
             minDate={new Date()}
             inline
             showOtherMonths={false}
@@ -231,75 +249,80 @@ const UserSchedule = ({ setPage, page }) => {
           </div>
         )}
         {!fetching && (
-          <div>
-            <div>
-              <div className="my-5 pl-4 font-bold">INCOMING SCHEDULE</div>
-              {requests
-                .filter(
-                  (request) =>
-                    new Date(request.startTime).getTime() > new Date().getTime()
-                )
-                .map((request, idx) => (
-                  <div
-                    key={idx}
-                    className={`mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9] p-2 text-slate-600 md:w-1/2
+          <div className="flex flex-col space-y-2 pl-4">
+            <div className="mt-5 font-bold">INCOMING SCHEDULE</div>
+            {requests
+              .filter(
+                (request) =>
+                  new Date(request.startTime).getTime() > new Date().getTime()
+              )
+              .map((request, idx) => (
+                <div
+                  key={idx}
+                  className={`mx-auto my-4 flex w-[90%] flex-col space-y-2 rounded-lg border-2 border-[#36c2f9] p-2 text-slate-600 md:w-1/2
                     ${
                       request.status === "CHOSEN" &&
                       "border-[#beda9f] bg-[#f1fae4] text-slate-600"
                     }`}
-                  >
-                    <div className="flex justify-between">
-                      <div className="w-2/3">
-                        <div className="flex items-center font-bold">
-                          {request.title}
-                        </div>
-                        <div className="font-bold">
-                          <div className="my-auto flex items-center text-center text-sm">
-                            <HiLocationMarker className="text-blue-500" />
-                            &nbsp;
-                            {request.meetingType === "ONLINE" &&
-                              request.meetingType + " : "}
-                            {request.location}
-                          </div>
-                        </div>
-                        <p>
-                          {new Date(request.startTime).toLocaleDateString("TH")}{" "}
-                          :{" "}
-                          {new Date(request.startTime)
-                            .toLocaleTimeString("TH")
-                            .slice(0, 5)}
-                          -
-                          {new Date(request.finishTime)
-                            .toLocaleTimeString("TH")
-                            .slice(0, 5)}
-                        </p>
+                >
+                  <div className="flex justify-between">
+                    <div className="w-2/3">
+                      <div className="flex items-center font-bold">
+                        {request.title}
                       </div>
-                      <button
-                        onClick={() => {
-                          setRequestToExecute(request);
-                          setOpenRemoveRequest(true);
-                        }}
-                        className={`float-right text-2xl text-slate-500 hover:text-slate-400 
-                        ${request.status !== "OPEN" && "hidden"}`}
-                      >
-                        <BiTrash />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setRequestToExecute(request);
-                          setOpenChooseDoctors(true);
-                        }}
-                        className={`button float-right my-auto h-fit p-2 text-xs text-white
-                        ${request.status !== "ACCEPTED" && "hidden"}`}
-                      >
-                        CHOOSE DOCTOR
-                      </button>
+                      <div className="font-bold">
+                        <div className="my-auto flex items-center text-center text-sm">
+                          <HiLocationMarker className="text-blue-500" />
+                          &nbsp;
+                          {request.meetingType === "ONLINE" &&
+                            request.meetingType + " : "}
+                          {request.location}
+                        </div>
+                      </div>
+                      <p>
+                        {new Date(request.startTime).toLocaleDateString("TH")} :{" "}
+                        {new Date(request.startTime)
+                          .toLocaleTimeString("TH")
+                          .slice(0, 5)}
+                        -
+                        {new Date(request.finishTime)
+                          .toLocaleTimeString("TH")
+                          .slice(0, 5)}
+                      </p>
                     </div>
+                    <button
+                      onClick={() => {
+                        setRequestToExecute(request);
+                        setOpenRemoveRequest(true);
+                      }}
+                      className={`float-right text-2xl text-slate-500 hover:text-slate-400 
+                        ${request.status !== "OPEN" && "hidden"}`}
+                    >
+                      <BiTrash />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setRequestToExecute(request);
+                        setOpenChooseDoctors(true);
+                      }}
+                      className={`button float-right my-auto h-fit p-2 text-xs text-white
+                        ${request.status !== "ACCEPTED" && "hidden"}`}
+                    >
+                      CHOOSE DOCTOR
+                    </button>
                   </div>
-                ))}
-            </div>
+                </div>
+              ))}
+            {requests.filter(
+              (request) =>
+                new Date(request.startTime).getTime() > new Date().getTime()
+            ).length === 0 && (
+              <p className="pl-4 text-slate-700 md:w-1/2">
+                No incoming schedule
+              </p>
+            )}
             <div>
-              <div className="my-5 pl-4 font-bold">PAST SCHEDULE</div>
+              <div className="font-bold">PAST SCHEDULE</div>
 
               {requests
                 .filter(
@@ -354,6 +377,12 @@ const UserSchedule = ({ setPage, page }) => {
                     </div>
                   </div>
                 ))}
+              {requests.filter(
+                (request) =>
+                  new Date(request.finishTime).getTime() < new Date().getTime()
+              ).length === 0 && (
+                <div className="pl-4 text-slate-700 md:w-1/2">No history</div>
+              )}
             </div>
           </div>
         )}
@@ -377,16 +406,7 @@ const UserSchedule = ({ setPage, page }) => {
             ? "scale-100 opacity-100"
             : "pointer-events-none opacity-0"
         }`}
-      >
-        <SelectDoctor
-          date={date}
-          setInsidePage={setInsidePage}
-          setDate={setDate}
-          disabledDates={disabledDates}
-          dateTemplate={dateTemplate}
-        
-        />
-      </div>
+      ></div>
       <div
         className={`shader duration-200
       ${!openCreateRequest ? "pointer-events-none opacity-0" : ""}`}
@@ -513,142 +533,120 @@ const UserSchedule = ({ setPage, page }) => {
               className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
               onClick={() => setOpenDoctorDetail(false)}
             />
-            {
-              fetching ? (
-                <div className="flex w-full items-center justify-center">
-                  <ProgressSpinner
-                    style={{ width: "50px", height: "50px" }}
-                    strokeWidth="8"
-                    animationDuration="0.7s"
+            {fetching ? (
+              <div className="flex w-full items-center justify-center">
+                <ProgressSpinner
+                  style={{ width: "50px", height: "50px" }}
+                  strokeWidth="8"
+                  animationDuration="0.7s"
+                />
+              </div>
+            ) : (
+              doctorDetail && (
+                <div className="flex w-full flex-col text-slate-600">
+                  <img
+                    src={doctorDetail.profilePictureUrl}
+                    className="h-[150px] rounded-lg object-contain"
+                    alt="doctor-profile"
                   />
-                </div>
-              ) : (
-                doctorDetail && (
-                  <div className="flex w-full flex-col text-slate-600">
-                    <img
-                      src={doctorDetail.profilePictureUrl}
-                      className="h-[150px] rounded-lg object-contain"
-                      alt="doctor-profile"
-                    />
-                    <p className="text-center text-2xl">
-                      {doctorDetail.firstName} &nbsp; {doctorDetail.lastName}
-                    </p>
-                    <p className="mx-auto w-fit rounded-lg bg-red-50 p-1 px-2 text-sm text-red-400">
-                      {doctorDetail.licenseId}
-                    </p>
-                    <div className="flex justify-center space-x-4">
-                      <div className="my-2 flex items-center justify-center gap-3">
-                        <div className="rounded-lg border bg-indigo-100 p-2 text-2xl font-bold text-blue-600 ">
-                          <MdDone />
-                        </div>{" "}
-                        <div className="">
-                          <p className="text-start text-xl">
-                            {doctorDetail.schedules.reduce(
-                              (acc, e) =>
-                                acc +
-                                e.timeslots.filter(
-                                  (timeslot) =>
-                                    new Date(timeslot.finishTime) <
-                                      new Date() &&
-                                    timeslot.request?.status === "CHOSEN"
-                                ).length,
-                              0
-                            )}
-                          </p>
-                          <p className="text-sm text-slate-500">Cases Done</p>
-                        </div>
-                      </div>
-                      <div className="my-2 flex items-center justify-center gap-3">
-                        <div className="rounded-lg border bg-indigo-100 p-2 text-2xl font-bold text-blue-600 ">
-                          <AiOutlineStar />
-                        </div>{" "}
-                        <div className="">
-                          <p className="text-start text-xl">
-                            {doctorDetail.reviews.reduce(
-                              (acc, e) => acc + e.score,
-                              0
-                            ) / doctorDetail.reviews.length}
-                          </p>
-                          <p className="text-sm text-slate-500">Rate Given</p>
-                        </div>
+                  <p className="text-center text-2xl">
+                    {doctorDetail.firstName} &nbsp; {doctorDetail.lastName}
+                  </p>
+                  <p className="mx-auto w-fit rounded-lg bg-red-50 p-1 px-2 text-sm text-red-400">
+                    {doctorDetail.licenseId}
+                  </p>
+                  <div className="flex justify-center space-x-4">
+                    <div className="my-2 flex items-center justify-center gap-3">
+                      <div className="rounded-lg border bg-indigo-100 p-2 text-2xl font-bold text-blue-600 ">
+                        <MdDone />
+                      </div>{" "}
+                      <div className="">
+                        <p className="text-start text-xl">
+                          {doctorDetail.schedules.reduce(
+                            (acc, e) =>
+                              acc +
+                              e.timeslots.filter(
+                                (timeslot) =>
+                                  new Date(timeslot.finishTime) < new Date() &&
+                                  timeslot.request?.status === "CHOSEN"
+                              ).length,
+                            0
+                          )}
+                        </p>
+                        <p className="text-sm text-slate-500">Cases Done</p>
                       </div>
                     </div>
-                    <p className="mt-3 text-start text-xl text-slate-600">
-                      About
-                    </p>
-                    <div className="mx-auto h-40 w-full rounded-lg border-2 border-slate-400 p-2 text-start">
-                      {doctorDetail.background}
-                    </div>
-                    <p className="mt-4 text-start text-xl text-slate-600">
-                      Review
-                    </p>
-                    <div className="no-scrollbar h-80 overflow-scroll">
-                      {doctorDetail.reviews.map((e) => (
-                        <>
-                          <div
-                            className="my-2 flex flex-col rounded-lg border border-slate-200 p-4 px-4
-                      text-sm shadow-md"
-                          >
-                            <div className="no-scrollbar my-2 mx-auto max-h-24 w-full overflow-scroll text-start text-sm">
-                              {e.review}
-                            </div>
-                            <Rating
-                              onIcon={
-                                <img
-                                  src="/rating-icon-active.png"
-                                  onError={(e) =>
-                                    (e.target.src =
-                                      "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                                  }
-                                  alt="custom-active"
-                                  width="12px"
-                                  height="12px"
-                                />
-                              }
-                              offIcon={
-                                <img
-                                  src="/rating-icon-inactive.png"
-                                  onError={(e) =>
-                                    (e.target.src =
-                                      "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                                  }
-                                  alt="custom-inactive"
-                                  width="12px"
-                                  height="12px"
-                                />
-                              }
-                              className="mb-2 self-end"
-                              value={e.score}
-                              readOnly
-                              cancel={false}
-                            />
-                          </div>
-                        </>
-                      ))}
+                    <div className="my-2 flex items-center justify-center gap-3">
+                      <div className="rounded-lg border bg-indigo-100 p-2 text-2xl font-bold text-blue-600 ">
+                        <AiOutlineStar />
+                      </div>{" "}
+                      <div className="">
+                        <p className="text-start text-xl">
+                          {doctorDetail.reviews.reduce(
+                            (acc, e) => acc + e.score,
+                            0
+                          ) / doctorDetail.reviews.length}
+                        </p>
+                        <p className="text-sm text-slate-500">Rate Given</p>
+                      </div>
                     </div>
                   </div>
-                )
+                  <p className="mt-3 text-start text-xl text-slate-600">
+                    About
+                  </p>
+                  <div className="mx-auto h-40 w-full rounded-lg border-2 border-slate-400 p-2 text-start">
+                    {doctorDetail.background}
+                  </div>
+                  <p className="mt-4 text-start text-xl text-slate-600">
+                    Review
+                  </p>
+                  <div className="no-scrollbar h-80 overflow-scroll">
+                    {doctorDetail.reviews.map((e) => (
+                      <>
+                        <div
+                          className="my-2 flex flex-col rounded-lg border border-slate-200 p-4 px-4
+                      text-sm shadow-md"
+                        >
+                          <div className="no-scrollbar my-2 mx-auto max-h-24 w-full overflow-scroll text-start text-sm">
+                            {e.review}
+                          </div>
+                          <Rating
+                            onIcon={
+                              <img
+                                src="/rating-icon-active.png"
+                                onError={(e) =>
+                                  (e.target.src =
+                                    "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                                }
+                                alt="custom-active"
+                                width="12px"
+                                height="12px"
+                              />
+                            }
+                            offIcon={
+                              <img
+                                src="/rating-icon-inactive.png"
+                                onError={(e) =>
+                                  (e.target.src =
+                                    "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                                }
+                                alt="custom-inactive"
+                                width="12px"
+                                height="12px"
+                              />
+                            }
+                            className="mb-2 self-end"
+                            value={e.score}
+                            readOnly
+                            cancel={false}
+                          />
+                        </div>
+                      </>
+                    ))}
+                  </div>
+                </div>
               )
-              // (
-              // <div className="shader">
-              //   <div className="popup flex h-fit w-11/12 flex-col items-center">
-              //     <MdClose
-              //       className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
-              //       onClick={() => setOpenDoctorDetail(false)}
-              //     />
-              //       <img
-              //         src={doctorDetail.profilePictureUrl}
-              //         alt="doctor-profile"
-              //         className="h-[100px] w-[75px] border-2 object-cover"
-              //       />
-              //       <p>
-              //         {doctorDetail.firstName} {doctorDetail.lastName}
-              //       </p>
-              //       <div></div>
-              //     </div>
-              //   </div>
-              // )
-            }
+            )}
           </div>
         </div>
       )}
@@ -659,7 +657,7 @@ const UserSchedule = ({ setPage, page }) => {
         state={confirmChoosing}
         setState={setConfirmChoosing}
       />
-      ;
+
       <SendingPopup />
       <ResultPopup />
     </>

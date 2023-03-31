@@ -1,17 +1,23 @@
 import React, { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Checkbox } from "primereact/button";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import axios from "axios";
 import { Toast } from "primereact/toast";
+import { useEffect } from "react";
 
 const Login = ({ setPage }) => {
   const [authenticated, setAuthenticated] = useState(false);
   const [loginFail, setLoginFail] = useState();
   const [logginIn, setLogginIn] = useState(false);
+  const redirect = useNavigate();
   const toast = useRef(null);
-
+  // const uuid = localStorage.getItem("uuid");
+  // useEffect(() => {
+  //   uuid && redirect("/");
+  // }, [uuid]);
   const show = () => {
     toast.current.show({
       severity: "error",
@@ -32,18 +38,21 @@ const Login = ({ setPage }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/login",
       headers: {
         "Content-Type": "application/json",
+        "authorization": localStorage.getItem("access-token"),
       },
       data: data,
     };
 
     axios(config)
       .then((response) => {
-        console.log("res",response.data);
-        localStorage.setItem("access-token",response.data.access_token);
+        console.log('response', response)
+        localStorage.setItem("access-token", response.data.access_token);
         document.querySelector("#password").value = "";
-        response.data.type === 'PATIENT' ? setPage("patient") : setPage("doctor")
-        setAuthenticated(true);
+        localStorage.setItem("type", response.data.type);
+        localStorage.setItem("uuid", response.data.uuid);
+        redirect("/");
         show();
+        setAuthenticated(true);
         setLogginIn(false);
       })
       .catch((error) => {
@@ -53,8 +62,29 @@ const Login = ({ setPage }) => {
         setAuthenticated(false);
         setLoginFail(true);
         setLogginIn(false);
+        if (error.response.status === 401) {
+          window.location.reload();
+        }
       });
   };
+
+  if (!localStorage.getItem("access-token")) {
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getPublicToken",
+      headers: {},
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        localStorage.setItem("access-token", response.data.access_token);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
   return (
     <>
       <Toast ref={toast} position="bottom-left" className="hidden md:block" />
@@ -107,13 +137,12 @@ const Login = ({ setPage }) => {
           <div className="my-4 flex flex-wrap justify-center">
             <p>
               Don't have an account?{" "}
-              <a
-                onClick={(e) => setPage("signup")}
+              <Link
+                to="/signup"
                 className="font-bold underline underline-offset-1"
-                href="#"
               >
                 Sign Up
-              </a>
+              </Link>
             </p>
           </div>
           <p

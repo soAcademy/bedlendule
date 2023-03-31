@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useContext } from "react";
+import { DisabledatesContext } from "../home";
 const useDoctorCalendarProps = () => {
-  const [openRequests, setOpenRequests] = useState([]);
-  const [datesArray, setDatesArray] = useState([]);
-  const [disabledDates, setDisabledDates] = useState([]);
+  const {
+    dateTemplate,
+    disabledDates,
+    setDisabledDates,
+    datesArray,
+    timeSlots,
+    setTimeSlots,
+  } = useContext(DisabledatesContext);
   const doctorUUID = localStorage.getItem("doctorUUID");
   useEffect(() => {
     var config = {
@@ -14,14 +21,14 @@ const useDoctorCalendarProps = () => {
 
     axios(config)
       .then(function async(response) {
-        const openRequestsNotAccepted = response.data.filter(
+        const timeSlotsNotAccepted = response.data.filter(
           (request) =>
             request.doctorTimeslot.findIndex(
               (timeslot) => timeslot.schedule.uuid === doctorUUID
             ) === -1
         );
-        setOpenRequests(
-          openRequestsNotAccepted.map((e) => new Date(e.startTime).toLocaleDateString())
+        setTimeSlots(
+          timeSlotsNotAccepted.map((e) => new Date(e.startTime).toLocaleDateString())
         );
       })
       .catch(function (error) {
@@ -30,59 +37,59 @@ const useDoctorCalendarProps = () => {
   }, []);
 
   useEffect(() => {
-    const _disabledDates = datesArray.filter((e) => !openRequests.includes(e));
+    const _disabledDates = datesArray.filter((e) => !timeSlots.includes(e));
     setDisabledDates(_disabledDates);
-  }, [openRequests, datesArray]);
+  }, [timeSlots, datesArray]);
 
-  const dateTemplate = (date) => {
-    const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
-    if (!datesArray.includes(_date.toLocaleDateString())) {
-      const _datesArray = [
-        ...new Set([...datesArray, _date.toLocaleDateString()]),
-      ];
-      setDatesArray(_datesArray);
-    }
-    if (
-      openRequests.includes(_date.toLocaleDateString()) &&
-      _date.getTime() >= new Date().getTime()
-    ) {
-      return date.day === new Date().getDate() ? (
-        <div
-          style={{
-            backgroundColor: "#99B47B",
-            color: "#ffffff",
-            borderRadius: "50%",
-            width: "4em",
-            height: "4em",
-            lineHeight: "4em",
-            padding: 0,
-            textAlign: "center",
-          }}
-        >
-          {date.day}
-        </div>
-      ) : (
-        <div
-          style={{
-            backgroundColor: "#C5E1A5",
-            color: "#ffffff",
-            borderRadius: "50%",
-            width: "3em",
-            height: "3em",
-            lineHeight: "3em",
-            padding: 0,
-            textAlign: "center",
-          }}
-        >
-          {date.day}
-        </div>
-      );
-    } else {
-      return date.day;
-    }
-  };
+  // const dateTemplate = (date) => {
+  //   const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
+  //   if (!datesArray.includes(_date.toLocaleDateString())) {
+  //     const _datesArray = [
+  //       ...new Set([...datesArray, _date.toLocaleDateString()]),
+  //     ];
+  //     setDatesArray(_datesArray);
+  //   }
+  //   if (
+  //     timeSlots.includes(_date.toLocaleDateString()) &&
+  //     _date.getTime() >= new Date().getTime()
+  //   ) {
+  //     return date.day === new Date().getDate() ? (
+  //       <div
+  //         style={{
+  //           backgroundColor: "#99B47B",
+  //           color: "#ffffff",
+  //           borderRadius: "50%",
+  //           width: "4em",
+  //           height: "4em",
+  //           lineHeight: "4em",
+  //           padding: 0,
+  //           textAlign: "center",
+  //         }}
+  //       >
+  //         {date.day}
+  //       </div>
+  //     ) : (
+  //       <div
+  //         style={{
+  //           backgroundColor: "#C5E1A5",
+  //           color: "#ffffff",
+  //           borderRadius: "50%",
+  //           width: "3em",
+  //           height: "3em",
+  //           lineHeight: "3em",
+  //           padding: 0,
+  //           textAlign: "center",
+  //         }}
+  //       >
+  //         {date.day}
+  //       </div>
+  //     );
+  //   } else {
+  //     return date.day;
+  //   }
+  // };
 
-  return { openRequests, setOpenRequests, dateTemplate, disabledDates };
+  return { timeSlots, setTimeSlots, dateTemplate, disabledDates };
 };
 
 export default useDoctorCalendarProps;
