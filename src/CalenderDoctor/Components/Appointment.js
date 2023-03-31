@@ -11,30 +11,31 @@ const Appointment = ({
   setAppointmentPopup,
   chooseTimeSlot,
   doctorName,
+  setFetch,
+  fetch
 }) => {
   const [booktimeSlot, setBooktimeSlot] = useState([]);
   const [processing, setProcessing] = useState(false);
 
-  console.log("processing",processing)
   console.log("booktimeSlot", booktimeSlot);
-  console.log("Appointment....");
 
-  const tranformData = (selectTimeSlot) => {
+  const tranformData = (chooseTimeSlot) => {
     const _result = {
-      price: selectTimeSlot?.price,
-      startTime: selectTimeSlot?.startTime,
-      finishTime: selectTimeSlot?.finishTime,
-      patientUUID: selectTimeSlot?.patientUUID,
-      timeslotId: selectTimeSlot?.timeslotId,
-      meetingType: selectTimeSlot?.meetingType,
-      location: selectTimeSlot?.location,
+      price: chooseTimeSlot[1]?.price,
+      startTime: chooseTimeSlot[1]?.startTime,
+      finishTime: chooseTimeSlot[1]?.finishTime,
+      patientUUID: chooseTimeSlot[0]?.patientUUID,
+      timeslotId: chooseTimeSlot[1]?.id,
+      meetingType: chooseTimeSlot[0]?.meetingType,
+      location: chooseTimeSlot[0]?.location,
     };
-     return setBooktimeSlot(_result);
+
+    return setBooktimeSlot(_result);
   };
 
   useEffect(() => {
     console.log("useEffect working...");
-  
+
     const _data = JSON.stringify({
       price: booktimeSlot.price,
       startTime: booktimeSlot.startTime,
@@ -51,6 +52,7 @@ const Appointment = ({
       url: "https://bedlendule-backend.vercel.app/bedlendule/bookTimeSlot",
       headers: {
         "Content-Type": "application/json",
+        authorization: localStorage.getItem("access-token"),
       },
       data: _data,
     };
@@ -59,7 +61,6 @@ const Appointment = ({
       // setProcessing(false);
       console.log(response.data);
     });
-   
   }, [booktimeSlot]);
   return (
     <>
@@ -84,7 +85,7 @@ const Appointment = ({
                 </div>
                 <div className="mx-auto flex">
                   <div className="underline underline-offset-2 ">
-                    {chooseTimeSlot.startTime.substring(11, 16)}
+                    {chooseTimeSlot[1].startTime.substring(11, 16)}
                   </div>
                   <div className="px-1">
                     <GiAlarmClock className="text-base" />
@@ -97,7 +98,7 @@ const Appointment = ({
                 </div>
                 <div className="mx-auto flex">
                   <div className="underline underline-offset-2">
-                    {chooseTimeSlot.finishTime.substring(11, 16)}
+                    {chooseTimeSlot[1].finishTime.substring(11, 16)}
                   </div>
                   <div className="px-1">
                     <GiAlarmClock className="text-base" />
@@ -110,7 +111,7 @@ const Appointment = ({
                 </div>
                 <div className=" mx-auto flex">
                   <div className="underline underline-offset-2">
-                    {chooseTimeSlot.price} THB/Hour
+                    {chooseTimeSlot[1].price} THB/Hour
                   </div>
                   <div className="px-1">
                     <AiFillDollarCircle className="my-auto text-base" />
@@ -119,11 +120,15 @@ const Appointment = ({
               </li>
             </ul>
             <div className="mx-3 rounded-lg border-2 border-slate-400 p-2 text-left indent-8 text-sm text-slate-500">
-              &nbsp;&nbsp;&nbsp;{chooseTimeSlot.description}
+              &nbsp;&nbsp;&nbsp;{chooseTimeSlot[0].description}
             </div>
             <button
               className="button my-2 mx-auto w-[50%] py-2"
-              onClick={() =>{tranformData(chooseTimeSlot);setAppointmentPopup(false)}}
+              onClick={() => {
+                tranformData(chooseTimeSlot);
+                setAppointmentPopup(false);
+                setFetch(!fetch)
+              }}
             >
               CONFIRM
             </button>

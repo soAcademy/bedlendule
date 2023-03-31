@@ -17,6 +17,8 @@ const SelectDoctor = () => {
   const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
+  const [selectDate,setSelectDate] = useState();
+
   const { date } = useParams();
   const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
   const redirect = useNavigate();
@@ -47,6 +49,7 @@ const SelectDoctor = () => {
     setDoctors([]);
     setFetching(true);
     const _date = transformDate(date);
+    setSelectDate(_date)
     const data = JSON.stringify({ date: _date });
     console.log("data", data);
     const config = {
@@ -176,6 +179,7 @@ const SelectDoctor = () => {
         <SelectDoctorDetail
           setOpenDoctorDetail={setOpenDoctorDetail}
           selectedDoctor={selectedDoctor}
+          selectDate={selectDate}
         />
       </div>
     </>

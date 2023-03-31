@@ -9,36 +9,78 @@ import { IoIosReturnLeft } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { MdClose } from "react-icons/md";
 
-const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
+const SelectDoctorDetail = ({
+  selectedDoctor,
+  setOpenDoctorDetail,
+  selectDate,
+}) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [appointmentPopup, setAppointmentPopup] = useState(false);
   const [doctorDetail, setDoctorDetail] = useState([]);
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
   const [doctorName, setDoctorName] = useState([]);
-  const [schedules, setSchedules] = useState([]);
+  const [timeSlots, setTimeSlots] = useState([]);
   const [location, setLocation] = useState([]);
+  const [fetch, setFetch] = useState(false);
   const redirect = useNavigate();
 
-  
-  // const chosenDate = new Date(date);
+  console.log("SelectDoctorDetail...");
+  console.log("selectedDoctor", selectedDoctor);
+  console.log("selectDate:", selectDate);
+  console.log("timeSlots", timeSlots);
+
   const patientUUID = "9ab93e34-b805-429d-962a-c723d8d8bca8";
- 
 
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
 
-  // console.log("chosenDate", chosenDate);
-  // console.log("selectedDoctor<>", selectedDoctor);
-  // console.log("dataFormState", dataForm);
-  // console.log("chosenTestDate", chosenTestDate);
-  // console.log("SelectedDoctorDetails...");
-  // console.log("UUID:", selectedDoctor.doctorUUID?.uuid);
-  // get doctor detail by UUID
+  const findFreeTimeSlot = (timeSlots) => {
+    console.log("findFreeTimeSlot working...", timeSlots);
+    const findRequestNull = timeSlots.map((r) =>
+      r.timeslots.filter((timeslots) => timeslots.request === null)
+    );
+
+    const IndexLocation = findRequestNull
+      .map((r, idx) => (r.length !== 0 ? idx : -1))
+      .filter((r) => r >= 0);
+
+    const mapLocation = IndexLocation.map((index) => timeSlots[index]).map(
+      (r) => {
+        return {
+          location: r.location,
+          meetingType: r.meetingType,
+          description: r.description,
+          title: r.title,
+          
+
+        };
+      }
+    );
+
+    const result = findRequestNull.map((findRequestNull, idx) => {
+      return { ...[mapLocation[idx]], freeTimeslots: findRequestNull };
+    });
+
+    const finalResult = result.map((r) => {
+      return {
+        location: r[0].location,
+        meetingType: r[0].meetingType,
+        description: r[0].description,
+        title: r[0].title,
+        freetime: r.freeTimeslots,
+        patientUUID:patientUUID
+      };
+    });
+    console.log("finalResult",finalResult)
+    return finalResult;
+  };
+
   useEffect(() => {
     const _data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
     });
+
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -53,112 +95,39 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
 
     axios(config).then((response) => {
       setLoading(false);
-      console.log("response.data...", response.data);
+      // console.log("Doctor detail response.data...", response.data);
       setDoctorDetail(response.data);
       setDoctorName(selectedDoctor.doctorUUID);
     });
-  }, [selectedDoctor]);
+  }, [selectedDoctor,fetch]);
 
-  // get ScheduleBy UUID
+  // get ScheduleBy UUID and Date
   useEffect(() => {
-    const _data = JSON.stringify({
+    const data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
+      date: selectDate,
     });
-    console.log("UUID data", _data);
+
     const config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByUUID",
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByDateAndUUID",
       headers: {
         "Content-Type": "application/json",
-        authorization: localStorage.getItem("access-token"),
       },
-      data: _data,
+      data: data,
     };
+
     axios(config).then((response) => {
-      // ได้ schedule ทั้งหมดของหมอ 1 คน 
-      console.log("ScheduleByUUID response.data:", response.data);
-      // เอาไปเข้า function เพื่อ filter หาเวลาที่ว่าง 
-      // tranformData(response.data);
+      console.log("timeSlots from UUID and Date api: ", response.data);
+      const _freetimeSlots = findFreeTimeSlot(response.data);
+      setTimeSlots(_freetimeSlots);
     });
   }, [selectedDoctor]);
 
-  //find index of scheduled which has timeslot(requestNull)
-  // const findindexOfSchedules = (schedules) => {
-  //   const findRequestNull = selectedDoctor.timeslots
-  //     ?.filter((timeslots) => timeslots.requestId === null)
-  //     .map((r) => r.id);
-  //   // console.log("requestNullId", requestNullId);
-
-  //   // เอา index of request null Id มา map เอา location,meetingType เก็บแบบ array
-  //   const inputRequestId = (InputRequestNullId) => {
-  //     const a = InputRequestNullId.map((c, idx) =>
-  //       schedules.map((r) => r.timeslots.filter((r) => r.id === c))
-  //     );
-  //     const b = a.map((r) => r.findIndex((c) => c.length > 0));
-  //     const mapId = a.map((r) => {
-  //       return { data: r.filter((r) => r.length > 0) };
-  //     });
-
-  //     const requestAndLocationId = b.map((r) =>
-  //       mapId.map((timeData) => {
-  //         return { timeData, locationId: r };
-  //       })
-  //     );
-  //     const cleanData = requestAndLocationId[0].map((r) => {
-  //       return { location: r.locationId, reqeustData: r.timeData.data[0] };
-  //     });
-  //     console.log("cleanData<>", cleanData);
-  //     const pickDateFilter = cleanData.map((r) =>
-  //       r.reqeustData.map((c,idx) => {
-  //         console.log("startTime +idx",idx,c.startTime.substring(8,10))
-  //         // console.log("chosenDate:",chosenDate);
-  //         // console.log("startTime: ",new Date(c.startTime.substring(0,19)));
-  //         const dateType = new Date(c.startTime.substring(0,19));
-  //         console.log("dateType: ",dateType);
-  //         console.log("typeAll",typeof chosenDate);
-        
-  //         return dateType >= chosenDate;
-  //       })
-  //     );
-  //     console.log("pickDateFilter", pickDateFilter);
-
-  //     const findIndex = pickDateFilter
-  //       .map((r, idx) => r.map((r) => (r === true ? idx : null)))
-  //       .flat();
-  //     console.log("findIndex", findIndex);
-  //     const currentSlotTime = findIndex.map((index) => cleanData[index]);
-  //     console.log("currentSlotTime", currentSlotTime);
-
-     
-  //     const readyData = currentSlotTime.filter((r) => r !== undefined);
-
-  //     console.log("readyData", readyData);
-
-  //     const dataForm2 = readyData.map((r) => {
-  //       return {
-  //         description: schedules[r.location].description,
-  //         location: schedules[r.location].location,
-  //         meetingType: schedules[r.location].meetingType,
-  //         timeslotId: r.reqeustData
-  //           .map((r) => r.id)
-  //           .slice(0, 1)
-  //           .pop(),
-  //         patientUUID: patientUUID,
-  //         startTime: r.reqeustData.map((r) => r.startTime).pop(),
-  //         finishTime: r.reqeustData.map((r) => r.finishTime).pop(),
-  //         price: r.reqeustData.map((r) => r.price).pop(),
-  //       };
-  //     });
-  //     console.log("dataForm2", dataForm2);
-  //     return dataForm2;
-  //   };
-  //   return setDataForm(inputRequestId(requestNullId));
-  // };
-
   return (
     <div className="shader">
-      <div className="popup flex flex-col w-full">
+      <div className="popup flex w-full flex-col">
         <button
           className="top-13 absolute right-4 z-40 w-10 px-1 text-2xl font-light text-slate-400 hover:text-slate-300"
           onClick={() => setOpenDoctorDetail(false)}
@@ -194,14 +163,14 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
             alt="doctorURL"
           />
         </div>
-        <div className=" mx-auto my-5 w-[80%] rounded-lg border-2  border-slate-400 pt-2 ">
+        <div className=" mx-auto my-5 w-[80%] rounded-lg border-2  border-slate-400 pt-2 text-left ">
           <div className="text-center text-xl">Details</div>
 
           <ul className="p-[20px] text-slate-600">
             <li className="">
               Email:
               <span className="text-slate-700 ">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{" "}
+                &nbsp;&nbsp;&nbsp;
                 {doctorDetail.email}
               </span>
             </li>
@@ -222,56 +191,58 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
             </li>
           </ul>
         </div>
-        <div className=" mx-auto w-[95%]">
-          {/* {dataForm.map((r) => (
-            <ul
-              className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
-              onClick={() => {
-                setChooseTimeSlot(r);
-                setAppointmentPopup(!appointmentPopup);
-              }}
-            >
-              <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
-                <div className="absolute top-[-10px] w-[50px] rounded-lg bg-white px-1 text-slate-400">
-                  From
-                </div>
-                <div className="mx-auto flex">
-                  <div className="underline underline-offset-2 ">
-                    {r.startTime.substring(11, 16)}
+        <div className=" mx-auto w-[350px] md:w-3/4 ">
+          {timeSlots?.map((c) =>
+            c?.freetime.map((r) => (
+              <ul
+                className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
+                onClick={() => {
+                  setChooseTimeSlot([c,r]);
+                  setAppointmentPopup(!appointmentPopup);
+                }}
+              >
+                <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
+                  <div className="absolute top-[-10px] w-[50px] rounded-lg bg-white px-1 text-slate-400">
+                    From
                   </div>
-                  <div className="px-1">
-                    <GiAlarmClock className="text-base" />
+                  <div className="mx-auto flex">
+                    <div className="underline underline-offset-2 ">
+                      {r.startTime.substring(11, 16)}
+                    </div>
+                    <div className="px-1">
+                      <GiAlarmClock className="text-base" />
+                    </div>
                   </div>
-                </div>
-              </li>
-              <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
-                  To
-                </div>
-                <div className="mx-auto flex">
-                  <div className="underline underline-offset-2">
-                    {r.finishTime.substring(11, 16)}
+                </li>
+                <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
+                  <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
+                    To
                   </div>
-                  <div className="px-1">
-                    <GiAlarmClock className="text-base" />
+                  <div className="mx-auto flex">
+                    <div className="underline underline-offset-2">
+                      {r.finishTime.substring(11, 16)}
+                    </div>
+                    <div className="px-1">
+                      <GiAlarmClock className="text-base" />
+                    </div>
                   </div>
-                </div>
-              </li>
-              <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
-                  Rate
-                </div>
-                <div className=" mx-auto flex">
-                  <div className="underline underline-offset-2">
-                    {r.price} THB/Hour
+                </li>
+                <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
+                  <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
+                    Rate
                   </div>
-                  <div className="px-1">
-                    <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
+                  <div className=" mx-auto flex">
+                    <div className="underline underline-offset-2">
+                      {r.price} THB/Hour
+                    </div>
+                    <div className="px-1">
+                      <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
+                    </div>
                   </div>
-                </div>
-              </li>
-            </ul>
-          ))} */}
+                </li>
+              </ul>
+            ))
+          )}
         </div>
       </div>
 
@@ -281,6 +252,8 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
           doctorName={doctorName}
           setAppointmentPopup={setAppointmentPopup}
           appointmentPopup={appointmentPopup}
+          setFetch={setFetch}
+          fetch={fetch}
         />
       )}
     </div>
