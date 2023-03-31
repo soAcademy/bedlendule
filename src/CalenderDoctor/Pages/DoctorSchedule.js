@@ -21,7 +21,7 @@ import {
 import useDateTimepicker from "../Hooks/useDateTimePicker";
 import SelectRequest from "../Components/SelectRequest";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { DisabledatesContext } from "../home";
 
@@ -94,7 +94,7 @@ const DoctorSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByUUID",
       headers: {
         "Content-Type": "application/json",
-        'authorization': localStorage.getItem('access-token')
+        authorization: localStorage.getItem("access-token"),
       },
       data: data,
     };
@@ -114,6 +114,9 @@ const DoctorSchedule = () => {
       .catch((error) => {
         console.log(error);
         setFetching(false);
+        if (error.response.status === 401) {
+          redirect("/login");
+        }
       });
   }, [updated]);
 
@@ -134,10 +137,10 @@ const DoctorSchedule = () => {
               disabledDates={disabledDates.map((e) => new Date(e))}
               onChange={(e) => {
                 redirect(
-                  `../schedule/selectdoctor/${new Date(e.value
-                    .toLocaleDateString()).toISOString()
-                  }`
-                )
+                  `selectrequest/${e.value
+                    .toLocaleDateString()
+                    .replace(/\//g, "-")}`
+                );
               }}
               showOtherMonths={false}
               minDate={new Date()}
@@ -168,9 +171,9 @@ const DoctorSchedule = () => {
             >
               CREATE SCHEDULE
             </button>
-            <button className="button w-1/2 py-3 md:w-1/4" onClick={() => []}>
+            <Link className="button w-1/2 py-3 md:w-1/4" to="/schedule/selectrequest/">
               REQUEST
-            </button>
+            </Link>
           </div>
           {!fetching && (
             <div className="my-4 ml-4 font-bold text-slate-700 md:w-1/2">

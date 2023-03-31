@@ -33,7 +33,6 @@ const Registration = () => {
   };
 
   const validateInput = (e) => {
-    console.log(error);
     let { name, value } = e.target;
     setError((prev) => {
       const stateObj = { ...prev, [name]: "" };

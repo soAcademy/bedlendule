@@ -6,8 +6,9 @@ import Appointment from "./Appointment";
 import axios from "axios";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IoIosReturnLeft } from "react-icons/io";
+import { useNavigate } from "react-router-dom";
 
-const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
+const SelectDoctorDetail = ({ selectedDoctor }) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [appointmentPopup, setAppointmentPopup] = useState(false);
   const [doctorDetail, setDoctorDetail] = useState([]);
@@ -16,7 +17,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   const [doctorName, setDoctorName] = useState([]);
   const [schedules, setSchedules] = useState([]);
   const [location, setLocation] = useState([]);
-
+  const redirect = useNavigate();
 
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
@@ -121,11 +122,11 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
   return (
     <>
       <div className="fixed top-10 flex w-full flex-col  ">
-        <button
-          className="fixed right-5 top-7 rounded-lg text-2xl font-light text-slate-400 hover:bg-slate-50 hover:text-slate-300"
-          onClick={() => setPage("doctorLists")}
+      <button
+          className="top-13 absolute right-4 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
+          onClick={() => redirect("/schedule/")}
         >
-          <IoIosReturnLeft className="w-[40px] rounded-lg shadow-lg" />
+          <IoIosReturnLeft className="" />
         </button>
         <div className="w-full text-center text-2xl">
           {selectedDoctor.doctorUUID?.firstName} &nbsp;{" "}

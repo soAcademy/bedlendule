@@ -62,6 +62,9 @@ const Login = ({ setPage }) => {
         setAuthenticated(false);
         setLoginFail(true);
         setLogginIn(false);
+        if (error.response.status === 401) {
+          window.location.reload();
+        }
       });
   };
 
