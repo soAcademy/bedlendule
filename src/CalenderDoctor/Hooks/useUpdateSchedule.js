@@ -11,19 +11,22 @@ const useUpdateSchedule = ({
   finishTime,
   startTime,
   scheduleToEdit,
+  scheduleToDelete,
+  setScheduleToDelete,
   price,
   setOpenTimeSlotForm,
+  setOpenDelete,
   setUpdated,
   updated,
   setPrice,
 }) => {
-  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
   const [removingTimeSlotIds, setRemovingTimeSlotIds] = useState([]);
   const [duplicatedTime, setDuplicatedTime] = useState(false);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
   const { setSending, SendingPopup } = useSendingPopup();
   const closeEditPanel = () => {
-    setIsEditOpen(false);
+    setOpenEdit(false);
     setConfirmSubmit(false);
   };
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
@@ -89,6 +92,7 @@ const useUpdateSchedule = ({
   };
 
   const updateSchedule = () => {
+    setSending(true);
     let data = JSON.stringify({
       scheduleId: scheduleToEdit.id,
       addingTimeSlots: newTimeSlots.filter((timeslot) => !timeslot.id),
@@ -107,14 +111,13 @@ const useUpdateSchedule = ({
       },
       data: data,
     };
-    setSending(true);
     axios
       .request(config)
       .then((response) => {
         setRemovingTimeSlotIds([]);
         setUpdated(!updated);
         setSending(false);
-        setIsEditOpen(false)
+        setOpenEdit(false)
         setSubmitSuccessPopUp(true);
       })
       .catch((error) => {
@@ -123,17 +126,53 @@ const useUpdateSchedule = ({
         setSubmitFailPopUp(true);
       });
   };
+
+  const deleteSchedule = () => {
+    setSending(true)
+    let data = JSON.stringify({
+      "scheduleId": scheduleToDelete
+    });
+    
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'http://localhost:5555/bedlendule/deleteSchedule?',
+      headers: { 
+        'Authorization': localStorage.getItem('access-token'), 
+        'Content-Type': 'application/json'
+      },
+      data : data
+    };
+    
+    axios.request(config)
+    .then((response) => {
+      console.log(JSON.stringify(response.data));
+      setScheduleToDelete()
+      setSending(false)
+      setOpenDelete(false)
+      setUpdated(!updated)
+      setSubmitSuccessPopUp(true);
+    })
+    .catch((error) => {
+      console.log(error);
+      setSending(false)
+      setOpenDelete(false)
+      setSubmitFailPopUp(true)
+    });
+    
+  }
   return {
     removeTimeslot,
     addTimeSlot,
     updateSchedule,
     duplicatedTime,
     SendingPopup,
-    isEditOpen,
-    setIsEditOpen,
+    openEdit,
+    setOpenEdit,
     ResultPopup,
     confirmSubmit,
     setConfirmSubmit,
+    deleteSchedule
   };
 };
 
