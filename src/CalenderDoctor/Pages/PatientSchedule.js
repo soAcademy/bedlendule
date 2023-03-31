@@ -63,7 +63,7 @@ const UserSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/chooseDoctor",
       headers: {
         "Content-Type": "application/json",
-        'access-token': localStorage.getItem('access-token')
+        'authorization': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -95,7 +95,7 @@ const UserSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/deleteRequest",
       headers: {
         "Content-Type": "application/json",
-        'access-token': localStorage.getItem('access-token')
+        'authorization': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -127,7 +127,7 @@ const UserSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getRequestsByUUID",
       headers: {
         "Content-Type": "application/json",
-        'access-token': localStorage.getItem('access-token')
+        'authorization': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -156,7 +156,7 @@ const UserSchedule = () => {
         url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
         headers: {
           "Content-Type": "application/json",
-          'access-token': localStorage.getItem('access-token')
+          'authorization': localStorage.getItem('access-token')
         },
         data: data,
       };
@@ -189,10 +189,10 @@ const UserSchedule = () => {
             value={date}
             onChange={(e) => {
               redirect(
-                `selectDoctor/${e.value
-                  .toLocaleDateString()
-                  .replace(/\//g, "-")}`
-              );
+                `../schedule/selectdoctor/${new Date(e.value
+                  .toLocaleDateString()).toISOString()
+                }`
+              )
             }}
             disabledDates={disabledDates?.map((e) => new Date(e))}
             minDate={new Date()}

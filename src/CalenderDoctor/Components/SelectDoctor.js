@@ -44,7 +44,7 @@ const SelectDoctor = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByDate",
       headers: {
         "Content-Type": "application/json",
-        'access-token': localStorage.getItem('access-token')
+        'authorization': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -52,6 +52,7 @@ const SelectDoctor = () => {
     axios(config)
       .then((response) => {
         setFetching(false);
+        console.log(response.data)
         const _data = findFreeDoctor(response.data);
         setDoctors(_data);
       })
@@ -65,7 +66,7 @@ const SelectDoctor = () => {
       <div>
         <button
           className="z-40 top-13 absolute right-4 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
-          onClick={() => redirect(-1)}
+          onClick={() => redirect('/schedule/')}
         >
           <IoIosReturnLeft className="" />
         </button>
@@ -81,9 +82,9 @@ const SelectDoctor = () => {
             disabledDates={disabledDates?.map((e) => new Date(e))}
             onChange={(e) => {
               redirect(
-                `../schedule/selectdoctor/${e.value
-                  .toLocaleDateString()
-                  .replace(/\//g, "-")}`
+                `../schedule/selectdoctor/${new Date(e.value
+                  .toLocaleDateString()).toISOString()
+                }`
               );
             }}
             minDate={new Date()}

@@ -85,7 +85,7 @@ const Nav = ({ page, setPage, type, setType }) => {
               setIsSideBarOpen(false);
               localStorage.removeItem("uuid");
               localStorage.removeItem("type")
-              localStorage.removeItem("uuid")
+              localStorage.removeItem("access-token")
             }}
             className={`cursor-pointer rounded-lg p-2 hover:bg-slate-200
               ${!localStorage.getItem("uuid") && "hidden"}`}

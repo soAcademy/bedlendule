@@ -49,7 +49,7 @@ const SelectRequest = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/acceptRequest",
       headers: {
         "Content-Type": "application/json",
-        'access-token': localStorage.getItem('access-token')
+        'authorization': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -103,7 +103,7 @@ const SelectRequest = () => {
     <>
       <button
         className="top-13 absolute right-4 z-40 w-10 rounded-md border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
-        onClick={() => redirect(-1)}
+        onClick={() => redirect('schedule')}
       >
         <IoIosReturnLeft />
       </button>
@@ -119,10 +119,10 @@ const SelectRequest = () => {
           disabledDates={disabledDates.map((e) => new Date(e))}
           onChange={(e) => {
             redirect(
-              `../schedule/selectrequest/${e.value
-                .toLocaleDateString()
-                .replace(/\//g, "-")}`
-            );
+              `../schedule/selectdoctor/${new Date(e.value
+                .toLocaleDateString()).toISOString()
+              }`
+            )
           }}
           minDate={new Date()}
           locale="en"

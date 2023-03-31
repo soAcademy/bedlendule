@@ -6,6 +6,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import axios from "axios";
 import { Toast } from "primereact/toast";
+import { useEffect } from "react";
 
 const Login = ({ setPage }) => {
   const [authenticated, setAuthenticated] = useState(false);
@@ -13,7 +14,10 @@ const Login = ({ setPage }) => {
   const [logginIn, setLogginIn] = useState(false);
   const redirect = useNavigate();
   const toast = useRef(null);
-
+  const uuid = localStorage.getItem("uuid");
+  useEffect(() => {
+    uuid && redirect("/");
+  }, [uuid]);
   const show = () => {
     toast.current.show({
       severity: "error",
@@ -34,13 +38,14 @@ const Login = ({ setPage }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/login",
       headers: {
         "Content-Type": "application/json",
-        'access-token': localStorage.getItem('access-token')
+        "authorization": localStorage.getItem("access-token"),
       },
       data: data,
     };
 
     axios(config)
       .then((response) => {
+        console.log('response', response)
         localStorage.setItem("access-token", response.data.access_token);
         document.querySelector("#password").value = "";
         localStorage.setItem("type", response.data.type);
@@ -59,6 +64,24 @@ const Login = ({ setPage }) => {
         setLogginIn(false);
       });
   };
+
+  if (!localStorage.getItem("access-token")) {
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getPublicToken",
+      headers: {},
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        localStorage.setItem("access-token", response.data.access_token);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
   return (
     <>
       <Toast ref={toast} position="bottom-left" className="hidden md:block" />
@@ -111,7 +134,8 @@ const Login = ({ setPage }) => {
           <div className="my-4 flex flex-wrap justify-center">
             <p>
               Don't have an account?{" "}
-              <Link to="/signup"
+              <Link
+                to="/signup"
                 className="font-bold underline underline-offset-1"
               >
                 Sign Up

@@ -41,7 +41,7 @@ const useCreateRequest = ({
       url: "https://bedlendule-backend.vercel.app/bedlendule/createRequest",
       headers: {
         "Content-Type": "application/json",
-        'access-token': localStorage.getItem('access-token')
+        'authorization': localStorage.getItem('access-token')
       },
       data: formData,
     };

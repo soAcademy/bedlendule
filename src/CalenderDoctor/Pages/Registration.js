@@ -104,7 +104,7 @@ const Registration = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/createUser",
       headers: {
         "Content-Type": "application/json",
-        'access-token': localStorage.getItem('access-token'),
+        'authorization': localStorage.getItem('access-token'),
       },
       data: userData,
     };
