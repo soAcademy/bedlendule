@@ -10,6 +10,7 @@ export const DatePicker = ({
     {label}
     <Calendar
       disabled={disabled}
+      tabIndex={-1}
       readOnlyInput
       minDate={new Date()}
       id="date"
@@ -33,6 +34,7 @@ export const StartTimePicker = ({
       id="startTime"
       inputId="start-time"
       readOnlyInput
+      tabIndex={-1}
       timeOnly
       showButtonBar
       hourFormat="12"
@@ -53,6 +55,7 @@ export const FinishTimePicker = ({
   <>
     {label}
     <Calendar
+    tabIndex={-1}
       id="finishTime"
       inputId="finish-time"
       readOnlyInput

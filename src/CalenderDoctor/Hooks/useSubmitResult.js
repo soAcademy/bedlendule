@@ -21,6 +21,7 @@ const useSubmitResult = ({ successAction, failedAction }) => {
           </div>
           <div className="mt-4 flex space-y-2">
             <button
+            autoFocus={submitSuccessPopUp}
               type="button"
               className="text-md button mx-auto w-24 rounded-md py-1"
               onClick={() => {
@@ -49,6 +50,7 @@ const useSubmitResult = ({ successAction, failedAction }) => {
           </div>
           <div className="mt-4 flex space-y-2">
             <button
+            autoFocus={submitFailPopUp}
               type="button"
               className="text-md button mx-auto w-24 rounded-md py-1"
               onClick={() => {

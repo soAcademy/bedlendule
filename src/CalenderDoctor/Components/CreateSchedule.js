@@ -75,6 +75,7 @@ const CreateSchedule = ({
       failedAction: () => {},
     });
   const { handleSubmit, submitForm } = useCreateSchedule({
+    setOpenCreateSchedule,
     newTimeSlots,
     setPopupState,
     formData,
@@ -220,6 +221,7 @@ const CreateSchedule = ({
                 id="price"
                 type="number"
                 placeholder="Price"
+                tabIndex={-1}
                 value={price ?? ""}
                 onChange={(e) => {
                   setPrice(e.target.value);
@@ -234,12 +236,13 @@ const CreateSchedule = ({
               />
               <FinishTimePicker
                 finishTime={finishTime}
-                onChange={handleFinishTimeChange}
+                handleFinishTimeChange={handleFinishTimeChange}
               />
             </div>
             <div className="flex justify-center space-x-2 text-4xl">
               <button
                 type="button"
+                tabIndex={-1}
                 disabled={
                   isDateAvailable && startTime && finishTime && price && date
                     ? false
@@ -252,6 +255,7 @@ const CreateSchedule = ({
               </button>
               <button
                 type="button"
+                tabIndex={-1}
                 onClick={() => {
                   clearTimeslotInput();
                   setOpenTimeSlotForm(false);
@@ -275,7 +279,7 @@ const CreateSchedule = ({
             <BiPlusCircle className="text-3xl" /> Add Time slot
           </button>
         </div>
-        <div className="fixed bottom-24 left-1/2 flex w-full -translate-x-1/2 flex-col">
+        <div className="fixed bottom-20 left-1/2 flex w-full -translate-x-1/2 flex-col">
           <p
             className={`pointer-events-none text-center text-red-400 opacity-0
                 ${

@@ -49,6 +49,7 @@ const useDateTimepicker = () => {
   };
 
   const handleFinishTimeChange = (e) => {
+    console.log(e)
     if (e.value) {
       const _date =
         date?.toLocaleDateString() || new Date().toLocaleDateString();

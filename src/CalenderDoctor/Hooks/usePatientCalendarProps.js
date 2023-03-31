@@ -15,7 +15,6 @@ const usePatientCalendarProps = () => {
     timeSlots,
     setTimeSlots,
   } = useContext(DisabledatesContext);
-  const redirect = useNavigate()
 
   useEffect(() => {
     var config = {
