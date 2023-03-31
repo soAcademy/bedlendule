@@ -125,11 +125,11 @@ const SelectDoctor = () => {
               setOpenDoctorDetail(true);
             }}
           >
-            <div className="flex ">
+            <div className="flex justify-between">
               <div className="font-bol w-[60%] text-xl text-[#666CFF]">
                 {doctor.doctorUUID.firstName}&nbsp; {doctor.doctorUUID.lastName}
               </div>
-              <div className="w-[20%] ">
+              
                 <Rating
                   onIcon={
                     <img
@@ -164,9 +164,8 @@ const SelectDoctor = () => {
                   start={5}
                   cancel={false}
                 />
-              </div>
             </div>
-            <div className="indent-8 text-[#4C4E64]">{doctor.description}</div>
+            <div className="p-2 text-[#4C4E64]">{doctor.description}</div>
           </div>
         ))}
       </div>

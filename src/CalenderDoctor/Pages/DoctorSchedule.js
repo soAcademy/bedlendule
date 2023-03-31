@@ -33,10 +33,12 @@ const DoctorSchedule = () => {
   const [schedules, setSchedules] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
   const [scheduleToEdit, setScheduleToEdit] = useState([]);
+  const [scheduleToDelete, setScheduleToDelete] = useState([]);
   const [newTimeSlots, setNewTimeSlots] = useState([]);
   const [openTimeSlotForm, setOpenTimeSlotForm] = useState(false);
   const [updated, setUpdated] = useState();
   const [confirmRemove, setConfirmRemove] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
   const [openCreateSchedule, setOpenCreateSchedule] = useState(false);
   const [insidePage, setInsidePage] = useState("doctorSchedule");
   const { redirect, redirectToLogin } = useRedirect();
@@ -54,11 +56,12 @@ const DoctorSchedule = () => {
     updateSchedule,
     duplicatedTime,
     SendingPopup,
-    isEditOpen,
-    setIsEditOpen,
+    openEdit,
+    setOpenEdit,
     ResultPopup,
     confirmSubmit,
     setConfirmSubmit,
+    deleteSchedule,
   } = useUpdateSchedule({
     timeSlots,
     setPrice,
@@ -69,8 +72,11 @@ const DoctorSchedule = () => {
     finishTime,
     startTime,
     scheduleToEdit,
+    scheduleToDelete,
+    setScheduleToDelete,
     price,
     setOpenTimeSlotForm,
+    setOpenDelete,
     updated,
     setUpdated,
   });
@@ -101,6 +107,7 @@ const DoctorSchedule = () => {
             new Date(a.timeslots.at(-1).startTime).getTime() -
             new Date(b.timeslots.at(-1).startTime).getTime()
         );
+        console.log(_schedules);
         setFetching(false);
         setSchedules(_schedules);
         setTimeSlots(_schedules.map((e) => e.timeslots).flat());
@@ -210,17 +217,34 @@ const DoctorSchedule = () => {
                           </div>
                         </div>
                       </div>
-                      <button
-                        onClick={() => {
-                          setScheduleToEdit(schedule);
-                          setNewTimeSlots(schedule.timeslots);
-                          setIsEditOpen(true);
-                        }}
-                        className={`float-right text-2xl text-slate-500 hover:text-slate-400
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            setScheduleToEdit(schedule);
+                            setNewTimeSlots(schedule.timeslots);
+                            setOpenEdit(true);
+                          }}
+                          className={`float-right text-2xl text-slate-500 hover:text-slate-400
                         ${schedule.title === "Patient Request" && "hidden"}`}
-                      >
-                        <BiEditAlt />
-                      </button>
+                        >
+                          <BiEditAlt />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setOpenDelete(true);
+                            setScheduleToDelete(schedule.id);
+                            console.log(schedule.timeslots);
+                          }}
+                          className={`float-right text-2xl text-slate-500 hover:text-slate-400
+                        ${
+                          schedule.timeslots.findIndex(
+                            (timeslot) => timeslot.request
+                          ) !== -1 && "hidden"
+                        }`}
+                        >
+                          <BiTrash />
+                        </button>
+                      </div>
                     </div>
                     {schedule.timeslots?.map((timeslot, idx) => {
                       return (
@@ -233,7 +257,7 @@ const DoctorSchedule = () => {
                           } 
                           ${
                             timeslot.request?.status === "ACCEPTED" &&
-                            "border-sky-400 bg-sky-100"
+                            "border-sky-400 bg-sky-200"
                           }`}
                         >
                           <div className="w-3/4">
@@ -268,7 +292,7 @@ const DoctorSchedule = () => {
                   <div
                     className={`shader fixed top-0 z-50
       ${
-        isEditOpen && scheduleToEdit.id === schedule.id
+        openEdit && scheduleToEdit.id === schedule.id
           ? ""
           : "pointer-events-none opacity-0"
       }`}
@@ -277,7 +301,7 @@ const DoctorSchedule = () => {
                       className={`fixed top-1/4 z-50 h-full w-full
     space-y-2 rounded-lg bg-white p-6 shadow-lg transition-all duration-300
     ${
-      isEditOpen && scheduleToEdit.id === schedule.id
+      openEdit && scheduleToEdit.id === schedule.id
         ? ""
         : "pointer-events-none translate-y-full opacity-0"
     }
@@ -286,7 +310,7 @@ const DoctorSchedule = () => {
                       <div className="flex flex-col">
                         <BsChevronDown
                           className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
-                          onClick={() => setIsEditOpen(false)}
+                          onClick={() => setOpenEdit(false)}
                         />
                         <div>
                           <p className="text-2xl font-bold text-[#4C4E64DE] ">
@@ -429,7 +453,7 @@ const DoctorSchedule = () => {
                           <button
                             onClick={() => {
                               setOpenTimeSlotForm(false);
-                              setIsEditOpen(false);
+                              setOpenEdit(false);
                             }}
                             className="text-md button w-24 bg-slate-400 p-2 text-white hover:bg-slate-300 active:bg-slate-500"
                           >
@@ -472,6 +496,13 @@ const DoctorSchedule = () => {
         action={updateSchedule}
         state={confirmSubmit}
         setState={setConfirmSubmit}
+      />
+      <ConfirmPopup
+        title={"DELETE SCHEDULE"}
+        description={"Are you sure to delete this schedule?"}
+        action={deleteSchedule}
+        state={openDelete}
+        setState={setOpenDelete}
       />
       <SendingPopup />
       <ResultPopup />

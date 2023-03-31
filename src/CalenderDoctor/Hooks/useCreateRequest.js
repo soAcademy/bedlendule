@@ -11,7 +11,6 @@ const useCreateRequest = ({
   setPopupState,
 }) => {
   const [formData, setFormData] = useState();
-  const patientUUID = localStorage.getItem('patientUUID');
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = event.target;
@@ -28,13 +27,13 @@ const useCreateRequest = ({
       location: form.location.value,
       startTime: startTime.toISOString(),
       finishTime: finishTime.toISOString(),
-      patientUUID: patientUUID,
     };
     setFormData(data);
   };
   const submitForm = () => {
     setPopupState(false);
     setSending(true);
+    console.log(formData)
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -67,6 +66,7 @@ const useCreateRequest = ({
           : setSubmitFailPopUp(true);
       })
       .catch((error) => {
+        console.log(error)
         setSending(false);
         setSubmitFailPopUp(true);
       });

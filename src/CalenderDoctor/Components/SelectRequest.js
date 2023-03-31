@@ -39,7 +39,6 @@ const SelectRequest = () => {
     setConfirmPopup(false);
     let data = JSON.stringify({
       requestId: requestId,
-      uuid: doctorUUID,
       startTime: timeSlot.startTime,
       finishTime: timeSlot.finishTime,
     });
@@ -60,6 +59,7 @@ const SelectRequest = () => {
       .request(config)
       .then((response) => {
         setSending(false);
+        console.log(response.data)
         response.status === 200
           ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
@@ -95,7 +95,7 @@ const SelectRequest = () => {
             (e) =>
               e.doctorTimeslot.findIndex(
                 (timeslot) => timeslot.schedule.uuid === doctorUUID
-              ) === -1
+              ) === -1 && new Date(e.startTime) > new Date()
           );
           setRequests(_requests);
         })

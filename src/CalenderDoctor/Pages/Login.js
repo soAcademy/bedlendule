@@ -48,7 +48,6 @@ const Login = ({ setPage }) => {
         console.log('response', response)
         localStorage.setItem("access-token", response.data.access_token);
         document.querySelector("#password").value = "";
-        localStorage.setItem("type", response.data.type);
         localStorage.setItem("uuid", response.data.uuid);
         redirect("/");
         show();

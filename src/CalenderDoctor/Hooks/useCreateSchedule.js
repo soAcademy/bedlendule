@@ -7,10 +7,6 @@ export const useCreateSchedule = ({
   formData,
   setFormData,
   setSending,
-  setStartTime,
-  setFinishTime,
-  setPrice,
-  setDate,
   setNewTimeSlots,
   setSubmitFailPopUp,
   setSubmitSuccessPopUp,
@@ -19,10 +15,8 @@ export const useCreateSchedule = ({
 }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
-    const doctorUUID = localStorage.getItem('doctorUUID');;
     const form = event.target;
     const data = {
-      uuid: doctorUUID,
       title: form["title"].value,
       description: form["description"].value,
       meetingType: form["online"].checked ? "ONLINE" : "OFFLINE",
@@ -54,6 +48,7 @@ export const useCreateSchedule = ({
         setNewTimeSlots([]);
         setDatePickerDisabled(false);
         setSending(false);
+        setFormData()
         response.status === 200
           ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
