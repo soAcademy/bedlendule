@@ -21,7 +21,7 @@ const SelectRequest = () => {
   const [timeSlot, setTimeSlot] = useState({});
   const [updated, setUpdated] = useState(false);
   const { setSending, SendingPopup } = useSendingPopup();
-  const date = useParams();
+  const { date } = useParams();
   const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
   const redirect = useNavigate();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
@@ -49,7 +49,7 @@ const SelectRequest = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/acceptRequest",
       headers: {
         "Content-Type": "application/json",
-        'authorization': localStorage.getItem('access-token')
+        authorization: localStorage.getItem("access-token"),
       },
       data: data,
     };
@@ -67,43 +67,71 @@ const SelectRequest = () => {
         setSending(false);
         setSubmitFailPopUp(true);
         console.log(error);
+        if (error.response.status === 401) {
+          redirect("/login");
+        }
       });
   };
   useEffect(() => {
     setRequests([]);
     setFetching(true);
-    const data = JSON.stringify(date);
-    const config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getOpeningRequestsByDate",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
+    if (date) {
+      const data = JSON.stringify({ date: new Date(date) });
+      const config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://bedlendule-backend.vercel.app/bedlendule/getOpeningRequestsByDate",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
 
-    axios(config)
-      .then((response) => {
-        setFetching(false);
-        const _requests = response.data.filter(
-          (e) =>
-            e.doctorTimeslot.findIndex(
-              (timeslot) => timeslot.schedule.uuid === doctorUUID
-            ) === -1
-        );
-        setRequests(_requests);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      axios(config)
+        .then((response) => {
+          setFetching(false);
+          const _requests = response.data.filter(
+            (e) =>
+              e.doctorTimeslot.findIndex(
+                (timeslot) => timeslot.schedule.uuid === doctorUUID
+              ) === -1
+          );
+          setRequests(_requests);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://bedlendule-backend.vercel.app/bedlendule/getOpeningRequests",
+        headers: {},
+      };
+
+      axios
+        .request(config)
+        .then((response) => {
+          setFetching(false);
+          const _requests = response.data.filter(
+            (e) =>
+              e.doctorTimeslot.findIndex(
+                (timeslot) => timeslot.schedule.uuid === doctorUUID
+              ) === -1
+          );
+          setRequests(_requests);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   }, [date, updated]);
 
   return (
     <>
       <button
         className="top-13 absolute right-4 z-40 w-10 rounded-md border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
-        onClick={() => redirect('schedule')}
+        onClick={() => redirect("/schedule")}
       >
         <IoIosReturnLeft />
       </button>
@@ -119,10 +147,10 @@ const SelectRequest = () => {
           disabledDates={disabledDates.map((e) => new Date(e))}
           onChange={(e) => {
             redirect(
-              `../schedule/selectdoctor/${new Date(e.value
-                .toLocaleDateString()).toISOString()
-              }`
-            )
+              `../schedule/selectrequest/${e.value
+                .toLocaleDateString()
+                .replace(/\//g, "-")}`
+            );
           }}
           minDate={new Date()}
           locale="en"

@@ -11,15 +11,14 @@ import { DisabledatesContext } from "../home";
 import usePatientCalendarProps from "../Hooks/usePatientCalendarProps";
 
 const SelectDoctor = () => {
-  usePatientCalendarProps()
+  usePatientCalendarProps();
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState([]);
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
-  const date = useParams();
-  const { disabledDates, dateTemplate } =
-    useContext(DisabledatesContext);
-  const redirect = useNavigate()
+  const { date } = useParams();
+  const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
+  const redirect = useNavigate();
   const findFreeDoctor = (freeDoctor) => {
     const filter = freeDoctor.map((doctor) =>
       doctor.timeslots.filter((timeslots) => timeslots.requestId === null)
@@ -36,7 +35,7 @@ const SelectDoctor = () => {
   useEffect(() => {
     setDoctors([]);
     setFetching(true);
-    const data = JSON.stringify(date);
+    const data = JSON.stringify({ date: new Date(date) });
     console.log("data", data);
     const config = {
       method: "post",
@@ -44,7 +43,6 @@ const SelectDoctor = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByDate",
       headers: {
         "Content-Type": "application/json",
-        'authorization': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -52,7 +50,7 @@ const SelectDoctor = () => {
     axios(config)
       .then((response) => {
         setFetching(false);
-        console.log(response.data)
+        console.log(response.data);
         const _data = findFreeDoctor(response.data);
         setDoctors(_data);
       })
@@ -65,8 +63,8 @@ const SelectDoctor = () => {
     <>
       <div>
         <button
-          className="z-40 top-13 absolute right-4 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
-          onClick={() => redirect('/schedule/')}
+          className="top-13 absolute right-4 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
+          onClick={() => redirect("/schedule/")}
         >
           <IoIosReturnLeft className="" />
         </button>
@@ -82,9 +80,9 @@ const SelectDoctor = () => {
             disabledDates={disabledDates?.map((e) => new Date(e))}
             onChange={(e) => {
               redirect(
-                `../schedule/selectdoctor/${new Date(e.value
-                  .toLocaleDateString()).toISOString()
-                }`
+                `../schedule/selectDoctor/${e.value
+                  .toLocaleDateString()
+                  .replace(/\//g, "-")}`
               );
             }}
             minDate={new Date()}

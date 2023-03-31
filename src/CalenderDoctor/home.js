@@ -1,11 +1,5 @@
 import { useState, useEffect, createContext } from "react";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  useNavigate,
-  redirect,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Nav from "./Components/Nav";
 import CreateRequest from "./Components/CreateRequest";
 import "primereact/resources/themes/saga-green/theme.css";
@@ -35,33 +29,35 @@ export const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
   const [page, setPage] = useState(); // landing
   const [type, setType] = useState(); //อย่าลืมเปลี่ยนเป็น doctor
-
   window.onload = () => {
     const accessToken = localStorage.getItem("access-token");
-    let config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/verifySession",
-      headers: {
-        authorization: accessToken,
-        "Content-Type": "application/json",
-      },
-    };
-    axios
-      .request(config)
-      .then((response) => {
-        if (response.status === 250) {
-          redirect("/login");
-        } else if (response.status === 200 && response.data.uuid) {
-          localStorage.setItem("type", response.data.type);
-          localStorage.setItem("uuid", response.data.uuid);
-        } else {
-          redirect("/login");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (accessToken) {
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://bedlendule-backend.vercel.app/bedlendule/verifySession",
+        headers: {
+          authorization: accessToken,
+          "Content-Type": "application/json",
+        },
+      };
+      axios
+        .request(config)
+        .then((response) => {
+          console.log("onload");
+          if (response.status === 200 && response.data.uuid) {
+            localStorage.setItem("type", response.data.type);
+            localStorage.setItem("uuid", response.data.uuid);
+          }
+        })
+        .catch((error) => {
+          window.location = window.location.origin + "/login";
+          localStorage.removeItem("access-token");
+          localStorage.removeItem("type");
+          localStorage.removeItem("uuid");
+          console.log(error);
+        });
+    }
   };
 
   if (!localStorage.getItem("access-token")) {
@@ -184,6 +180,16 @@ export const Home = () => {
                 <Route
                   exact
                   path="schedule/selectRequest/:date"
+                  element={<SelectRequest />}
+                />
+                <Route
+                  exact
+                  path="schedule/selectdoctor/"
+                  element={<SelectDoctor />}
+                />
+                <Route
+                  exact
+                  path="schedule/selectRequest/"
                   element={<SelectRequest />}
                 />
               </Routes>

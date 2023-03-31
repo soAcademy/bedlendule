@@ -63,7 +63,7 @@ const UserSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/chooseDoctor",
       headers: {
         "Content-Type": "application/json",
-        'authorization': localStorage.getItem('access-token')
+        authorization: localStorage.getItem("access-token"),
       },
       data: data,
     };
@@ -80,6 +80,9 @@ const UserSchedule = () => {
         console.log(error);
         setSending(false);
         setSubmitFailPopUp(true);
+        if (error.response.status === 401) {
+          redirect("/login");
+        }
       });
   };
   const deleteRequest = () => {
@@ -95,7 +98,7 @@ const UserSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/deleteRequest",
       headers: {
         "Content-Type": "application/json",
-        'authorization': localStorage.getItem('access-token')
+        authorization: localStorage.getItem("access-token"),
       },
       data: data,
     };
@@ -112,6 +115,9 @@ const UserSchedule = () => {
         console.log(error);
         setSending(false);
         setSubmitFailPopUp(true);
+        if (error.response.status === 401) {
+          redirect("/login");
+        }
       });
   };
   useEffect(() => {
@@ -127,7 +133,7 @@ const UserSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getRequestsByUUID",
       headers: {
         "Content-Type": "application/json",
-        'authorization': localStorage.getItem('access-token')
+        authorization: localStorage.getItem("access-token"),
       },
       data: data,
     };
@@ -141,6 +147,9 @@ const UserSchedule = () => {
       .catch((error) => {
         console.log(error);
         setFetching(false);
+        if (error.response.status === 401) {
+          redirect("/login");
+        }
       });
   }, [updated]);
 
@@ -156,7 +165,7 @@ const UserSchedule = () => {
         url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
         headers: {
           "Content-Type": "application/json",
-          'authorization': localStorage.getItem('access-token')
+          authorization: localStorage.getItem("access-token"),
         },
         data: data,
       };
@@ -171,6 +180,9 @@ const UserSchedule = () => {
         .catch((error) => {
           console.log(error);
           setFetching(false);
+          if (error.response.status === 401) {
+            redirect("/login");
+          }
         });
     }
   }, [doctorUUID]);
@@ -189,10 +201,10 @@ const UserSchedule = () => {
             value={date}
             onChange={(e) => {
               redirect(
-                `../schedule/selectdoctor/${new Date(e.value
-                  .toLocaleDateString()).toISOString()
-                }`
-              )
+                `selectDoctor/${e.value
+                  .toLocaleDateString()
+                  .replace(/\//g, "-")}`
+              );
             }}
             disabledDates={disabledDates?.map((e) => new Date(e))}
             minDate={new Date()}
@@ -234,7 +246,7 @@ const UserSchedule = () => {
           </div>
         )}
         {!fetching && (
-          <div className="pl-4 flex flex-col space-y-2">
+          <div className="flex flex-col space-y-2 pl-4">
             <div className="mt-5 font-bold">INCOMING SCHEDULE</div>
             {requests
               .filter(
@@ -366,9 +378,7 @@ const UserSchedule = () => {
                 (request) =>
                   new Date(request.finishTime).getTime() < new Date().getTime()
               ).length === 0 && (
-                <div className="pl-4 text-slate-700 md:w-1/2">
-                  No history
-                </div>
+                <div className="pl-4 text-slate-700 md:w-1/2">No history</div>
               )}
             </div>
           </div>

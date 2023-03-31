@@ -6,10 +6,12 @@ import axios from "axios";
 import { BsCheckCircleFill } from "react-icons/bs";
 import { AiFillStar } from "react-icons/ai";
 import { Rating } from "primereact/rating";
+import { useNavigate } from "react-router-dom";
 
 const DoctorProfileUserSide = () => {
   const [reviewScore, setReviewScore] = useState(0);
   const [profile, setProfile] = useState([]);
+  const redirect = useNavigate()
   const mockDoctordata = [
     {
       name: "David Goodman",
@@ -56,6 +58,9 @@ const DoctorProfileUserSide = () => {
       })
       .catch((error) => {
         console.log(error);
+        if (error.response.status === 401) {
+          redirect("/login");
+        }
       });
   }, []);
 

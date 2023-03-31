@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useContext } from "react";
 import { DisabledatesContext } from "../home";
+import { useNavigate } from "react-router-dom";
 
 const usePatientCalendarProps = () => {
   const [date, setDate] = useState(null);
@@ -14,13 +15,13 @@ const usePatientCalendarProps = () => {
     timeSlots,
     setTimeSlots,
   } = useContext(DisabledatesContext);
+  const redirect = useNavigate()
+
   useEffect(() => {
     var config = {
       method: "post",
       url: "https://bedlendule-backend.vercel.app/bedlendule/getAllTimeSlots",
-      headers: {
-        authorization: localStorage.getItem('access-token')
-      },
+      headers: {},
     };
 
     axios(config)
