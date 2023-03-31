@@ -182,6 +182,8 @@ const UserSchedule = () => {
         });
     }
   }, [doctorUUID]);
+
+  // console.log("testDate",testDate);
   return (
     <>
       <div

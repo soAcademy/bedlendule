@@ -14,29 +14,43 @@ const SelectDoctor = () => {
   usePatientCalendarProps();
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState([]);
-  const [openDoctorDetail,setOpenDoctorDetail]=useState(false)
+  const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
+  const [selectDate,setSelectDate] = useState();
+
   const { date } = useParams();
   const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
   const redirect = useNavigate();
-  const findFreeDoctor = (freeDoctor) => {
-    const filter = freeDoctor.map((doctor) =>
-      doctor.timeslots.filter((timeslots) => timeslots.requestId === null)
+
+  const transformDate = (date) => {
+    const buddhistDate = date;
+    const [day, month, year] = buddhistDate.split("-");
+    const gregorianYear = parseInt(year) - 543;
+    const gregorianDate = `${gregorianYear}-${month}-${day}`;
+
+    return gregorianDate;
+  };
+
+  const findFreeDoctor = (allDoctors) => {
+    const findRequestNull = allDoctors.map((allDoctors) =>
+      allDoctors.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
-    const indexes = filter
-      .map((r, idx) => (r.length >= 1 ? idx : -1))
-      .filter((idx) => idx !== -1);
 
-    const results = indexes.map((idx) => freeDoctor[idx]);
+    const findIndexOfRequestNull = findRequestNull
+      .map((r, idx) => (r.length !== 0 ? idx : -1))
+      .filter((r) => r > 0);
 
-    return results;
+    const freeDoctor = findIndexOfRequestNull.map((index) => allDoctors[index]);
+    return freeDoctor;
   };
 
   useEffect(() => {
     setDoctors([]);
     setFetching(true);
-    const data = JSON.stringify({ date: new Date(date) });
+    const _date = transformDate(date);
+    setSelectDate(_date)
+    const data = JSON.stringify({ date: _date });
     console.log("data", data);
     const config = {
       method: "post",
@@ -53,6 +67,7 @@ const SelectDoctor = () => {
         setFetching(false);
         console.log(response.data);
         const _data = findFreeDoctor(response.data);
+        console.log("freeDoctor", _data);
         setDoctors(_data);
       })
       .catch((error) => {
@@ -157,12 +172,14 @@ const SelectDoctor = () => {
 
       <div
         className={`mt-4 p-2 opacity-0 duration-200 ${
-          openDoctorDetail 
-            ? "opacity-100"
-            : "pointer-events-none opacity-0"
+          openDoctorDetail ? "opacity-100" : "pointer-events-none opacity-0"
         } `}
       >
-        <SelectDoctorDetail setOpenDoctorDetail={setOpenDoctorDetail} selectedDoctor={selectedDoctor} />
+        <SelectDoctorDetail
+          setOpenDoctorDetail={setOpenDoctorDetail}
+          selectedDoctor={selectedDoctor}
+          selectDate={selectDate}
+        />
       </div>
     </>
   );

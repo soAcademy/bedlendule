@@ -9,26 +9,78 @@ import { IoIosReturnLeft } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { MdClose } from "react-icons/md";
 
-const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
+const SelectDoctorDetail = ({
+  selectedDoctor,
+  setOpenDoctorDetail,
+  selectDate,
+}) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [appointmentPopup, setAppointmentPopup] = useState(false);
   const [doctorDetail, setDoctorDetail] = useState([]);
-  const [loading, setLoading] = useState();
-  const [currentTime, setCurrentTime] = useState();
+  const [loading, setLoading] = useState(false);
   const [doctorName, setDoctorName] = useState([]);
-  const [schedules, setSchedules] = useState([]);
+  const [timeSlots, setTimeSlots] = useState([]);
   const [location, setLocation] = useState([]);
+  const [fetch, setFetch] = useState(false);
   const redirect = useNavigate();
+
+  console.log("SelectDoctorDetail...");
+  console.log("selectedDoctor", selectedDoctor);
+  console.log("selectDate:", selectDate);
+  console.log("timeSlots", timeSlots);
+
+  const patientUUID = "9ab93e34-b805-429d-962a-c723d8d8bca8";
 
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
 
-  // get doctor detail by UUID
+  const findFreeTimeSlot = (timeSlots) => {
+    console.log("findFreeTimeSlot working...", timeSlots);
+    const findRequestNull = timeSlots.map((r) =>
+      r.timeslots.filter((timeslots) => timeslots.request === null)
+    );
+
+    const IndexLocation = findRequestNull
+      .map((r, idx) => (r.length !== 0 ? idx : -1))
+      .filter((r) => r >= 0);
+
+    const mapLocation = IndexLocation.map((index) => timeSlots[index]).map(
+      (r) => {
+        return {
+          location: r.location,
+          meetingType: r.meetingType,
+          description: r.description,
+          title: r.title,
+          
+
+        };
+      }
+    );
+
+    const result = findRequestNull.map((findRequestNull, idx) => {
+      return { ...[mapLocation[idx]], freeTimeslots: findRequestNull };
+    });
+
+    const finalResult = result.map((r) => {
+      return {
+        location: r[0].location,
+        meetingType: r[0].meetingType,
+        description: r[0].description,
+        title: r[0].title,
+        freetime: r.freeTimeslots,
+        patientUUID:patientUUID
+      };
+    });
+    console.log("finalResult",finalResult)
+    return finalResult;
+  };
+
   useEffect(() => {
     const _data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
     });
+
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -43,85 +95,39 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
 
     axios(config).then((response) => {
       setLoading(false);
+      // console.log("Doctor detail response.data...", response.data);
       setDoctorDetail(response.data);
       setDoctorName(selectedDoctor.doctorUUID);
     });
-  }, [selectedDoctor]);
+  }, [selectedDoctor,fetch]);
 
-  // get ScheduleBy UUID
+  // get ScheduleBy UUID and Date
   useEffect(() => {
-    const _data = JSON.stringify({
+    const data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
+      date: selectDate,
     });
+
     const config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByUUID",
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByDateAndUUID",
       headers: {
         "Content-Type": "application/json",
-        authorization: localStorage.getItem("access-token"),
       },
-      data: _data,
+      data: data,
     };
+
     axios(config).then((response) => {
-      setSchedules(response.data);
-      findTimeslot(response.data);
-      findindexOfSchedules(response.data);
+      console.log("timeSlots from UUID and Date api: ", response.data);
+      const _freetimeSlots = findFreeTimeSlot(response.data);
+      setTimeSlots(_freetimeSlots);
     });
   }, [selectedDoctor]);
 
-  //get doctor Id for requestnull
-  const findTimeslot = (schedules) => {
-    const findRequestNull = selectedDoctor.timeslots?.filter(
-      (timeslots) => timeslots.requestId === null
-    );
-    const idRequestNull = findRequestNull?.map((r) => r.id);
-    const times = idRequestNull?.map((a) =>
-      schedules?.map((r) => r.timeslots?.filter((c) => c.id === a))
-    );
-    const _arrayTimes = times?.map((r) => r?.filter((c) => c.length > 0));
-
-    const _doctorTimeslots = _arrayTimes?.map((r) =>
-      r.map((c) =>
-        c.map((r) => {
-          return {
-            startTime: r.startTime.substring(11, 16),
-            finishTime: r.finishTime.substring(11, 16),
-            price: r.price,
-          };
-        })
-      )
-    );
-    return setCurrentTime(_doctorTimeslots);
-  };
-  //find index of scheduled which has timeslot(requestNull)
-  const findindexOfSchedules = (schedules) => {
-    const findRequestNull = selectedDoctor.timeslots
-      ?.filter((timeslots) => timeslots.requestId === null)
-      .map((r) => r.id);
-    const filter = schedules.map((r) =>
-      r.timeslots.map((r, idx) => (r.id === findRequestNull[0] ? r : []))
-    );
-
-    const boolean = filter.map((r) => r.map((a) => a.length === undefined));
-    const onlyTrue = boolean.map((r) => (r.includes(true) ? true : false));
-    const indexOfTrue = onlyTrue
-      .map((r, idx) => (r === true ? idx : -1))
-      .filter((c) => c > 0);
-    const location = indexOfTrue
-      .map((r) => schedules[r])
-      .map((r) => {
-        return { location: r.location, meetingType: r.meetingType };
-      });
-
-    const result = findRequestNull?.map((r) => ({ ...location, requestId: r }));
-
-    return setLocation(result);
-  };
-
   return (
     <div className="shader">
-      <div className="popup flex flex-col w-full">
+      <div className="popup flex w-full flex-col">
         <button
           className="top-13 absolute right-4 z-40 w-10 px-1 text-2xl font-light text-slate-400 hover:text-slate-300"
           onClick={() => setOpenDoctorDetail(false)}
@@ -157,14 +163,14 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
             alt="doctorURL"
           />
         </div>
-        <div className=" mx-auto my-5 w-[80%] rounded-lg border-2  border-slate-400 pt-2 ">
+        <div className=" mx-auto my-5 w-[80%] rounded-lg border-2  border-slate-400 pt-2 text-left ">
           <div className="text-center text-xl">Details</div>
 
           <ul className="p-[20px] text-slate-600">
             <li className="">
               Email:
               <span className="text-slate-700 ">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{" "}
+                &nbsp;&nbsp;&nbsp;
                 {doctorDetail.email}
               </span>
             </li>
@@ -185,59 +191,57 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
             </li>
           </ul>
         </div>
-        <div className=" mx-auto w-[95%]">
-          {currentTime?.map((currentTime) =>
-            currentTime?.map((r) =>
-              r.map((r) => (
-                <ul
-                  className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
-                  onClick={() => {
-                    setChooseTimeSlot(r);
-                    setAppointmentPopup(!appointmentPopup);
-                  }}
-                >
-                  <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
-                    <div className="absolute top-[-10px] w-[50px] rounded-lg bg-white px-1 text-slate-400">
-                      From
+        <div className=" mx-auto w-[350px] md:w-3/4 ">
+          {timeSlots?.map((c) =>
+            c?.freetime.map((r) => (
+              <ul
+                className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
+                onClick={() => {
+                  setChooseTimeSlot([c,r]);
+                  setAppointmentPopup(!appointmentPopup);
+                }}
+              >
+                <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
+                  <div className="absolute top-[-10px] w-[50px] rounded-lg bg-white px-1 text-slate-400">
+                    From
+                  </div>
+                  <div className="mx-auto flex">
+                    <div className="underline underline-offset-2 ">
+                      {r.startTime.substring(11, 16)}
                     </div>
-                    <div className="mx-auto flex">
-                      <div className="underline underline-offset-2 ">
-                        {r.startTime}
-                      </div>
-                      <div className="px-1">
-                        <GiAlarmClock className="text-base" />
-                      </div>
+                    <div className="px-1">
+                      <GiAlarmClock className="text-base" />
                     </div>
-                  </li>
-                  <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                    <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
-                      To
+                  </div>
+                </li>
+                <li className="  relative flex w-[25%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
+                  <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
+                    To
+                  </div>
+                  <div className="mx-auto flex">
+                    <div className="underline underline-offset-2">
+                      {r.finishTime.substring(11, 16)}
                     </div>
-                    <div className="mx-auto flex">
-                      <div className="underline underline-offset-2">
-                        {r.finishTime}
-                      </div>
-                      <div className="px-1">
-                        <GiAlarmClock className="text-base" />
-                      </div>
+                    <div className="px-1">
+                      <GiAlarmClock className="text-base" />
                     </div>
-                  </li>
-                  <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
-                    <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
-                      Rate
+                  </div>
+                </li>
+                <li className=" relative flex w-[50%]  rounded-lg border-2 border-slate-400 p-2 text-center text-sm">
+                  <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
+                    Rate
+                  </div>
+                  <div className=" mx-auto flex">
+                    <div className="underline underline-offset-2">
+                      {r.price} THB/Hour
                     </div>
-                    <div className=" mx-auto flex">
-                      <div className="underline underline-offset-2">
-                        {r.price} THB/Hour
-                      </div>
-                      <div className="px-1">
-                        <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
-                      </div>
+                    <div className="px-1">
+                      <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
                     </div>
-                  </li>
-                </ul>
-              ))
-            )
+                  </div>
+                </li>
+              </ul>
+            ))
           )}
         </div>
       </div>
@@ -248,6 +252,8 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
           doctorName={doctorName}
           setAppointmentPopup={setAppointmentPopup}
           appointmentPopup={appointmentPopup}
+          setFetch={setFetch}
+          fetch={fetch}
         />
       )}
     </div>
