@@ -19,11 +19,11 @@ import {
   StartTimePicker,
 } from "../Components/DateTimePicker";
 import useDateTimepicker from "../Hooks/useDateTimePicker";
-import SelectRequest from "../Components/SelectRequest";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { DisabledatesContext } from "../home";
+import useRedirect from "../Hooks/useRedirect";
 
 const DoctorSchedule = () => {
   useDoctorCalendarProps();
@@ -39,18 +39,14 @@ const DoctorSchedule = () => {
   const [confirmRemove, setConfirmRemove] = useState(false);
   const [openCreateSchedule, setOpenCreateSchedule] = useState(false);
   const [insidePage, setInsidePage] = useState("doctorSchedule");
-  const {
-    disabledDates,
-    dateTemplate,
-    // date, setDate
-  } = useContext(DisabledatesContext);
+  const { redirect, redirectToLogin } = useRedirect();
+  const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
   const {
     handleStartTimeChange,
     handleFinishTimeChange,
     startTime,
     finishTime,
     date,
-    setDate,
   } = useDateTimepicker();
   const {
     removeTimeslot,
@@ -78,8 +74,6 @@ const DoctorSchedule = () => {
     updated,
     setUpdated,
   });
-
-  const redirect = useNavigate();
 
   useEffect(() => {
     setFetching(true);
@@ -115,7 +109,7 @@ const DoctorSchedule = () => {
         console.log(error);
         setFetching(false);
         if (error.response.status === 401) {
-          redirect("/login");
+          redirectToLogin();
         }
       });
   }, [updated]);
@@ -171,7 +165,10 @@ const DoctorSchedule = () => {
             >
               CREATE SCHEDULE
             </button>
-            <Link className="button w-1/2 py-3 md:w-1/4" to="/schedule/selectrequest/">
+            <Link
+              className="button w-1/2 py-3 md:w-1/4"
+              to="/schedule/selectrequest/"
+            >
               REQUEST
             </Link>
           </div>

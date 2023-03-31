@@ -15,6 +15,7 @@ import { Rating } from "primereact/rating";
 import { AiOutlineStar } from "react-icons/ai";
 import { useNavigate } from "react-router-dom";
 import { DisabledatesContext } from "../home";
+import useRedirect from "../Hooks/useRedirect";
 
 const UserSchedule = () => {
   usePatientCalendarProps();
@@ -34,7 +35,7 @@ const UserSchedule = () => {
   const [insidePage, setInsidePage] = useState("patientSchedule");
   const { disabledDates, dateTemplate, date, setDate } =
     useContext(DisabledatesContext);
-  const redirect = useNavigate();
+  const { redirectToLogin, redirect } = useRedirect();
   const { setSending, SendingPopup } = useSendingPopup();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
@@ -81,7 +82,7 @@ const UserSchedule = () => {
         setSending(false);
         setSubmitFailPopUp(true);
         if (error.response.status === 401) {
-          redirect("/login");
+          redirectToLogin();
         }
       });
   };
@@ -116,7 +117,7 @@ const UserSchedule = () => {
         setSending(false);
         setSubmitFailPopUp(true);
         if (error.response.status === 401) {
-          redirect("/login");
+          redirectToLogin();
         }
       });
   };
@@ -148,7 +149,7 @@ const UserSchedule = () => {
         console.log(error);
         setFetching(false);
         if (error.response.status === 401) {
-          redirect("/login");
+          redirectToLogin();
         }
       });
   }, [updated]);
@@ -181,7 +182,7 @@ const UserSchedule = () => {
           console.log(error);
           setFetching(false);
           if (error.response.status === 401) {
-            redirect("/login");
+            redirectToLogin();
           }
         });
     }

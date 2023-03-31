@@ -8,9 +8,10 @@ import ConfirmPopup from "./ConfirmPopup";
 import useSendingPopup from "../Hooks/useSendingPopup";
 import useSubmitResult from "../Hooks/useSubmitResult";
 import useDoctorCalendarProps from "../Hooks/useDoctorCalendarProps";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useContext } from "react";
 import { DisabledatesContext } from "../home";
+import useRedirect from "../Hooks/useRedirect";
 
 const SelectRequest = () => {
   useDoctorCalendarProps();
@@ -23,7 +24,7 @@ const SelectRequest = () => {
   const { setSending, SendingPopup } = useSendingPopup();
   const { date } = useParams();
   const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
-  const redirect = useNavigate();
+  const { redirectToLogin, redirect } = useRedirect();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: () => {
@@ -68,7 +69,7 @@ const SelectRequest = () => {
         setSubmitFailPopUp(true);
         console.log(error);
         if (error.response.status === 401) {
-          redirect("/login");
+          redirectToLogin()
         }
       });
   };
