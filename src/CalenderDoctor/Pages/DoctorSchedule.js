@@ -94,7 +94,7 @@ const DoctorSchedule = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByUUID",
       headers: {
         "Content-Type": "application/json",
-        'access-token': localStorage.getItem('access-token')
+        'authorization': localStorage.getItem('access-token')
       },
       data: data,
     };
@@ -134,10 +134,10 @@ const DoctorSchedule = () => {
               disabledDates={disabledDates.map((e) => new Date(e))}
               onChange={(e) => {
                 redirect(
-                  `selectrequest/${e.value
-                    .toLocaleDateString()
-                    .replace(/\//g, "-")}`
-                );
+                  `../schedule/selectdoctor/${new Date(e.value
+                    .toLocaleDateString()).toISOString()
+                  }`
+                )
               }}
               showOtherMonths={false}
               minDate={new Date()}

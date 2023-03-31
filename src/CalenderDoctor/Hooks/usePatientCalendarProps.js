@@ -18,11 +18,14 @@ const usePatientCalendarProps = () => {
     var config = {
       method: "post",
       url: "https://bedlendule-backend.vercel.app/bedlendule/getAllTimeSlots",
-      headers: {},
+      headers: {
+        authorization: localStorage.getItem('access-token')
+      },
     };
 
     axios(config)
       .then(function async(response) {
+        // console.log(response)
         const _timeslots = [
           ...new Set(
             response.data.map((e) => new Date(e.startTime).toLocaleDateString())

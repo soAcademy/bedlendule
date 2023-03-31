@@ -33,7 +33,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
       headers: {
         "Content-Type": "application/json",
-        'access-token': localStorage.getItem('access-token')
+        'authorization': localStorage.getItem('access-token')
       },
       data: _data,
     };
@@ -57,7 +57,7 @@ const SelectDoctorDetail = ({ setPage, selectedDoctor }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByUUID",
       headers: {
         "Content-Type": "application/json",
-        'access-token': localStorage.getItem('access-token')
+        'authorization': localStorage.getItem('access-token')
       },
       data: _data,
     };

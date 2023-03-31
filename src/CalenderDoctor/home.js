@@ -43,7 +43,7 @@ export const Home = () => {
       maxBodyLength: Infinity,
       url: "https://bedlendule-backend.vercel.app/bedlendule/verifySession",
       headers: {
-        "access-token": accessToken,
+        authorization: accessToken,
         "Content-Type": "application/json",
       },
     };
@@ -56,7 +56,7 @@ export const Home = () => {
           localStorage.setItem("type", response.data.type);
           localStorage.setItem("uuid", response.data.uuid);
         } else {
-          redirect("/login")
+          redirect("/login");
         }
       })
       .catch((error) => {
@@ -64,23 +64,23 @@ export const Home = () => {
       });
   };
 
+  if (!localStorage.getItem("access-token")) {
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getPublicToken",
+      headers: {},
+    };
 
-  let config = {
-    method: "post",
-    maxBodyLength: Infinity,
-    url: "https://bedlendule-backend.vercel.app/bedlendule/getPublicToken",
-    headers: {},
-  };
-
-  axios
-    .request(config)
-    .then((response) => {
-      localStorage.setItem("access-token", response.data.access_token);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-    
+    axios
+      .request(config)
+      .then((response) => {
+        localStorage.setItem("access-token", response.data.access_token);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
   useEffect(() => {
     console.log("page", page);
   }, [page]);
@@ -177,11 +177,13 @@ export const Home = () => {
                 <Route path="signup" element={<Registration />} />
                 <Route path="schedule" element={<Schedule />}></Route>
                 <Route
-                  exact path="schedule/selectdoctor/:date"
+                  exact
+                  path="schedule/selectdoctor/:date"
                   element={<SelectDoctor />}
                 />
                 <Route
-                  exact path="schedule/selectRequest/:date"
+                  exact
+                  path="schedule/selectRequest/:date"
                   element={<SelectRequest />}
                 />
               </Routes>
