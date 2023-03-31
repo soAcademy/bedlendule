@@ -1,10 +1,11 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import useRedirect from "../Hooks/useRedirect";
 const Landing = () => {
-  const redirect = useNavigate();
+  const {redirectToLogin} = useRedirect();
   const uuid = localStorage.getItem("uuid");
   useEffect(() => {
-    !uuid && redirect("/login");
+    !uuid && redirectToLogin();
   }, [uuid]);
   return (
     <div className="flex h-screen flex-col items-center justify-center space-y-6">

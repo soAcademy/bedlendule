@@ -14,10 +14,10 @@ const Login = ({ setPage }) => {
   const [logginIn, setLogginIn] = useState(false);
   const redirect = useNavigate();
   const toast = useRef(null);
-  const uuid = localStorage.getItem("uuid");
-  useEffect(() => {
-    uuid && redirect("/");
-  }, [uuid]);
+  // const uuid = localStorage.getItem("uuid");
+  // useEffect(() => {
+  //   uuid && redirect("/");
+  // }, [uuid]);
   const show = () => {
     toast.current.show({
       severity: "error",

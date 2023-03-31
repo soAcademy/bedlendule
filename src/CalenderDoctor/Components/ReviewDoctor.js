@@ -5,7 +5,7 @@ import ConfirmPopup from "./ConfirmPopup";
 import axios from "axios";
 import useSendingPopup from "../Hooks/useSendingPopup";
 import useSubmitResult from "../Hooks/useSubmitResult";
-import { useNavigate } from "react-router-dom";
+import useRedirect from "../Hooks/useRedirect";
 
 const ReviewDoctor = ({
   setOpenReview,
@@ -19,7 +19,7 @@ const ReviewDoctor = ({
   const [review, setReview] = useState();
   const [confirmReview, setConfirmReview] = useState(false);
   const { setSending, SendingPopup } = useSendingPopup();
-  const redirect = useNavigate()
+  const {redirectToLogin} = useRedirect()
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: () => {
@@ -72,7 +72,7 @@ const ReviewDoctor = ({
         setSending(false);
         setSubmitFailPopUp(true);
         if (error.response.status === 401) {
-          redirect("/login");
+          redirectToLogin()
         }
       });
   };
