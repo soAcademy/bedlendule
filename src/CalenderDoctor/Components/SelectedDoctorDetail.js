@@ -7,8 +7,9 @@ import axios from "axios";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { IoIosReturnLeft } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
+import { MdClose } from "react-icons/md";
 
-const SelectDoctorDetail = ({ selectedDoctor }) => {
+const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [appointmentPopup, setAppointmentPopup] = useState(false);
   const [doctorDetail, setDoctorDetail] = useState([]);
@@ -34,7 +35,7 @@ const SelectDoctorDetail = ({ selectedDoctor }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
       headers: {
         "Content-Type": "application/json",
-        'authorization': localStorage.getItem('access-token')
+        authorization: localStorage.getItem("access-token"),
       },
       data: _data,
     };
@@ -58,7 +59,7 @@ const SelectDoctorDetail = ({ selectedDoctor }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByUUID",
       headers: {
         "Content-Type": "application/json",
-        'authorization': localStorage.getItem('access-token')
+        authorization: localStorage.getItem("access-token"),
       },
       data: _data,
     };
@@ -95,7 +96,6 @@ const SelectDoctorDetail = ({ selectedDoctor }) => {
   };
   //find index of scheduled which has timeslot(requestNull)
   const findindexOfSchedules = (schedules) => {
-
     const findRequestNull = selectedDoctor.timeslots
       ?.filter((timeslots) => timeslots.requestId === null)
       .map((r) => r.id);
@@ -120,20 +120,20 @@ const SelectDoctorDetail = ({ selectedDoctor }) => {
   };
 
   return (
-    <>
-      <div className="fixed top-10 flex w-full flex-col  ">
-      <button
-          className="top-13 absolute right-4 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
-          onClick={() => redirect("/schedule/")}
+    <div className="shader">
+      <div className="popup flex flex-col w-full">
+        <button
+          className="top-13 absolute right-4 z-40 w-10 px-1 text-2xl font-light text-slate-400 hover:text-slate-300"
+          onClick={() => setOpenDoctorDetail(false)}
         >
-          <IoIosReturnLeft className="" />
+          <MdClose className="" />
         </button>
         <div className="w-full text-center text-2xl">
           {selectedDoctor.doctorUUID?.firstName} &nbsp;{" "}
           {selectedDoctor.doctorUUID?.lastName}
         </div>
 
-        <div className="mx-auto  pt-2">
+        <div className="mx-auto pt-2">
           <Rating
             readOnly
             value={scoreFromReview}
@@ -250,7 +250,7 @@ const SelectDoctorDetail = ({ selectedDoctor }) => {
           appointmentPopup={appointmentPopup}
         />
       )}
-    </>
+    </div>
   );
 };
 export default SelectDoctorDetail;

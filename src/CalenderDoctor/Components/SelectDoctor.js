@@ -14,6 +14,7 @@ const SelectDoctor = () => {
   usePatientCalendarProps();
   const [doctors, setDoctors] = useState([]);
   const [selectedDoctor, setSelectedDoctor] = useState([]);
+  const [openDoctorDetail,setOpenDoctorDetail]=useState(false)
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
   const { date } = useParams();
@@ -106,7 +107,7 @@ const SelectDoctor = () => {
             className="mx-auto my-4 flex w-[90%] cursor-pointer flex-col rounded-lg border-2 border-slate-400 bg-[#F0F3EC] p-4 hover:bg-[#C5E1A5]"
             onClick={() => {
               setSelectedDoctor(doctor);
-              setPage("doctorDetail");
+              setOpenDoctorDetail(true);
             }}
           >
             <div className="flex ">
@@ -157,12 +158,12 @@ const SelectDoctor = () => {
 
       <div
         className={`mt-4 p-2 opacity-0 duration-200 ${
-          page === "doctorDetail"
+          openDoctorDetail 
             ? "opacity-100"
             : "pointer-events-none opacity-0"
         } `}
       >
-        <SelectDoctorDetail setPage={setPage} selectedDoctor={selectedDoctor} />
+        <SelectDoctorDetail setOpenDoctorDetail={setOpenDoctorDetail} selectedDoctor={selectedDoctor} />
       </div>
     </>
   );
