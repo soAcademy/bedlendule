@@ -22,6 +22,8 @@ const SelectDoctorDetail = ({ selectedDoctor, setOpenDoctorDetail }) => {
   
   const chosenDate = new Date(date);
   const patientUUID = "9ab93e34-b805-429d-962a-c723d8d8bca8";
+ 
+
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
