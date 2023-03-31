@@ -114,6 +114,7 @@ const useUpdateSchedule = ({
         setRemovingTimeSlotIds([]);
         setUpdated(!updated);
         setSending(false);
+        setIsEditOpen(false)
         setSubmitSuccessPopUp(true);
       })
       .catch((error) => {

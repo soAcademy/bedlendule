@@ -124,10 +124,6 @@ const UserSchedule = () => {
   useEffect(() => {
     setFetching(true);
     setRequests([]);
-    let data = JSON.stringify({
-      uuid: localStorage.getItem("uuid"),
-    });
-
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -136,7 +132,6 @@ const UserSchedule = () => {
         "Content-Type": "application/json",
         authorization: localStorage.getItem("access-token"),
       },
-      data: data,
     };
 
     axios
@@ -379,7 +374,7 @@ const UserSchedule = () => {
                 (request) =>
                   new Date(request.finishTime).getTime() < new Date().getTime()
               ).length === 0 && (
-                <div className="pl-4 text-slate-700 md:w-1/2">No history</div>
+                <div className="pl-4 text-slate-700 md:w-1/2 mb-4 mt-2">No history</div>
               )}
             </div>
           </div>

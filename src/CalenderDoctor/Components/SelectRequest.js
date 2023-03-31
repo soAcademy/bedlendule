@@ -39,7 +39,6 @@ const SelectRequest = () => {
     setConfirmPopup(false);
     let data = JSON.stringify({
       requestId: requestId,
-      uuid: doctorUUID,
       startTime: timeSlot.startTime,
       finishTime: timeSlot.finishTime,
     });

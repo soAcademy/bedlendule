@@ -60,7 +60,7 @@ const CreateRequest = ({
     "PANIC DISORDER",
     "SCHIZOPHRENIA",
     "POST TRAUMATIC STRESS DISORDER",
-    "BIPOLAR_DISORDER",
+    "BIPOLAR",
     "DEMENTIA",
     "PHOBIAS",
   ];
