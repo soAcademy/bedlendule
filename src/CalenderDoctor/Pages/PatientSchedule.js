@@ -199,9 +199,8 @@ const UserSchedule = () => {
             value={date}
             onChange={(e) => {
               redirect(
-                `selectDoctor/${e.value
-                  .toLocaleDateString()
-                  .replace(/\//g, "-")}`
+                `selectrequest/${e.value
+                  .toISOString().split("T")[0]}`
               );
             }}
             disabledDates={disabledDates?.map((e) => new Date(e))}
