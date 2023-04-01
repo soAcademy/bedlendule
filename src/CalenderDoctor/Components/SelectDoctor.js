@@ -17,11 +17,20 @@ const SelectDoctor = () => {
   const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
   const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
-  const [selectDate, setSelectDate] = useState();
+  const [selectDate,setSelectDate] = useState();
 
   const { date } = useParams();
   const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
   const redirect = useNavigate();
+
+  const transformDate = (date) => {
+    const buddhistDate = date;
+    const [day, month, year] = buddhistDate.split("-");
+    const gregorianYear = parseInt(year) - 543;
+    const gregorianDate = `${gregorianYear}-${month}-${day}`;
+
+    return gregorianDate;
+  };
 
   const findFreeDoctor = (allDoctors) => {
     const findRequestNull = allDoctors.map((allDoctors) =>
@@ -39,8 +48,10 @@ const SelectDoctor = () => {
   useEffect(() => {
     setDoctors([]);
     setFetching(true);
-    setSelectDate(new Date(date));
-    const data = JSON.stringify({ date: new Date(date) });
+    const _date = transformDate(date);
+    setSelectDate(_date)
+    const data = JSON.stringify({ date: _date });
+    console.log("data", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -54,7 +65,9 @@ const SelectDoctor = () => {
     axios(config)
       .then((response) => {
         setFetching(false);
+        console.log(response.data);
         const _data = findFreeDoctor(response.data);
+        console.log("freeDoctor", _data);
         setDoctors(_data);
       })
       .catch((error) => {
@@ -116,41 +129,41 @@ const SelectDoctor = () => {
               <div className="font-bol w-[60%] text-xl text-[#666CFF]">
                 {doctor.doctorUUID.firstName}&nbsp; {doctor.doctorUUID.lastName}
               </div>
-
-              <Rating
-                onIcon={
-                  <img
-                    src="/rating-icon-active.png"
-                    onError={(e) =>
-                      (e.target.src =
-                        "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                    }
-                    alt="custom-active"
-                    width="12px"
-                    height="12px"
-                  />
-                }
-                offIcon={
-                  <img
-                    src="/rating-icon-inactive.png"
-                    onError={(e) =>
-                      (e.target.src =
-                        "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                    }
-                    alt="custom-inactive"
-                    width="12px"
-                    height="12px"
-                  />
-                }
-                value={
-                  doctor.doctorUUID.reviews.reduce(
-                    (acc, r) => acc + r.score,
-                    0
-                  ) / doctor.doctorUUID.reviews.map((r) => r.score).length
-                }
-                start={5}
-                cancel={false}
-              />
+              
+                <Rating
+                  onIcon={
+                    <img
+                      src="/rating-icon-active.png"
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                      }
+                      alt="custom-active"
+                      width="12px"
+                      height="12px"
+                    />
+                  }
+                  offIcon={
+                    <img
+                      src="/rating-icon-inactive.png"
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                      }
+                      alt="custom-inactive"
+                      width="12px"
+                      height="12px"
+                    />
+                  }
+                  value={
+                    doctor.doctorUUID.reviews.reduce(
+                      (acc, r) => acc + r.score,
+                      0
+                    ) / doctor.doctorUUID.reviews.map((r) => r.score).length
+                  }
+                  start={5}
+                  cancel={false}
+                />
             </div>
             <div className="p-2 text-[#4C4E64]">{doctor.description}</div>
           </div>
