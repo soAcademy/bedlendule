@@ -21,7 +21,7 @@ const useDateTimepicker = () => {
   const handleStartTimeChange = (e) => {
     if (e.value) {
       const _date =
-        date?.toLocaleDateString() || new Date().toLocaleDateString();
+        date?.toLocaleDateString("en") || new Date().toLocaleDateString("en");
       const _startTime = new Date(
         _date +
           " " +
@@ -52,7 +52,7 @@ const useDateTimepicker = () => {
     console.log(e)
     if (e.value) {
       const _date =
-        date?.toLocaleDateString() || new Date().toLocaleDateString();
+        date?.toLocaleDateString("en") || new Date().toLocaleDateString("en");
       const _startTime =
         startTime &&
         new Date(
@@ -82,7 +82,7 @@ const useDateTimepicker = () => {
   const handleDateChange = (e) => {
     if (e.value) {
       setDate(e.value);
-      const _date = e.value?.toLocaleDateString();
+      const _date = e.value?.toLocaleDateString("en");
       const _startTime = new Date(
         _date +
           " " +

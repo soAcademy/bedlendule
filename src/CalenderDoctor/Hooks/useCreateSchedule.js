@@ -87,12 +87,14 @@ export const useAddOrRemoveTimeSlot = ({
 
   const addTimeSlot = () => {
     const duration = finishTime.getTime() - startTime.getTime();
-    const _date = date.toLocaleDateString();
+    const _date = date.toLocaleDateString("en");
+    console.log('_date', _date)
     const _startTime = new Date(
       _date +
         " " +
         startTime.toLocaleTimeString("en-GB").split(" ")[0].slice(0, 5)
     );
+    console.log(_startTime)
     const _finishTime = new Date(_startTime.getTime() + duration);
     const newAddingTimeSlot = {
       startTime: _startTime.toISOString(),
