@@ -84,7 +84,7 @@ const SelectDoctor = () => {
             onChange={(e) => {
               redirect(
                 `../schedule/selectDoctor/${e.value
-                  .toLocaleDateString()
+                  .toLocaleDateString("en")
                   .replace(/\//g, "-")}`
               );
             }}

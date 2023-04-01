@@ -139,7 +139,8 @@ const DoctorSchedule = () => {
               onChange={(e) => {
                 redirect(
                   `selectrequest/${e.value
-                    .toISOString().split("T")[0]}`
+                    .toLocaleDateString("en")
+                    .replace(/\//g, "-")}`
                 );
               }}
               showOtherMonths={false}

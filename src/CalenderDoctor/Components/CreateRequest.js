@@ -65,7 +65,7 @@ const CreateRequest = ({
     "PHOBIAS",
   ];
   useEffect(() => {
-    const _date = date?.toLocaleDateString()
+    const _date = date?.toLocaleDateString("en-GB")
     const _startTime = new Date(
       _date +
         " " +

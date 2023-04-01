@@ -163,14 +163,13 @@ const CreateSchedule = ({
                           : "No Booking"}
                       </p>
                       <p>
-                        {new Date(timeslot.startTime).toLocaleDateString("TH")}{" "}
-                        :{" "}
+                        {new Date(timeslot.startTime).toLocaleDateString("en-GB")} :{" "}
                         {new Date(timeslot.startTime)
-                          .toLocaleTimeString("TH")
+                          .toLocaleTimeString("en-GB")
                           .slice(0, 5)}
                         -
                         {new Date(timeslot.finishTime)
-                          .toLocaleTimeString("TH")
+                          .toLocaleTimeString("en-GB")
                           .slice(0, 5)}
                       </p>
                     </div>

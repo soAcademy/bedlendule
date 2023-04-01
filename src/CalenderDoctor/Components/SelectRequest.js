@@ -59,7 +59,7 @@ const SelectRequest = () => {
       .request(config)
       .then((response) => {
         setSending(false);
-        console.log(response.data)
+        console.log(response.data);
         response.status === 200
           ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
@@ -69,7 +69,7 @@ const SelectRequest = () => {
         setSubmitFailPopUp(true);
         console.log(error);
         if (error.response.status === 401) {
-          redirectToLogin()
+          redirectToLogin();
         }
       });
   };
@@ -149,7 +149,7 @@ const SelectRequest = () => {
           onChange={(e) => {
             redirect(
               `../schedule/selectrequest/${e.value
-                .toLocaleDateString()
+                .toLocaleDateString("en")
                 .replace(/\//g, "-")}`
             );
           }}
@@ -179,17 +179,17 @@ const SelectRequest = () => {
           <div className="text-[#4C4E64]">
             <p className="my-2 text-xl font-bold">{request.title}</p>
             <p>
-              Available : {new Date(request.startTime).toLocaleDateString()}
+              Available : {new Date(request.startTime).toLocaleDateString("en-GB")}
             </p>
             <p>
               From:{" "}
               {new Date(request.startTime)
-                .toLocaleString("TH")
+                .toLocaleString("en-GB")
                 .split(" ")[1]
                 .slice(0, 5)}{" "}
               -{" "}
               {new Date(request.finishTime)
-                .toLocaleString("TH")
+                .toLocaleString("en-GB")
                 .split(" ")[1]
                 .slice(0, 5)}
             </p>
