@@ -23,6 +23,9 @@ const SelectDoctor = () => {
   const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
   const redirect = useNavigate();
 
+  console.log("date...",new Date(date))
+  
+
   const findFreeDoctor = (allDoctors) => {
     const findRequestNull = allDoctors.map((allDoctors) =>
       allDoctors.timeslots.filter((timeslots) => timeslots.requestId === null)
@@ -41,6 +44,7 @@ const SelectDoctor = () => {
     setFetching(true);
     setSelectDate(new Date(date));
     const data = JSON.stringify({ date: new Date(date) });
+    console.log("data>>",data)
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -54,7 +58,9 @@ const SelectDoctor = () => {
     axios(config)
       .then((response) => {
         setFetching(false);
+        console.log("response.data...",response.data)
         const _data = findFreeDoctor(response.data);
+        console.log("find freeDoctor",_data)
         setDoctors(_data);
       })
       .catch((error) => {
