@@ -40,7 +40,6 @@ const Appointment = ({
       price: booktimeSlot.price,
       startTime: booktimeSlot.startTime,
       finishTime: booktimeSlot.finishTime,
-      patientUUID: booktimeSlot.patientUUID,
       timeslotId: booktimeSlot.timeslotId,
       meetingType: booktimeSlot.meetingType,
       location: booktimeSlot.location,
