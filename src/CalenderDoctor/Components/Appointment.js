@@ -59,7 +59,7 @@ const Appointment = ({
     // setProcessing(true);
     axios(config).then((response) => {
       // setProcessing(false);
-      console.log(response.data);
+      console.log("Appointment response.data:",response.data);
     });
   }, [booktimeSlot]);
   return (
