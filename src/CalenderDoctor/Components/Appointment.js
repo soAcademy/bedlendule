@@ -40,7 +40,6 @@ const Appointment = ({
       price: booktimeSlot.price,
       startTime: booktimeSlot.startTime,
       finishTime: booktimeSlot.finishTime,
-      patientUUID: booktimeSlot.patientUUID,
       timeslotId: booktimeSlot.timeslotId,
       meetingType: booktimeSlot.meetingType,
       location: booktimeSlot.location,
@@ -59,7 +58,7 @@ const Appointment = ({
     // setProcessing(true);
     axios(config).then((response) => {
       // setProcessing(false);
-      console.log(response.data);
+      console.log("Appointment response.data:",response.data);
     });
   }, [booktimeSlot]);
   return (
