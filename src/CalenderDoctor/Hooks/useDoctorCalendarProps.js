@@ -28,7 +28,9 @@ const useDoctorCalendarProps = () => {
             ) === -1
         );
         setTimeSlots(
-          timeSlotsNotAccepted.map((e) => new Date(e.startTime).toLocaleDateString())
+          timeSlotsNotAccepted.map((e) =>
+            new Date(e.startTime).toLocaleDateString("en")
+          )
         );
       })
       .catch(function (error) {
@@ -40,54 +42,6 @@ const useDoctorCalendarProps = () => {
     const _disabledDates = datesArray.filter((e) => !timeSlots.includes(e));
     setDisabledDates(_disabledDates);
   }, [timeSlots, datesArray]);
-
-  // const dateTemplate = (date) => {
-  //   const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
-  //   if (!datesArray.includes(_date.toLocaleDateString())) {
-  //     const _datesArray = [
-  //       ...new Set([...datesArray, _date.toLocaleDateString()]),
-  //     ];
-  //     setDatesArray(_datesArray);
-  //   }
-  //   if (
-  //     timeSlots.includes(_date.toLocaleDateString()) &&
-  //     _date.getTime() >= new Date().getTime()
-  //   ) {
-  //     return date.day === new Date().getDate() ? (
-  //       <div
-  //         style={{
-  //           backgroundColor: "#99B47B",
-  //           color: "#ffffff",
-  //           borderRadius: "50%",
-  //           width: "4em",
-  //           height: "4em",
-  //           lineHeight: "4em",
-  //           padding: 0,
-  //           textAlign: "center",
-  //         }}
-  //       >
-  //         {date.day}
-  //       </div>
-  //     ) : (
-  //       <div
-  //         style={{
-  //           backgroundColor: "#C5E1A5",
-  //           color: "#ffffff",
-  //           borderRadius: "50%",
-  //           width: "3em",
-  //           height: "3em",
-  //           lineHeight: "3em",
-  //           padding: 0,
-  //           textAlign: "center",
-  //         }}
-  //       >
-  //         {date.day}
-  //       </div>
-  //     );
-  //   } else {
-  //     return date.day;
-  //   }
-  // };
 
   return { timeSlots, setTimeSlots, dateTemplate, disabledDates };
 };

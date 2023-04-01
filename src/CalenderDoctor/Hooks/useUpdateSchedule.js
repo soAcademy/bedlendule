@@ -44,7 +44,7 @@ const useUpdateSchedule = ({
 
   const addTimeSlot = () => {
     const duration = finishTime.getTime() - startTime.getTime();
-    const date = scheduleToEdit.timeslots[0].startTime.split("T")[0];
+    const date = new Date(scheduleToEdit.timeslots[0].startTime).toLocaleDateString("en");
     const _startTime = new Date(
       date +
         " " +

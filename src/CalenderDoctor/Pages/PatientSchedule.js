@@ -275,13 +275,13 @@ const UserSchedule = () => {
                         </div>
                       </div>
                       <p>
-                        {new Date(request.startTime).toLocaleDateString("TH")} :{" "}
+                        {new Date(request.startTime).toLocaleDateString("en-GB")} :{" "}
                         {new Date(request.startTime)
-                          .toLocaleTimeString("TH")
+                          .toLocaleTimeString("en-GB")
                           .slice(0, 5)}
                         -
                         {new Date(request.finishTime)
-                          .toLocaleTimeString("TH")
+                          .toLocaleTimeString("en-GB")
                           .slice(0, 5)}
                       </p>
                     </div>
@@ -346,14 +346,14 @@ const UserSchedule = () => {
                           </div>
                         </div>
                         <p>
-                          {new Date(request.startTime).toLocaleDateString("TH")}{" "}
+                          {new Date(request.startTime).toLocaleDateString("en-GB")}{" "}
                           :{" "}
                           {new Date(request.startTime)
-                            .toLocaleTimeString("TH")
+                            .toLocaleTimeString("en-GB")
                             .slice(0, 5)}
                           -
                           {new Date(request.finishTime)
-                            .toLocaleTimeString("TH")
+                            .toLocaleTimeString("en-GB")
                             .slice(0, 5)}
                         </p>
                       </div>

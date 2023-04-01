@@ -270,15 +270,15 @@ const DoctorSchedule = () => {
                             </p>
                             <p>
                               {new Date(timeslot.startTime).toLocaleDateString(
-                                "TH"
+                                "en-GB"
                               )}{" "}
                               :{" "}
                               {new Date(timeslot.startTime)
-                                .toLocaleTimeString("TH")
+                                .toLocaleTimeString("en-GB")
                                 .slice(0, 5)}
                               -
                               {new Date(timeslot.finishTime)
-                                .toLocaleTimeString("TH")
+                                .toLocaleTimeString("en-GB")
                                 .slice(0, 5)}
                             </p>
                           </div>
@@ -341,14 +341,14 @@ const DoctorSchedule = () => {
                                     <p>
                                       {new Date(
                                         timeslot.startTime
-                                      ).toLocaleDateString("TH")}{" "}
+                                      ).toLocaleDateString("en-GB")}{" "}
                                       :{" "}
                                       {new Date(timeslot.startTime)
-                                        .toLocaleTimeString("TH")
+                                        .toLocaleTimeString("en-GB")
                                         .slice(0, 5)}
                                       -
                                       {new Date(timeslot.finishTime)
-                                        .toLocaleTimeString("TH")
+                                        .toLocaleTimeString("en-GB")
                                         .slice(0, 5)}
                                     </p>
                                   </div>
