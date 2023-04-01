@@ -10,7 +10,7 @@ const Schedule = () => {
   let config = {
     method: 'post',
     maxBodyLength: Infinity,
-    url: 'http://localhost:5555/bedlendule/verifySession',
+    url: 'https://bedlendule-backend.vercel.app/bedlendule/verifySession',
     headers: { 
       'authorization': token
     },
