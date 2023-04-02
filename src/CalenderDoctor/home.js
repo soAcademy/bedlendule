@@ -163,10 +163,9 @@ export const Home = () => {
               type={type}
               page={page}
               setPage={setPage}
-              className="cursor-pointer"
             />
 
-            <div>
+            <div className="absolute top-[50px] w-full">
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="login" element={<Login />} />

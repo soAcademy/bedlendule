@@ -101,7 +101,7 @@ const Appointment = ({
           <div className="relative flex flex-col text-center ">
             <div className=" my-2 text-2xl font-bold">APPPOINTMENT</div>
             <div
-              className="absolute right-0 cursor-pointer rounded-full p-2 text-xl opacity-50 hover:bg-red-500"
+              className="absolute right-0 cursor-pointer rounded-full p-2 text-2xl text-slate-400 opacity-50 duration-100 hover:bg-red-500 hover:text-slate-50"
               onClick={() => setAppointmentPopup(!appointmentPopup)}
             >
               <MdClose className="hover:text-white" />

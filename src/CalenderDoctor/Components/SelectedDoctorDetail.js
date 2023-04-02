@@ -111,6 +111,7 @@ const SelectDoctorDetail = ({
   selectedDoctor,
   setOpenDoctorDetail,
   selectDate,
+  openDoctorDetail,
 }) => {
   const findFreeTimeSlot = (timeSlots) => {
     console.log("findFreeTimeSlot working...", timeSlots);
@@ -181,17 +182,77 @@ const SelectDoctorDetail = ({
   // console.log("SelectDoctorDetail...");
   // console.log("fetch", fetch);
 
+<<<<<<< HEAD
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
 
+=======
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: localStorage.getItem("access-token"),
+      },
+      data: _data,
+    };
+
+    axios(config).then((response) => {
+      // console.log("Doctor detail response.data...", response.data);
+      setDoctorDetail(response.data);
+      setDoctorName(selectedDoctor.doctorUUID);
+    });
+  }, [selectedDoctor, fetch]);
+
+  // get ScheduleBy UUID and Date
+  useEffect(() => {
+    setLoading(true);
+    const data = JSON.stringify({
+      uuid: selectedDoctor.doctorUUID?.uuid,
+      date: selectDate,
+    });
+    console.log("dataForApi", data);
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByDateAndUUID",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios(config).then((response) => {
+      setLoading(false);
+      console.log("timeSlots from UUID and Date api: ", response.data);
+      const _freetimeSlots = findFreeTimeSlot(response.data);
+      console.log("_freetimeSlots", _freetimeSlots);
+      setTimeSlots(_freetimeSlots);
+    });
+  }, [selectedDoctor, fetch]);
+>>>>>>> 51023138da0f0b975083ddafa606b0f7b810ba0f
   console.log("timeSlots", timeSlots);
 
   return (
-    <div className="shader ">
-      <div className="popup flex w-full flex-col backdrop-blur-md">
+    <>
+      <shader
+        onClick={() => setOpenDoctorDetail(false)}
+        className={`shader
+    ${!openDoctorDetail && "pointer-events-none opacity-0"}`}
+      ></shader>
+      <div
+        className={`popup flex w-full flex-col duration-300 
+    ${
+      openDoctorDetail
+        ? "scale-100 opacity-100"
+        : "pointer-events-none scale-95 opacity-0"
+    }`}
+      >
         <button
-          className="top-13 absolute right-4 z-40 w-10 px-1 text-2xl font-light text-slate-400 hover:text-slate-300"
+          className=" absolute top-0 right-0 m-2 rounded-full p-2 text-2xl font-light text-slate-400 
+          opacity-50 duration-100  hover:bg-red-500 hover:text-slate-50"
           onClick={() => setOpenDoctorDetail(false)}
         >
           <MdClose className="" />
@@ -319,7 +380,7 @@ const SelectDoctorDetail = ({
           setOpenDoctorDetail={setOpenDoctorDetail}
         />
       )}
-    </div>
+    </>
   );
 };
 export default SelectDoctorDetail;

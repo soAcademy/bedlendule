@@ -65,7 +65,7 @@ const CreateRequest = ({
     "PHOBIAS",
   ];
   useEffect(() => {
-    const _date = date?.toLocaleDateString("en-GB")
+    const _date = date?.toLocaleDateString("en-GB");
     const _startTime = new Date(
       _date +
         " " +
@@ -85,20 +85,21 @@ const CreateRequest = ({
             _finishTime > new Date(request.startTime)) ||
           (_finishTime >= new Date(request.finishTime) &&
             _startTime <= new Date(request.startTime))
-      ) !== -1 
+      ) !== -1
     ) {
       setIsDateAvailable(false);
     }
   }, [requests, startTime, finishTime, date]);
 
   return (
-    <div
-      className={`fixed left-0 z-50 flex w-full flex-col
-  font-kanit shadow-xl duration-300
-    ${openCreateRequest ? "" : "pointer-events-none opacity-0"}`}
-    >
+    <>
+      <shader
+        onClick={() => setOpenCreateRequest(false)}
+        className={`shader
+    ${!openCreateRequest && "pointer-events-none opacity-0"}`}
+      ></shader>
       <div
-        className={`fixed top-24 left-0 h-screen w-full bg-white p-6 duration-200 ${
+        className={`fixed top-24 left-0 z-30 h-screen w-full bg-white p-6 duration-200 ${
           openCreateRequest ? "" : "translate-y-full"
         }`}
       >
@@ -224,7 +225,7 @@ const CreateRequest = ({
         <SendingPopup />
         <ResultPopup />
       </div>
-    </div>
+    </>
   );
 };
 export default CreateRequest;
