@@ -187,15 +187,15 @@ const UserSchedule = () => {
   return (
     <>
       <div
-        className={`mt-[50px] duration-200 ${
+        className={`duration-200 ${
           insidePage === "patientSchedule"
             ? "scale-100 opacity-100"
             : "pointer-events-none hidden opacity-0"
         }`}
       >
-        <div className="z-10 mt-20 flex w-full flex-col items-center justify-center">
+        <div className="z-10 mt-10 flex w-full flex-col items-center justify-center">
           <Calendar
-            className="z-0 w-10/12 shadow-lg"
+            className="z-0 w-10/12 shadow-lg md:w-8/12"
             value={date}
             onChange={(e) => {
               redirect(
@@ -275,7 +275,10 @@ const UserSchedule = () => {
                         </div>
                       </div>
                       <p>
-                        {new Date(request.startTime).toLocaleDateString("en-GB")} :{" "}
+                        {new Date(request.startTime).toLocaleDateString(
+                          "en-GB"
+                        )}{" "}
+                        :{" "}
                         {new Date(request.startTime)
                           .toLocaleTimeString("en-GB")
                           .slice(0, 5)}
@@ -346,7 +349,9 @@ const UserSchedule = () => {
                           </div>
                         </div>
                         <p>
-                          {new Date(request.startTime).toLocaleDateString("en-GB")}{" "}
+                          {new Date(request.startTime).toLocaleDateString(
+                            "en-GB"
+                          )}{" "}
                           :{" "}
                           {new Date(request.startTime)
                             .toLocaleTimeString("en-GB")
@@ -376,7 +381,9 @@ const UserSchedule = () => {
                 (request) =>
                   new Date(request.finishTime).getTime() < new Date().getTime()
               ).length === 0 && (
-                <div className="pl-4 text-slate-700 md:w-1/2 mb-4 mt-2">No history</div>
+                <div className="mb-4 mt-2 pl-4 text-slate-700 md:w-1/2">
+                  No history
+                </div>
               )}
             </div>
           </div>
@@ -403,6 +410,7 @@ const UserSchedule = () => {
         }`}
       ></div>
       <div
+        onClick={() => setOpenCreateRequest(false)}
         className={`shader duration-200
       ${!openCreateRequest ? "pointer-events-none opacity-0" : ""}`}
       ></div>

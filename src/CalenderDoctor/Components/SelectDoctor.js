@@ -25,14 +25,12 @@ const SelectDoctor = () => {
 
   // console.log("date...",date)
   // console.log("new date...",new Date(date));
-  console.log("ISO date...",new Date(date).toISOString());
-  
+  console.log("ISO date...", new Date(date).toISOString());
 
   const findFreeDoctor = (allDoctors) => {
     const findRequestNull = allDoctors.map((allDoctors) =>
       allDoctors.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
-
     const findIndexOfRequestNull = findRequestNull
       .map((r, idx) => (r.length !== 0 ? idx : -1))
       .filter((r) => r >= 0);
@@ -46,7 +44,7 @@ const SelectDoctor = () => {
     setFetching(true);
     setSelectDate(new Date(date).toISOString());
     const data = JSON.stringify({ date: new Date(date).toISOString() });
-    console.log("data>>",data)
+    console.log("data>>", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -60,9 +58,7 @@ const SelectDoctor = () => {
     axios(config)
       .then((response) => {
         setFetching(false);
-        console.log("response.data...",response.data)
         const _data = findFreeDoctor(response.data);
-        console.log("find freeDoctor",_data)
         setDoctors(_data);
       })
       .catch((error) => {
@@ -72,110 +68,101 @@ const SelectDoctor = () => {
 
   return (
     <>
-      <div>
-        <button
-          className="top-13 absolute right-4 z-40 w-10 rounded-lg border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
-          onClick={() => redirect("/schedule/")}
-        >
-          <IoIosReturnLeft className="" />
-        </button>
-        <div className="headingColor relative mt-8 text-center text-3xl font-bold ">
-          SELECT DOCTOR
-        </div>
-        <div className="m-4">
-          <p>FILTER DATE</p>
-          <Calendar
-            placeholder="Select date"
-            className="z-0 w-1/2 rounded-lg border-2 md:w-8/12"
-            value={date}
-            disabledDates={disabledDates?.map((e) => new Date(e))}
-            onChange={(e) => {
-              redirect(
-                `../schedule/selectDoctor/${e.value
-                  .toLocaleDateString("en")
-                  .replace(/\//g, "-")}`
-              );
-            }}
-            minDate={new Date()}
-            locale="en"
-            dateTemplate={dateTemplate}
-          />
-        </div>
-
-        {fetching && (
-          <div className="mt-10 flex w-full items-center justify-center">
-            <ProgressSpinner
-              style={{ width: "50px", height: "50px" }}
-              strokeWidth="4"
-              animationDuration="0.5s"
-            />
-          </div>
-        )}
-
-        {doctors.map((doctor) => (
-          <div
-            className="mx-auto my-4 flex w-[90%] cursor-pointer flex-col rounded-lg border-2 border-slate-400 bg-[#F0F3EC] p-4 hover:bg-[#C5E1A5]"
-            onClick={() => {
-              setSelectedDoctor(doctor);
-              setOpenDoctorDetail(true);
-            }}
-          >
-            <div className="flex justify-between">
-              <div className="font-bol w-[60%] text-xl text-[#666CFF]">
-                {doctor.doctorUUID.firstName}&nbsp; {doctor.doctorUUID.lastName}
-              </div>
-
-              <Rating
-                onIcon={
-                  <img
-                    src="/rating-icon-active.png"
-                    onError={(e) =>
-                      (e.target.src =
-                        "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                    }
-                    alt="custom-active"
-                    width="12px"
-                    height="12px"
-                  />
-                }
-                offIcon={
-                  <img
-                    src="/rating-icon-inactive.png"
-                    onError={(e) =>
-                      (e.target.src =
-                        "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                    }
-                    alt="custom-inactive"
-                    width="12px"
-                    height="12px"
-                  />
-                }
-                value={
-                  doctor.doctorUUID.reviews.reduce(
-                    (acc, r) => acc + r.score,
-                    0
-                  ) / doctor.doctorUUID.reviews.map((r) => r.score).length
-                }
-                start={5}
-                cancel={false}
-              />
-            </div>
-            <div className="p-2 text-[#4C4E64]">{doctor.description}</div>
-          </div>
-        ))}
-      </div>
-
-      <div
-        className={`mt-4 p-2 opacity-0 duration-200 ${
-          openDoctorDetail ? "opacity-100" : "pointer-events-none opacity-0"
-        } `}
+      <button
+        className="absolute top-0 right-0 z-20 m-2 flex w-10 justify-center rounded-full p-2 px-1 text-2xl text-slate-400 hover:bg-red-500 hover:text-slate-50 hover:opacity-50 md:m-4"
+        onClick={() => redirect("/schedule/")}
       >
-        <SelectDoctorDetail
-          setOpenDoctorDetail={setOpenDoctorDetail}
-          selectedDoctor={selectedDoctor}
-          selectDate={selectDate}
+        <IoIosReturnLeft />
+      </button>
+      <div className="headingColor relative mt-8 text-center text-3xl font-bold ">
+        SELECT DOCTOR
+      </div>
+      <div className="m-4">
+        <p>FILTER DATE</p>
+        <Calendar
+          placeholder="Select date"
+          className="z-0 w-2/3 rounded-lg border-2"
+          value={date}
+          disabledDates={disabledDates?.map((e) => new Date(e))}
+          onChange={(e) => {
+            redirect(
+              `../schedule/selectDoctor/${e.value
+                .toLocaleDateString("en")
+                .replace(/\//g, "-")}`
+            );
+          }}
+          minDate={new Date()}
+          locale="en"
+          dateTemplate={dateTemplate}
         />
       </div>
+
+      {fetching && (
+        <div className="mt-10 flex w-full items-center justify-center">
+          <ProgressSpinner
+            style={{ width: "50px", height: "50px" }}
+            strokeWidth="4"
+            animationDuration="0.5s"
+          />
+        </div>
+      )}
+
+      {doctors.map((doctor) => (
+        <div
+          className="mx-auto my-4 flex w-[90%] cursor-pointer flex-col rounded-lg border-2 border-slate-400 bg-[#F0F3EC] p-4 hover:bg-[#C5E1A5]"
+          onClick={() => {
+            setSelectedDoctor(doctor);
+            setOpenDoctorDetail(true);
+          }}
+        >
+          <div className="flex justify-between">
+            <div className="font-bol w-[60%] text-xl text-[#666CFF]">
+              {doctor.doctorUUID.firstName}&nbsp; {doctor.doctorUUID.lastName}
+            </div>
+
+            <Rating
+              onIcon={
+                <img
+                  src="/rating-icon-active.png"
+                  onError={(e) =>
+                    (e.target.src =
+                      "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                  }
+                  alt="custom-active"
+                  width="12px"
+                  height="12px"
+                />
+              }
+              offIcon={
+                <img
+                  src="/rating-icon-inactive.png"
+                  onError={(e) =>
+                    (e.target.src =
+                      "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                  }
+                  alt="custom-inactive"
+                  width="12px"
+                  height="12px"
+                />
+              }
+              value={
+                doctor.doctorUUID.reviews.reduce((acc, r) => acc + r.score, 0) /
+                doctor.doctorUUID.reviews.map((r) => r.score).length
+              }
+              start={5}
+              cancel={false}
+            />
+          </div>
+          <div className="p-2 text-[#4C4E64]">{doctor.description}</div>
+        </div>
+      ))}
+
+      <SelectDoctorDetail
+        openDoctorDetail={openDoctorDetail}
+        setOpenDoctorDetail={setOpenDoctorDetail}
+        selectedDoctor={selectedDoctor}
+        selectDate={selectDate}
+      />
     </>
   );
 };

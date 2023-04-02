@@ -1,12 +1,12 @@
 import { FaAlignJustify } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import React, { useState } from "react";
-const Nav = ({ page, setPage, type, setType }) => {
+const Nav = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const location = useLocation();
   return (
     <div className="z-[9999] w-full">
-      <div className="z-50 flex h-[50px] w-full flex-row bg-[#C5E1A5] px-2 drop-shadow-md">
+      <div className="fixed top-0 z-50 flex h-[50px] w-full flex-row bg-[#C5E1A5] px-2 drop-shadow-md">
         <button
           onClick={() => {
             setIsSideBarOpen(!isSideBarOpen);
@@ -19,6 +19,7 @@ const Nav = ({ page, setPage, type, setType }) => {
           <img className="h-[50px]" src="doctorLogo.png" alt="logo" />
         </div>
       </div>
+      <backdrop onClick={()=>setIsSideBarOpen(false)} className={isSideBarOpen && `shader z-40`}></backdrop>
       <section
         className={`fixed top-[50px] left-0 z-40 h-full w-2/3 bg-slate-50 py-6 px-3 shadow-xl duration-200
       ${!isSideBarOpen && "-translate-x-full"}`}
@@ -84,13 +85,13 @@ const Nav = ({ page, setPage, type, setType }) => {
             onClick={() => {
               setIsSideBarOpen(false);
               localStorage.removeItem("uuid");
-              localStorage.removeItem("type")
-              localStorage.removeItem("access-token")
+              localStorage.removeItem("type");
+              localStorage.removeItem("access-token");
             }}
             className={`cursor-pointer rounded-lg p-2 hover:bg-slate-200
               ${!localStorage.getItem("uuid") && "hidden"}`}
           >
-            Log out
+            LOGOUT
           </Link>
         </ul>
       </section>
