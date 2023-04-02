@@ -9,32 +9,109 @@ import { IoIosReturnLeft } from "react-icons/io";
 import { useNavigate } from "react-router-dom";
 import { MdClose } from "react-icons/md";
 
+const useChooseTimeSlot = ({
+  findFreeTimeSlot,
+  selectDate,
+  selectedDoctor,
+  setLoading,
+}) => {
+  const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
+  const [fetch, setFetch] = useState(false);
+  const [timeSlots, setTimeSlots] = useState([]);
+
+  useEffect(() => {
+    console.log("scheduleBy UUID and Date...");
+    console.log("scheduleBy fetch ", fetch);
+    setLoading(true);
+    const data = JSON.stringify({
+      uuid: selectedDoctor.doctorUUID?.uuid,
+      date: selectDate,
+    });
+    console.log("dataForApi", data);
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByDateAndUUID",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios(config).then((response) => {
+      setLoading(false);
+      const _freetimeSlots = findFreeTimeSlot(response.data);
+      setTimeSlots(_freetimeSlots);
+    });
+  }, [selectedDoctor, fetch]);
+
+  return {
+    chooseTimeSlot,
+    setChooseTimeSlot,
+    fetch,
+    setFetch,
+    timeSlots,
+    setTimeSlots,
+  };
+};
+
+const useFetch = ({ selectedDoctor, setDoctorDetail, setDoctorName }) => {
+  const [fetch, setFetch] = useState(false);
+  useEffect(() => {
+    const _data = JSON.stringify({
+      uuid: selectedDoctor.doctorUUID?.uuid,
+    });
+
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: localStorage.getItem("access-token"),
+      },
+      data: _data,
+    };
+
+    axios(config).then((response) => {
+      setDoctorDetail(response.data);
+      setDoctorName(selectedDoctor.doctorUUID);
+    });
+  }, [selectedDoctor, fetch]);
+
+  return {
+    fetch,
+    setFetch,
+  };
+};
+
+const useDoctorInfo = () => {
+  const [doctorDetail, setDoctorDetail] = useState([]);
+  const [doctorName, setDoctorName] = useState([]);
+  return {
+    doctorDetail,
+    setDoctorDetail,
+    doctorName,
+    setDoctorName,
+  };
+};
+
+const useToggle = () => {
+  const [loading, setLoading] = useState(false);
+  const [appointmentPopup, setAppointmentPopup] = useState(false);
+  return {
+    loading,
+    setLoading,
+    appointmentPopup,
+    setAppointmentPopup,
+  };
+};
+
 const SelectDoctorDetail = ({
   selectedDoctor,
   setOpenDoctorDetail,
   selectDate,
 }) => {
-  const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
-  const [appointmentPopup, setAppointmentPopup] = useState(false);
-  const [doctorDetail, setDoctorDetail] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [doctorName, setDoctorName] = useState([]);
-  const [timeSlots, setTimeSlots] = useState([]);
-  const [location, setLocation] = useState([]);
-  const [fetch, setFetch] = useState(false);
-  const redirect = useNavigate();
-
-  console.log("SelectDoctorDetail...");
-  // console.log("selectedDoctor", selectedDoctor);
-  // console.log("selectDate:", selectDate);
-  console.log("fetch", fetch);
-
-  const patientUUID = "9ab93e34-b805-429d-962a-c723d8d8bca8";
-
-  const scoreFromReview =
-    selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
-    selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
-
   const findFreeTimeSlot = (timeSlots) => {
     console.log("findFreeTimeSlot working...", timeSlots);
     const findRequestNull = timeSlots.map((r) =>
@@ -44,15 +121,8 @@ const SelectDoctorDetail = ({
 
     const filtertimeSlot = findRequestNull.map((r) =>
       r.filter((c) => {
-        // console.log("startTime:", c.startTime);
-        console.log("startTime :", new Date(c.startTime));
-        console.log("selectTime :", new Date(selectDate));
-
         let tomorrow = new Date(selectDate);
         tomorrow.setHours(tomorrow.getHours() + 24);
-        console.log("selelctTime +24 hr", tomorrow);
-
-        //  console.log("filter",new Date(c.startTime)>=new Date(selectDate) && new Date(c.startTime)<tomorrow);
 
         return (
           new Date(c.startTime) >= new Date(selectDate) &&
@@ -60,7 +130,7 @@ const SelectDoctorDetail = ({
         );
       })
     );
-    console.log("filtertimeSlot", filtertimeSlot);
+    // console.log("filtertimeSlot", filtertimeSlot);
 
     const IndexLocation = filtertimeSlot
       .map((r, idx) => (r.length !== 0 ? idx : -1))
@@ -88,66 +158,35 @@ const SelectDoctorDetail = ({
         description: r[0].description,
         title: r[0].title,
         freetime: r.freeTimeslots,
-        // patientUUID: patientUUID,
       };
     });
-    console.log("finalResult", finalResult);
+    // console.log("finalResult", finalResult);
     return finalResult;
   };
-
-  useEffect(() => {
-    const _data = JSON.stringify({
-      uuid: selectedDoctor.doctorUUID?.uuid,
+  const { doctorDetail, setDoctorDetail, doctorName, setDoctorName } = useDoctorInfo();
+  const { loading, setLoading, appointmentPopup, setAppointmentPopup } = useToggle();
+  const { fetch, setFetch } = useFetch({
+    selectedDoctor,
+    setDoctorDetail,
+    setDoctorName,
+  });
+  const { chooseTimeSlot, setChooseTimeSlot, timeSlots,  } =
+    useChooseTimeSlot({
+      findFreeTimeSlot,
+      selectDate,
+      selectedDoctor,
+      setLoading,
     });
+  const redirect = useNavigate();
+  // console.log("SelectDoctorDetail...");
+  // console.log("fetch", fetch);
 
-    const config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: localStorage.getItem("access-token"),
-      },
-      data: _data,
-    };
-    
+  const scoreFromReview =
+    selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
+    selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
 
-    axios(config).then((response) => {
-   
-      // console.log("Doctor detail response.data...", response.data);
-      setDoctorDetail(response.data);
-      setDoctorName(selectedDoctor.doctorUUID);
-    });
-  }, [selectedDoctor, fetch]);
-
-  // get ScheduleBy UUID and Date
-  useEffect(() => {
-    setLoading(true);
-    const data = JSON.stringify({
-      uuid: selectedDoctor.doctorUUID?.uuid,
-      date: selectDate,
-    });
-    console.log("dataForApi", data);
-    const config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByDateAndUUID",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-      
-    };
-
-    axios(config).then((response) => {
-      setLoading(false);
-      console.log("timeSlots from UUID and Date api: ", response.data);
-      const _freetimeSlots = findFreeTimeSlot(response.data);
-      console.log("_freetimeSlots", _freetimeSlots);
-      setTimeSlots(_freetimeSlots);
-    });
-  }, [selectedDoctor, fetch]);
   console.log("timeSlots", timeSlots);
+
   return (
     <div className="shader ">
       <div className="popup flex w-full flex-col backdrop-blur-md">
@@ -173,14 +212,12 @@ const SelectDoctorDetail = ({
 
         <div className="mx-auto my-2  flex w-full items-center justify-center  ">
           {loading && (
-          
             <div className="absolute  ">
               <ProgressSpinner
                 style={{ width: "50px", height: "50px" }}
                 strokeWidth="8"
               />
             </div>
-          
           )}
           <img
             src={doctorDetail?.profilePictureUrl}
@@ -279,6 +316,7 @@ const SelectDoctorDetail = ({
           appointmentPopup={appointmentPopup}
           setFetch={setFetch}
           fetch={fetch}
+          setOpenDoctorDetail={setOpenDoctorDetail}
         />
       )}
     </div>
