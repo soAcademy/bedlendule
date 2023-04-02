@@ -1,12 +1,24 @@
-const ConfirmPopup = ({ title, description, action, state, setState,className }) => (
-  <div
-    className={`shader
-        ${!state && "pointer-events-none opacity-0"}`}
-  >
+const ConfirmPopup = ({
+  title,
+  description,
+  action,
+  state,
+  setState,
+  className,
+}) => (
+  <>
     <div
-    
-      className={className? className :`popup duration-300
-    ${state ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
+      onClick={() => setState(false)}
+      className={`shader
+    ${!state && "pointer-events-none opacity-0"}`}
+    ></div>
+    <div
+      className={
+        className
+          ? className
+          : `popup duration-300
+    ${state ? "scale-100 opacity-100" : "scale-95 opacity-0 pointer-events-none"}`
+      }
     >
       <div>
         <p className="text-2xl font-bold text-[#4C4E64DE] ">{title}</p>
@@ -29,6 +41,6 @@ const ConfirmPopup = ({ title, description, action, state, setState,className })
         </button>
       </div>
     </div>
-  </div>
+  </>
 );
 export default ConfirmPopup;

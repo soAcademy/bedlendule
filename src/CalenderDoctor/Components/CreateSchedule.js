@@ -113,17 +113,18 @@ const CreateSchedule = ({
   });
 
   return (
-    <div
-      className={`fixed left-0 z-50 flex w-full flex-col
-    font-kanit shadow-xl duration-300
-      ${openCreateSchedule ? "" : "pointer-events-none opacity-0"}`}
-    >
+    <>
+      <shader
+        onClick={() => setOpenCreateSchedule(false)}
+        className={`shader
+    ${!openCreateSchedule && "pointer-events-none opacity-0"}`}
+      ></shader>
       <div
-        className={`fixed top-24 left-0 h-screen w-full bg-white p-6 duration-200 ${
-          openCreateSchedule ? "" : "translate-y-full"
+        className={`fixed top-24 left-0 z-30 h-screen w-full bg-white p-6 duration-300 ${
+          openCreateSchedule ? "" : "pointer-events-none translate-y-1/2 opacity-0"
         }`}
       >
-        <div className="">
+        <div>
           <BsChevronDown
             className="absolute right-4 cursor-pointer text-2xl text-slate-400 duration-150 hover:text-slate-300"
             onClick={() => {
@@ -163,7 +164,10 @@ const CreateSchedule = ({
                           : "No Booking"}
                       </p>
                       <p>
-                        {new Date(timeslot.startTime).toLocaleDateString("en-GB")} :{" "}
+                        {new Date(timeslot.startTime).toLocaleDateString(
+                          "en-GB"
+                        )}{" "}
+                        :{" "}
                         {new Date(timeslot.startTime)
                           .toLocaleTimeString("en-GB")
                           .slice(0, 5)}
@@ -301,7 +305,7 @@ const CreateSchedule = ({
         <SendingPopup />
         <ResultPopup />
       </div>
-    </div>
+    </>
   );
 };
 export default CreateSchedule;

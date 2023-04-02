@@ -131,8 +131,8 @@ const SelectRequest = () => {
   return (
     <>
       <button
-        className="top-13 absolute right-4 z-40 w-10 rounded-md border px-1 text-2xl font-light text-slate-400 shadow-md hover:bg-slate-100"
-        onClick={() => redirect("/schedule")}
+        className="absolute top-0 right-0 z-20 m-2 flex w-10 justify-center rounded-full p-2 px-1 text-2xl text-slate-400 hover:bg-red-500 hover:text-slate-50 hover:opacity-50 md:m-4"
+        onClick={() => redirect("/schedule/")}
       >
         <IoIosReturnLeft />
       </button>
@@ -143,7 +143,7 @@ const SelectRequest = () => {
         <p>FILTER DATE</p>
         <Calendar
           placeholder="Select date"
-          className="z-0 w-1/2 rounded-lg border-2 md:w-8/12"
+          className="z-0 w-2/3 rounded-lg border-2"
           value={date}
           disabledDates={disabledDates.map((e) => new Date(e))}
           onChange={(e) => {
@@ -179,7 +179,8 @@ const SelectRequest = () => {
           <div className="text-[#4C4E64]">
             <p className="my-2 text-xl font-bold">{request.title}</p>
             <p>
-              Available : {new Date(request.startTime).toLocaleDateString("en-GB")}
+              Available :{" "}
+              {new Date(request.startTime).toLocaleDateString("en-GB")}
             </p>
             <p>
               From:{" "}

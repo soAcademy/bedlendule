@@ -12,7 +12,7 @@ const Appointment = ({
   chooseTimeSlot,
   doctorName,
   setFetch,
-  fetch
+  fetch,
 }) => {
   const [booktimeSlot, setBooktimeSlot] = useState([]);
   const [processing, setProcessing] = useState(false);
@@ -58,17 +58,17 @@ const Appointment = ({
     // setProcessing(true);
     axios(config).then((response) => {
       // setProcessing(false);
-      console.log("Appointment response.data:",response.data);
+      console.log("Appointment response.data:", response.data);
     });
   }, [booktimeSlot]);
   return (
     <>
-      <div className="fixed top-0 h-screen w-screen backdrop-blur-md">
-        <div className="fixed top-[20%] right-[5%] w-[90%] rounded-lg bg-white p-2 shadow-lg">
-          <div className="relative flex flex-col text-center ">
+      <div className="fixed top-0 z-30 h-screen w-screen backdrop-blur-[2px]">
+        <div className="fixed top-1/2 left-1/2 w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-2 shadow-lg">
+          <div className="relative flex flex-col text-center">
             <div className=" my-2 text-2xl font-bold">APPPOINTMENT</div>
             <div
-              className="absolute right-0 cursor-pointer rounded-full p-2 text-xl opacity-50 hover:bg-red-500"
+              className="absolute right-0 cursor-pointer rounded-full p-2 text-2xl text-slate-400 opacity-50 duration-100 hover:bg-red-500 hover:text-slate-50"
               onClick={() => setAppointmentPopup(!appointmentPopup)}
             >
               <MdClose className="hover:text-white" />
@@ -126,7 +126,7 @@ const Appointment = ({
               onClick={() => {
                 tranformData(chooseTimeSlot);
                 setAppointmentPopup(false);
-                setFetch(!fetch)
+                setFetch(!fetch);
               }}
             >
               CONFIRM

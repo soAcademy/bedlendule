@@ -13,6 +13,7 @@ const SelectDoctorDetail = ({
   selectedDoctor,
   setOpenDoctorDetail,
   selectDate,
+  openDoctorDetail,
 }) => {
   const [chooseTimeSlot, setChooseTimeSlot] = useState([]);
   const [appointmentPopup, setAppointmentPopup] = useState(false);
@@ -110,10 +111,8 @@ const SelectDoctorDetail = ({
       },
       data: _data,
     };
-    
 
     axios(config).then((response) => {
-   
       // console.log("Doctor detail response.data...", response.data);
       setDoctorDetail(response.data);
       setDoctorName(selectedDoctor.doctorUUID);
@@ -136,7 +135,6 @@ const SelectDoctorDetail = ({
         "Content-Type": "application/json",
       },
       data: data,
-      
     };
 
     axios(config).then((response) => {
@@ -149,10 +147,23 @@ const SelectDoctorDetail = ({
   }, [selectedDoctor, fetch]);
   console.log("timeSlots", timeSlots);
   return (
-    <div className="shader ">
-      <div className="popup flex w-full flex-col backdrop-blur-md">
+    <>
+      <shader
+        onClick={() => setOpenDoctorDetail(false)}
+        className={`shader
+    ${!openDoctorDetail && "pointer-events-none opacity-0"}`}
+      ></shader>
+      <div
+        className={`popup flex w-full flex-col duration-300 
+    ${
+      openDoctorDetail
+        ? "scale-100 opacity-100"
+        : "pointer-events-none scale-95 opacity-0"
+    }`}
+      >
         <button
-          className="top-13 absolute right-4 z-40 w-10 px-1 text-2xl font-light text-slate-400 hover:text-slate-300"
+          className=" absolute top-0 right-0 m-2 rounded-full p-2 text-2xl font-light text-slate-400 
+          opacity-50 duration-100  hover:bg-red-500 hover:text-slate-50"
           onClick={() => setOpenDoctorDetail(false)}
         >
           <MdClose className="" />
@@ -173,14 +184,12 @@ const SelectDoctorDetail = ({
 
         <div className="mx-auto my-2  flex w-full items-center justify-center  ">
           {loading && (
-          
             <div className="absolute  ">
               <ProgressSpinner
                 style={{ width: "50px", height: "50px" }}
                 strokeWidth="8"
               />
             </div>
-          
           )}
           <img
             src={doctorDetail?.profilePictureUrl}
@@ -281,7 +290,7 @@ const SelectDoctorDetail = ({
           fetch={fetch}
         />
       )}
-    </div>
+    </>
   );
 };
 export default SelectDoctorDetail;
