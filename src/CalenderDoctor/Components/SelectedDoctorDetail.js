@@ -25,9 +25,9 @@ const SelectDoctorDetail = ({
   const redirect = useNavigate();
 
   console.log("SelectDoctorDetail...");
-  console.log("selectedDoctor", selectedDoctor);
-  console.log("selectDate:", selectDate);
-  console.log("timeSlots", timeSlots);
+  // console.log("selectedDoctor", selectedDoctor);
+  // console.log("selectDate:", selectDate);
+  console.log("fetch", fetch);
 
   const patientUUID = "9ab93e34-b805-429d-962a-c723d8d8bca8";
 
@@ -40,8 +40,29 @@ const SelectDoctorDetail = ({
     const findRequestNull = timeSlots.map((r) =>
       r.timeslots.filter((timeslots) => timeslots.request === null)
     );
+    console.log("findRequestNull", findRequestNull);
 
-    const IndexLocation = findRequestNull
+    const filtertimeSlot = findRequestNull.map((r) =>
+      r.filter((c) => {
+        // console.log("startTime:", c.startTime);
+        console.log("startTime :", new Date(c.startTime));
+        console.log("selectTime :", new Date(selectDate));
+
+        let tomorrow = new Date(selectDate);
+        tomorrow.setHours(tomorrow.getHours() + 24);
+        console.log("selelctTime +24 hr", tomorrow);
+
+        //  console.log("filter",new Date(c.startTime)>=new Date(selectDate) && new Date(c.startTime)<tomorrow);
+
+        return (
+          new Date(c.startTime) >= new Date(selectDate) &&
+          new Date(c.startTime) < tomorrow
+        );
+      })
+    );
+    console.log("filtertimeSlot", filtertimeSlot);
+
+    const IndexLocation = filtertimeSlot
       .map((r, idx) => (r.length !== 0 ? idx : -1))
       .filter((r) => r >= 0);
 
@@ -52,14 +73,12 @@ const SelectDoctorDetail = ({
           meetingType: r.meetingType,
           description: r.description,
           title: r.title,
-          
-
         };
       }
     );
 
-    const result = findRequestNull.map((findRequestNull, idx) => {
-      return { ...[mapLocation[idx]], freeTimeslots: findRequestNull };
+    const result = filtertimeSlot.map((filtertimeSlot, idx) => {
+      return { ...[mapLocation[idx]], freeTimeslots: filtertimeSlot };
     });
 
     const finalResult = result.map((r) => {
@@ -69,10 +88,10 @@ const SelectDoctorDetail = ({
         description: r[0].description,
         title: r[0].title,
         freetime: r.freeTimeslots,
-        patientUUID:patientUUID
+        // patientUUID: patientUUID,
       };
     });
-    console.log("finalResult",finalResult)
+    console.log("finalResult", finalResult);
     return finalResult;
   };
 
@@ -91,23 +110,24 @@ const SelectDoctorDetail = ({
       },
       data: _data,
     };
-    setLoading(true);
+    
 
     axios(config).then((response) => {
-      setLoading(false);
+   
       // console.log("Doctor detail response.data...", response.data);
       setDoctorDetail(response.data);
       setDoctorName(selectedDoctor.doctorUUID);
     });
-  }, [selectedDoctor,fetch]);
+  }, [selectedDoctor, fetch]);
 
   // get ScheduleBy UUID and Date
   useEffect(() => {
+    setLoading(true);
     const data = JSON.stringify({
       uuid: selectedDoctor.doctorUUID?.uuid,
       date: selectDate,
     });
-
+    console.log("dataForApi", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -116,18 +136,21 @@ const SelectDoctorDetail = ({
         "Content-Type": "application/json",
       },
       data: data,
+      
     };
 
     axios(config).then((response) => {
+      setLoading(false);
       console.log("timeSlots from UUID and Date api: ", response.data);
       const _freetimeSlots = findFreeTimeSlot(response.data);
+      console.log("_freetimeSlots", _freetimeSlots);
       setTimeSlots(_freetimeSlots);
     });
-  }, [selectedDoctor]);
-
+  }, [selectedDoctor, fetch]);
+  console.log("timeSlots", timeSlots);
   return (
-    <div className="shader">
-      <div className="popup flex w-full flex-col">
+    <div className="shader ">
+      <div className="popup flex w-full flex-col backdrop-blur-md">
         <button
           className="top-13 absolute right-4 z-40 w-10 px-1 text-2xl font-light text-slate-400 hover:text-slate-300"
           onClick={() => setOpenDoctorDetail(false)}
@@ -148,14 +171,16 @@ const SelectDoctorDetail = ({
           />
         </div>
 
-        <div className="mx-auto my-2  flex w-full items-center justify-center">
+        <div className="mx-auto my-2  flex w-full items-center justify-center  ">
           {loading && (
-            <div className="absolute   ">
+          
+            <div className="absolute  ">
               <ProgressSpinner
                 style={{ width: "50px", height: "50px" }}
                 strokeWidth="8"
               />
             </div>
+          
           )}
           <img
             src={doctorDetail?.profilePictureUrl}
@@ -197,7 +222,7 @@ const SelectDoctorDetail = ({
               <ul
                 className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
                 onClick={() => {
-                  setChooseTimeSlot([c,r]);
+                  setChooseTimeSlot([c, r]);
                   setAppointmentPopup(!appointmentPopup);
                 }}
               >

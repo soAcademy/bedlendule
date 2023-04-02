@@ -23,13 +23,18 @@ const SelectDoctor = () => {
   const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
   const redirect = useNavigate();
 
+  // console.log("date...",date)
+  // console.log("new date...",new Date(date));
+  console.log("ISO date...",new Date(date).toISOString());
+  
+
   const findFreeDoctor = (allDoctors) => {
     const findRequestNull = allDoctors.map((allDoctors) =>
       allDoctors.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
     const findIndexOfRequestNull = findRequestNull
       .map((r, idx) => (r.length !== 0 ? idx : -1))
-      .filter((r) => r > 0);
+      .filter((r) => r >= 0);
 
     const freeDoctor = findIndexOfRequestNull.map((index) => allDoctors[index]);
     return freeDoctor;
@@ -38,8 +43,9 @@ const SelectDoctor = () => {
   useEffect(() => {
     setDoctors([]);
     setFetching(true);
-    setSelectDate(new Date(date));
-    const data = JSON.stringify({ date: new Date(date) });
+    setSelectDate(new Date(date).toISOString());
+    const data = JSON.stringify({ date: new Date(date).toISOString() });
+    console.log("data>>",data)
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -54,7 +60,6 @@ const SelectDoctor = () => {
       .then((response) => {
         setFetching(false);
         const _data = findFreeDoctor(response.data);
-        console.log("result",response.data)
         setDoctors(_data);
       })
       .catch((error) => {
