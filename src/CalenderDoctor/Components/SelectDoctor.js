@@ -26,6 +26,7 @@ const useGetdoctors = ({ date }) => {
       .filter((r) => r >= 0);
 
     const freeDoctor = findIndexOfRequestNull.map((index) => allDoctors[index]);
+    console.log("freedoctor...", freeDoctor);
     return freeDoctor;
   };
 
@@ -50,6 +51,7 @@ const useGetdoctors = ({ date }) => {
         setFetching(false);
         const _data = findFreeDoctor(response.data);
         setDoctors(_data);
+       
       })
       .catch((error) => {
         console.log(error);
