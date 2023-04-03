@@ -1,7 +1,7 @@
 import { AiFillDollarCircle } from "react-icons/ai";
 import { GiAlarmClock } from "react-icons/gi";
 import { MdClose } from "react-icons/md";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { ProgressSpinner } from "primereact/progressspinner";
 import useRedirect from "../Hooks/useRedirect";
@@ -21,6 +21,38 @@ const useSuccess = () => {
     setSuccess,
   };
 };
+const usePatientInfo = () => {
+  const [patientInfo, setPatientInfo] = useState([]);
+  useEffect(() => {
+    const patientUUID = localStorage.getItem("uuid");
+    // console.log("patientUUID", patientUUID);
+
+    const _data = JSON.stringify({
+      uuid: patientUUID,
+    });
+
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: localStorage.getItem("access-token"),
+      },
+      data: _data,
+    };
+
+    axios(config).then((response) => {
+      console.log("PatientInfo response.data...", response.data);
+      setPatientInfo(response.data);
+    });
+  }, []);
+
+  return {
+    patientInfo,
+    setPatientInfo,
+  };
+};
 
 const Appointment = ({
   appointmentPopup,
@@ -34,6 +66,7 @@ const Appointment = ({
   const { processing, setProcessing } = useProcess(false);
   const { success, setSuccess } = useSuccess(false);
   const { redirectToLogin } = useRedirect();
+  const { patientInfo } = usePatientInfo();
   const redirect = useNavigate();
 
   const bookSlot = (chooseTimeSlot) => {
@@ -87,8 +120,7 @@ const Appointment = ({
 
     return;
   };
-console.log("appointmentPopup>>",appointmentPopup);
-console.log("processing",processing);
+
   return (
     <>
       <div className="fixed top-0 z-30 h-screen w-screen backdrop-blur-[2px]">
@@ -101,7 +133,9 @@ console.log("processing",processing);
             >
               <MdClose className="hover:text-white" />
             </div>
-            <div className=" text-xl ">Patient : Jone Smith</div>
+            <div className=" text-xl ">
+              Patient : {patientInfo.firstName}&nbsp;{patientInfo.lastName}
+            </div>
             <div className="mx-auto w-[150px] rounded-lg bg-green-200 text-slate-700">
               Doctor : {doctorName.firstName} {doctorName.lastName}
             </div>
@@ -163,7 +197,7 @@ console.log("processing",processing);
         </div>
       </div>
       {processing && (
-        <div className="fixed top-0 flex h-screen w-screen z-40 ">
+        <div className="fixed top-0 z-40 flex h-screen w-screen ">
           <div className="relative mx-auto my-auto flex h-[15%] w-[40%] flex-col  rounded-lg bg-white  shadow-lg ">
             <div className="w-full pt-4 text-center text-slate-600 ">
               {" "}
