@@ -120,7 +120,7 @@ const Appointment = ({
 
     return;
   };
-
+console.log("doctorName",doctorName);
   return (
     <>
       <div className="fixed top-0 z-30 h-screen w-screen backdrop-blur-[2px]">
@@ -134,10 +134,10 @@ const Appointment = ({
               <MdClose className="hover:text-white" />
             </div>
             <div className=" text-xl ">
-              Patient : {patientInfo.firstName}&nbsp;{patientInfo.lastName}
+              Patient : {patientInfo?.firstName}&nbsp;{patientInfo?.lastName}
             </div>
             <div className="mx-auto w-[150px] rounded-lg bg-green-200 text-slate-700">
-              Doctor : {doctorName.firstName} {doctorName.lastName}
+              Doctor : {doctorName?.firstName} {doctorName?.lastName}
             </div>
             <ul className="mx-auto my-4 flex  flex-row gap-2 ">
               <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
