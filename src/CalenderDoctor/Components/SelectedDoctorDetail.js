@@ -20,7 +20,7 @@ const useChooseTimeSlot = ({
   const [timeSlots, setTimeSlots] = useState([]);
 
   useEffect(() => {
-    console.log("scheduleBy UUID and Date...");
+    // console.log("scheduleBy UUID and Date...");
     // console.log("scheduleBy fetch ", fetch);
     setLoading(true);
     const data = JSON.stringify({
@@ -40,6 +40,7 @@ const useChooseTimeSlot = ({
 
     axios(config).then((response) => {
       console.log("UUID and Date response.data:", response.data);
+      console.log("selectDate",selectDate);
       setLoading(false);
       const _freetimeSlots = findFreeTimeSlot(response.data);
       setTimeSlots(_freetimeSlots);
@@ -75,7 +76,7 @@ const useFetch = ({ selectedDoctor, setDoctorDetail, setDoctorName }) => {
     };
 
     axios(config).then((response) => {
-      console.log("selectDoctor response.data555", response.data);
+      // console.log("getUserDetailByUUID:", response.data);
       setDoctorDetail(response.data);
       setDoctorName(selectedDoctor?.doctor);
     });
@@ -116,7 +117,7 @@ const SelectDoctorDetail = ({
   openDoctorDetail,
 }) => {
   const findFreeTimeSlot = (timeSlots) => {
-    console.log("findFreeTimeSlot working...", timeSlots);
+    // console.log("findFreeTimeSlot working...", timeSlots);
     const findRequestNull = timeSlots.map((r) =>
       r.timeslots.filter((timeslots) => timeslots.request === null)
     );

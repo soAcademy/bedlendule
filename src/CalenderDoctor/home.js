@@ -18,6 +18,7 @@ import SelectDoctor from "./Components/SelectDoctor";
 import axios from "axios";
 import SelectRequest from "./Components/SelectRequest";
 import Schedule from "./Pages/Schedule";
+import ProfileSetting from "./Components/ProfileSetting";
 
 export const ConfirmPopupContext = createContext();
 export const DisabledatesContext = createContext();
@@ -169,6 +170,7 @@ export const Home = () => {
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="login" element={<Login />} />
+                <Route path ="setting" element={<ProfileSetting/>}/>
                 <Route path="signup" element={<Registration />} />
                 <Route path="schedule" element={<Schedule />}></Route>
                 <Route

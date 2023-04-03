@@ -120,7 +120,7 @@ const Appointment = ({
 
     return;
   };
-console.log("doctorName",doctorName);
+// console.log("doctorName",doctorName);
   return (
     <>
       <div className="fixed top-0 z-30 h-screen w-screen backdrop-blur-[2px]">
