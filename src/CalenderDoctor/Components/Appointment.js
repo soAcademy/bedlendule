@@ -7,21 +7,20 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import useRedirect from "../Hooks/useRedirect";
 import { useNavigate } from "react-router-dom";
 
-const useProcess = ()=>{
+const useProcess = () => {
   const [processing, setProcessing] = useState(false);
   return {
     processing,
-    setProcessing
-  }
+    setProcessing,
+  };
 };
-const useSuccess = ()=>{
+const useSuccess = () => {
   const [success, setSuccess] = useState(false);
-  return{
+  return {
     success,
-    setSuccess
-  }
+    setSuccess,
+  };
 };
-
 
 const Appointment = ({
   appointmentPopup,
@@ -32,15 +31,12 @@ const Appointment = ({
   fetch,
   setOpenDoctorDetail,
 }) => {
-
-  const {processing, setProcessing} = useProcess(false);
-  const {success, setSuccess} = useSuccess(false);
+  const { processing, setProcessing } = useProcess(false);
+  const { success, setSuccess } = useSuccess(false);
   const { redirectToLogin } = useRedirect();
   const redirect = useNavigate();
 
-
   const bookSlot = (chooseTimeSlot) => {
-
     const _result = {
       price: chooseTimeSlot[1]?.price,
       startTime: chooseTimeSlot[1]?.startTime,
@@ -49,7 +45,6 @@ const Appointment = ({
       meetingType: chooseTimeSlot[0]?.meetingType,
       location: chooseTimeSlot[0]?.location,
     };
-   
 
     const _data = JSON.stringify({
       price: _result.price,
@@ -59,7 +54,6 @@ const Appointment = ({
       meetingType: _result.meetingType,
       location: _result.location,
     });
-    
 
     const config = {
       method: "post",
@@ -77,7 +71,7 @@ const Appointment = ({
         console.log("booking response.data", response.data);
       })
       .then(() => {
-        // console.log("booking is successful!");
+        console.log("booking is successful!");
         setSuccess(true);
       })
       .then(() => {
@@ -93,12 +87,13 @@ const Appointment = ({
 
     return;
   };
-
+console.log("appointmentPopup>>",appointmentPopup);
+console.log("processing",processing);
   return (
     <>
-      <div className="fixed top-0 h-screen w-screen backdrop-blur-md ">
-        <div className="fixed top-[20%] right-[5%] w-[90%] rounded-lg bg-white p-2 shadow-lg ">
-          <div className="relative flex flex-col text-center ">
+      <div className="fixed top-0 z-30 h-screen w-screen backdrop-blur-[2px]">
+        <div className="fixed top-1/2 left-1/2 w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-2 shadow-lg">
+          <div className="relative flex flex-col text-center">
             <div className=" my-2 text-2xl font-bold">APPPOINTMENT</div>
             <div
               className="absolute right-0 cursor-pointer rounded-full p-2 text-2xl text-slate-400 opacity-50 duration-100 hover:bg-red-500 hover:text-slate-50"
@@ -168,7 +163,7 @@ const Appointment = ({
         </div>
       </div>
       {processing && (
-        <div className="fixed top-0 flex h-screen w-screen  ">
+        <div className="fixed top-0 flex h-screen w-screen z-40 ">
           <div className="relative mx-auto my-auto flex h-[15%] w-[40%] flex-col  rounded-lg bg-white  shadow-lg ">
             <div className="w-full pt-4 text-center text-slate-600 ">
               {" "}

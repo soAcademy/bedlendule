@@ -182,57 +182,10 @@ const SelectDoctorDetail = ({
   // console.log("SelectDoctorDetail...");
   // console.log("fetch", fetch);
 
-<<<<<<< HEAD
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
 
-=======
-    const config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: localStorage.getItem("access-token"),
-      },
-      data: _data,
-    };
-
-    axios(config).then((response) => {
-      // console.log("Doctor detail response.data...", response.data);
-      setDoctorDetail(response.data);
-      setDoctorName(selectedDoctor.doctorUUID);
-    });
-  }, [selectedDoctor, fetch]);
-
-  // get ScheduleBy UUID and Date
-  useEffect(() => {
-    setLoading(true);
-    const data = JSON.stringify({
-      uuid: selectedDoctor.doctorUUID?.uuid,
-      date: selectDate,
-    });
-    console.log("dataForApi", data);
-    const config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByDateAndUUID",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-
-    axios(config).then((response) => {
-      setLoading(false);
-      console.log("timeSlots from UUID and Date api: ", response.data);
-      const _freetimeSlots = findFreeTimeSlot(response.data);
-      console.log("_freetimeSlots", _freetimeSlots);
-      setTimeSlots(_freetimeSlots);
-    });
-  }, [selectedDoctor, fetch]);
->>>>>>> 51023138da0f0b975083ddafa606b0f7b810ba0f
   console.log("timeSlots", timeSlots);
 
   return (
@@ -321,7 +274,7 @@ const SelectDoctorDetail = ({
                 className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
                 onClick={() => {
                   setChooseTimeSlot([c, r]);
-                  setAppointmentPopup(!appointmentPopup);
+                  setAppointmentPopup(true);
                 }}
               >
                 <li className="  relative flex w-[25%] rounded-lg border-2 border-slate-400 p-2 text-center text-sm ">
@@ -370,6 +323,7 @@ const SelectDoctorDetail = ({
       </div>
 
       {appointmentPopup && (
+     
         <Appointment
           chooseTimeSlot={chooseTimeSlot}
           doctorName={doctorName}
@@ -378,7 +332,9 @@ const SelectDoctorDetail = ({
           setFetch={setFetch}
           fetch={fetch}
           setOpenDoctorDetail={setOpenDoctorDetail}
+          
         />
+      
       )}
     </>
   );
