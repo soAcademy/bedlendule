@@ -46,14 +46,12 @@ export const Home = () => {
         .then((response) => {
           console.log("onload");
           if (response.status === 200 && response.data.uuid) {
-            localStorage.setItem("type", response.data.type);
             localStorage.setItem("uuid", response.data.uuid);
           }
         })
         .catch((error) => {
           window.location = window.location.origin + "/login";
           localStorage.removeItem("access-token");
-          localStorage.removeItem("type");
           localStorage.removeItem("uuid");
           console.log(error);
         });

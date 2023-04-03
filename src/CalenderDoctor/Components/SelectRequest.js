@@ -34,7 +34,7 @@ const SelectRequest = () => {
         setUpdated(!updated);
       },
     });
-  const doctorUUID = localStorage.getItem("doctorUUID");
+  const doctorUUID = localStorage.getItem("uuid");
   const acceptRequest = () => {
     setConfirmPopup(false);
     let data = JSON.stringify({

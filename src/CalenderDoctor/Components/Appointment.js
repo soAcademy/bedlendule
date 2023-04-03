@@ -4,7 +4,55 @@ import { MdClose } from "react-icons/md";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { AiFillCheckCircle } from "react-icons/ai";
+import useRedirect from "../Hooks/useRedirect";
+import { useNavigate } from "react-router-dom";
+
+const useProcess = () => {
+  const [processing, setProcessing] = useState(false);
+  return {
+    processing,
+    setProcessing,
+  };
+};
+const useSuccess = () => {
+  const [success, setSuccess] = useState(false);
+  return {
+    success,
+    setSuccess,
+  };
+};
+const usePatientInfo = () => {
+  const [patientInfo, setPatientInfo] = useState([]);
+  useEffect(() => {
+    const patientUUID = localStorage.getItem("uuid");
+    // console.log("patientUUID", patientUUID);
+
+    const _data = JSON.stringify({
+      uuid: patientUUID,
+    });
+
+    const config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: localStorage.getItem("access-token"),
+      },
+      data: _data,
+    };
+
+    axios(config).then((response) => {
+      console.log("PatientInfo response.data...", response.data);
+      setPatientInfo(response.data);
+    });
+  }, []);
+
+  return {
+    patientInfo,
+    setPatientInfo,
+  };
+};
 
 const Appointment = ({
   appointmentPopup,
@@ -13,36 +61,31 @@ const Appointment = ({
   doctorName,
   setFetch,
   fetch,
+  setOpenDoctorDetail,
 }) => {
-  const [booktimeSlot, setBooktimeSlot] = useState([]);
-  const [processing, setProcessing] = useState(false);
+  const { processing, setProcessing } = useProcess(false);
+  const { success, setSuccess } = useSuccess(false);
+  const { redirectToLogin } = useRedirect();
+  const { patientInfo } = usePatientInfo();
+  const redirect = useNavigate();
 
-  console.log("booktimeSlot", booktimeSlot);
-
-  const tranformData = (chooseTimeSlot) => {
+  const bookSlot = (chooseTimeSlot) => {
     const _result = {
       price: chooseTimeSlot[1]?.price,
       startTime: chooseTimeSlot[1]?.startTime,
       finishTime: chooseTimeSlot[1]?.finishTime,
-      patientUUID: chooseTimeSlot[0]?.patientUUID,
       timeslotId: chooseTimeSlot[1]?.id,
       meetingType: chooseTimeSlot[0]?.meetingType,
       location: chooseTimeSlot[0]?.location,
     };
 
-    return setBooktimeSlot(_result);
-  };
-
-  useEffect(() => {
-    console.log("useEffect working...");
-
     const _data = JSON.stringify({
-      price: booktimeSlot.price,
-      startTime: booktimeSlot.startTime,
-      finishTime: booktimeSlot.finishTime,
-      timeslotId: booktimeSlot.timeslotId,
-      meetingType: booktimeSlot.meetingType,
-      location: booktimeSlot.location,
+      price: _result.price,
+      startTime: _result.startTime,
+      finishTime: _result.finishTime,
+      timeslotId: _result.timeslotId,
+      meetingType: _result.meetingType,
+      location: _result.location,
     });
 
     const config = {
@@ -55,12 +98,29 @@ const Appointment = ({
       },
       data: _data,
     };
-    // setProcessing(true);
-    axios(config).then((response) => {
-      // setProcessing(false);
-      console.log("Appointment response.data:", response.data);
-    });
-  }, [booktimeSlot]);
+    setProcessing(true);
+    axios(config)
+      .then((response) => {
+        console.log("booking response.data", response.data);
+      })
+      .then(() => {
+        console.log("booking is successful!");
+        setSuccess(true);
+      })
+      .then(() => {
+        // console.log("fetch");
+        setFetch(!fetch);
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.status === 401) {
+          redirectToLogin();
+        }
+      });
+
+    return;
+  };
+
   return (
     <>
       <div className="fixed top-0 z-30 h-screen w-screen backdrop-blur-[2px]">
@@ -73,7 +133,9 @@ const Appointment = ({
             >
               <MdClose className="hover:text-white" />
             </div>
-            <div className=" text-xl ">Patient : Jone Smith</div>
+            <div className=" text-xl ">
+              Patient : {patientInfo.firstName}&nbsp;{patientInfo.lastName}
+            </div>
             <div className="mx-auto w-[150px] rounded-lg bg-green-200 text-slate-700">
               Doctor : {doctorName.firstName} {doctorName.lastName}
             </div>
@@ -113,7 +175,7 @@ const Appointment = ({
                     {chooseTimeSlot[1].price} THB/Hour
                   </div>
                   <div className="px-1">
-                    <AiFillDollarCircle className="my-auto text-base" />
+                    <AiFillDollarCircle className="my-auto text-base text-yellow-500" />
                   </div>
                 </div>
               </li>
@@ -124,9 +186,9 @@ const Appointment = ({
             <button
               className="button my-2 mx-auto w-[50%] py-2"
               onClick={() => {
-                tranformData(chooseTimeSlot);
-                setAppointmentPopup(false);
+                bookSlot(chooseTimeSlot);
                 setFetch(!fetch);
+                // loading();
               }}
             >
               CONFIRM
@@ -135,16 +197,45 @@ const Appointment = ({
         </div>
       </div>
       {processing && (
-        <div className="fixed top-0 flex h-screen w-screen backdrop-blur-sm">
-          <div className="mx-auto my-auto flex h-[20%] w-[30%] rounded-lg  bg-white shadow-lg ">
-            <div className="my-auto mx-auto">
-              <ProgressSpinner
-                style={{ width: "50px", height: "50px" }}
-                strokeWidth="8"
-                animationDuration="2.5"
-                className=""
-              />
+        <div className="fixed top-0 z-40 flex h-screen w-screen ">
+          <div className="relative mx-auto my-auto flex h-[15%] w-[40%] flex-col  rounded-lg bg-white  shadow-lg ">
+            <div className="w-full pt-4 text-center text-slate-600 ">
+              {" "}
+              {success === false ? (
+                "Processing..."
+              ) : (
+                <span className="">
+                  <p className="text-xl text-[#99B47B]">Success</p>
+                  <p>Your booking is succesfull</p>
+                </span>
+              )}
             </div>
+
+            {!success && (
+              <div className="my-auto mx-auto">
+                <ProgressSpinner
+                  style={{ width: "50px", height: "50px" }}
+                  strokeWidth="8"
+                  animationDuration="2.5"
+                  className=""
+                />
+              </div>
+            )}
+
+            {success && (
+              <div
+                className="button my-auto mx-auto cursor-pointer px-5 py-1"
+                onClick={() => {
+                  setProcessing(false);
+                  setAppointmentPopup(false);
+                  setFetch(!fetch);
+                  setOpenDoctorDetail(false);
+                  redirect("/schedule/");
+                }}
+              >
+                OK
+              </div>
+            )}
           </div>
         </div>
       )}
