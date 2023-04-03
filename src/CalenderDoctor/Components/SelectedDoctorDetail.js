@@ -323,6 +323,7 @@ const SelectDoctorDetail = ({
       </div>
 
       {appointmentPopup && (
+     
         <Appointment
           chooseTimeSlot={chooseTimeSlot}
           doctorName={doctorName}
@@ -331,7 +332,9 @@ const SelectDoctorDetail = ({
           setFetch={setFetch}
           fetch={fetch}
           setOpenDoctorDetail={setOpenDoctorDetail}
+          
         />
+      
       )}
     </>
   );
