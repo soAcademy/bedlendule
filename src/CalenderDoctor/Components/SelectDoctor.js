@@ -10,22 +10,12 @@ import { useContext } from "react";
 import { DisabledatesContext } from "../home";
 import usePatientCalendarProps from "../Hooks/usePatientCalendarProps";
 
-const SelectDoctor = () => {
-  usePatientCalendarProps();
+const useGetdoctors = ({ date }) => {
   const [doctors, setDoctors] = useState([]);
-  const [selectedDoctor, setSelectedDoctor] = useState([]);
-  const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
-  const [page, setPage] = useState("doctorLists"); // อย่าลืมเปลี่ยน doctorLists
   const [fetching, setFetching] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState([]);
   const [selectDate, setSelectDate] = useState();
-
-  const { date } = useParams();
-  const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
-  const redirect = useNavigate();
-
-  // console.log("date...",date)
-  // console.log("new date...",new Date(date));
-  console.log("ISO date...", new Date(date).toISOString());
+  const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
 
   const findFreeDoctor = (allDoctors) => {
     const findRequestNull = allDoctors.map((allDoctors) =>
@@ -44,7 +34,7 @@ const SelectDoctor = () => {
     setFetching(true);
     setSelectDate(new Date(date).toISOString());
     const data = JSON.stringify({ date: new Date(date).toISOString() });
-    console.log("data>>", data);
+    // console.log("data>>", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -66,6 +56,36 @@ const SelectDoctor = () => {
       });
   }, [date]);
 
+  return {
+    doctors,
+    setDoctors,
+    fetching,
+    setFetching,
+    selectedDoctor,
+    setSelectedDoctor,
+    selectDate,
+    setSelectDate,
+    openDoctorDetail,
+    setOpenDoctorDetail,
+  };
+};
+
+const SelectDoctor = () => {
+  usePatientCalendarProps();
+  const { date } = useParams();
+  const {
+    doctors,
+    fetching,
+    selectedDoctor,
+    setSelectedDoctor,
+    selectDate,
+    openDoctorDetail,
+    setOpenDoctorDetail,
+  } = useGetdoctors({ date });
+  const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
+  const redirect = useNavigate();
+
+  console.log("doctors", doctors);
   return (
     <>
       <button

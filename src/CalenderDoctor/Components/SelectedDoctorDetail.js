@@ -179,9 +179,6 @@ const SelectDoctorDetail = ({
       setLoading,
     });
   const redirect = useNavigate();
-  // console.log("SelectDoctorDetail...");
-  // console.log("fetch", fetch);
-
   const scoreFromReview =
     selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
