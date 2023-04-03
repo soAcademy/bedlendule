@@ -26,15 +26,15 @@ const SelectDoctorDetail = ({
   const redirect = useNavigate();
 
   console.log("SelectDoctorDetail...");
-  // console.log("selectedDoctor", selectedDoctor);
+  console.log("selectedDoctor", selectedDoctor);
   // console.log("selectDate:", selectDate);
   console.log("fetch", fetch);
 
   const patientUUID = "9ab93e34-b805-429d-962a-c723d8d8bca8";
 
   const scoreFromReview =
-    selectedDoctor?.doctorUUID?.reviews?.reduce((acc, r) => acc + r.score, 0) /
-    selectedDoctor?.doctorUUID?.reviews?.map((r) => r.score).length;
+    selectedDoctor?.doctor?.reviews?.reduce((acc, r) => acc + r.score, 0) /
+    selectedDoctor?.doctor?.reviews?.map((r) => r.score).length;
 
   const findFreeTimeSlot = (timeSlots) => {
     console.log("findFreeTimeSlot working...", timeSlots);
@@ -98,7 +98,7 @@ const SelectDoctorDetail = ({
 
   useEffect(() => {
     const _data = JSON.stringify({
-      uuid: selectedDoctor.doctorUUID?.uuid,
+      uuid: selectedDoctor.doctor?.uuid,
     });
 
     const config = {
@@ -115,7 +115,7 @@ const SelectDoctorDetail = ({
     axios(config).then((response) => {
       // console.log("Doctor detail response.data...", response.data);
       setDoctorDetail(response.data);
-      setDoctorName(selectedDoctor.doctorUUID);
+      setDoctorName(selectedDoctor.doctor);
     });
   }, [selectedDoctor, fetch]);
 
@@ -123,7 +123,7 @@ const SelectDoctorDetail = ({
   useEffect(() => {
     setLoading(true);
     const data = JSON.stringify({
-      uuid: selectedDoctor.doctorUUID?.uuid,
+      uuid: selectedDoctor.doctor?.uuid,
       date: selectDate,
     });
     console.log("dataForApi", data);
@@ -169,8 +169,8 @@ const SelectDoctorDetail = ({
           <MdClose className="" />
         </button>
         <div className="w-full text-center text-2xl">
-          {selectedDoctor.doctorUUID?.firstName} &nbsp;{" "}
-          {selectedDoctor.doctorUUID?.lastName}
+          {selectedDoctor.doctor?.firstName} &nbsp;{" "}
+          {selectedDoctor.doctor?.lastName}
         </div>
 
         <div className="mx-auto pt-2">

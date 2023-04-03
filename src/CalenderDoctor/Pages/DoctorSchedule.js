@@ -296,7 +296,7 @@ const DoctorSchedule = () => {
       }`}
                 ></div>
                 <div
-                  className={`fixed top-1/4 z-30 h-full w-full
+                  className={`fixed top-1/4 z-20 h-full w-full
     space-y-2 rounded-lg bg-white p-6 shadow-lg transition-all duration-300
     ${
       openEdit && scheduleToEdit.id === schedule.id

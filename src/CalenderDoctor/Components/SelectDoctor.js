@@ -58,7 +58,9 @@ const SelectDoctor = () => {
     axios(config)
       .then((response) => {
         setFetching(false);
+        console.log(response.data)
         const _data = findFreeDoctor(response.data);
+        console.log(_data)
         setDoctors(_data);
       })
       .catch((error) => {
@@ -107,7 +109,7 @@ const SelectDoctor = () => {
         </div>
       )}
 
-      {doctors.map((doctor) => (
+      {doctors?.map((doctor) => (
         <div
           className="mx-auto my-4 flex w-[90%] cursor-pointer flex-col rounded-lg border-2 border-slate-400 bg-[#F0F3EC] p-4 hover:bg-[#C5E1A5]"
           onClick={() => {
@@ -117,7 +119,7 @@ const SelectDoctor = () => {
         >
           <div className="flex justify-between">
             <div className="font-bol w-[60%] text-xl text-[#666CFF]">
-              {doctor.doctorUUID.firstName}&nbsp; {doctor.doctorUUID.lastName}
+              {doctor.doctor.firstName}&nbsp; {doctor.doctor.lastName}
             </div>
 
             <Rating
@@ -146,8 +148,8 @@ const SelectDoctor = () => {
                 />
               }
               value={
-                doctor.doctorUUID.reviews.reduce((acc, r) => acc + r.score, 0) /
-                doctor.doctorUUID.reviews.map((r) => r.score).length
+                doctor.doctor.reviews.reduce((acc, r) => acc + r.score, 0) /
+                doctor.doctor.reviews.map((r) => r.score).length
               }
               start={5}
               cancel={false}

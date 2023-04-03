@@ -38,6 +38,7 @@ export const useCreateSchedule = ({
       },
       data: formData,
     };
+    console.log(config)
     setSending(true);
 
     axios

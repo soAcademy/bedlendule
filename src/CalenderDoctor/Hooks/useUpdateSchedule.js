@@ -93,6 +93,7 @@ const useUpdateSchedule = ({
 
   const updateSchedule = () => {
     setSending(true);
+    setConfirmSubmit(false)
     let data = JSON.stringify({
       scheduleId: scheduleToEdit.id,
       addingTimeSlots: newTimeSlots.filter((timeslot) => !timeslot.id),
@@ -128,6 +129,7 @@ const useUpdateSchedule = ({
   };
 
   const deleteSchedule = () => {
+    setOpenDelete(false)
     setSending(true)
     let data = JSON.stringify({
       "scheduleId": scheduleToDelete
@@ -149,14 +151,12 @@ const useUpdateSchedule = ({
       console.log(JSON.stringify(response.data));
       setScheduleToDelete()
       setSending(false)
-      setOpenDelete(false)
       setUpdated(!updated)
       setSubmitSuccessPopUp(true);
     })
     .catch((error) => {
       console.log(error);
       setSending(false)
-      setOpenDelete(false)
       setSubmitFailPopUp(true)
     });
     

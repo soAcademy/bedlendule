@@ -7,22 +7,36 @@ import { useState } from "react";
 import { enforceFormat, formatToPhone } from "../Functions/validateForm";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import useRedirect from "../Hooks/useRedirect";
+import useSubmitResult from "../Hooks/useSubmitResult";
 
 const Registration = () => {
+  const { redirectToLogin } = useRedirect();
   const [sending, setSending] = useState();
   const [input, setInput] = useState({
     password: "",
     confirmPassword: "",
     phoneNumber: "",
   });
-
   const [error, setError] = useState({
     password: "",
     confirmPassword: "",
     phoneNumber: "",
   });
 
-
+  const { setSubmitSuccessPopUp, setSubmitFailPopUp, ResultPopup } = useSubmitResult({
+    successAction: () => {
+      redirectToLogin();
+    },
+    failedAction: ()=>{
+      document.querySelector("#register1").reset()
+      setInput({
+        password: "",
+        confirmPassword: "",
+        phoneNumber: "",
+      })
+    },
+  });
   const onInputChange = (e) => {
     const { name, value } = e.target;
     setInput((prev) => ({
@@ -103,7 +117,7 @@ const Registration = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/createUser",
       headers: {
         "Content-Type": "application/json",
-        'authorization': localStorage.getItem('access-token'),
+        authorization: localStorage.getItem("access-token"),
       },
       data: userData,
     };
@@ -112,11 +126,13 @@ const Registration = () => {
       .request(config)
       .then((response) => {
         console.log(JSON.stringify(response.data));
+        setSubmitSuccessPopUp(true)
         setSending(false);
       })
       .catch((error) => {
         console.log(error);
         setSending(false);
+        setSubmitFailPopUp(true)
       });
   };
   return (
@@ -267,6 +283,7 @@ const Registration = () => {
           </p>
         </div>
       </div>
+      <ResultPopup />
     </div>
   );
 };
