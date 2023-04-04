@@ -11,7 +11,7 @@ const useDoctorCalendarProps = () => {
     timeSlots,
     setTimeSlots,
   } = useContext(DisabledatesContext);
-  const doctorUUID = localStorage.getItem("doctorUUID");
+  const doctorUUID = localStorage.getItem("uuid");
   useEffect(() => {
     var config = {
       method: "post",

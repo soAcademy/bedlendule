@@ -153,13 +153,13 @@ const SelectDoctorDetail = ({
         };
       }
     );
-    // console.log("mapLocation", mapLocation);
+    console.log("mapLocation", mapLocation);
 
     const result = filterEmptyArray.map((r, idx) => {
       return { ...[mapLocation[idx]], freeTimeslots: r };
     });
 
-    // console.log("result", result);
+    console.log("result", result);
 
     const finalResult = result.map((r) => {
       return {
@@ -193,7 +193,6 @@ const SelectDoctorDetail = ({
     selectedDoctor?.doctor?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctor?.reviews?.map((r) => r.score).length;
 
-  console.log("timeSlots", timeSlots);
 
   return (
     <>

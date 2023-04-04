@@ -6,11 +6,11 @@ const useSendingPopup = () => {
   const SendingPopup = () => (
     <>
       <div
-        className={`shader duration-200
+        className={`shader duration-200 z-20
         ${!sending && "pointer-events-none opacity-0"}`}
       >
         <div
-          className={`popup duration-100
+          className={`popup duration-100 z-30
         ${sending ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
         >
           <div>

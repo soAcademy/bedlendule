@@ -6,7 +6,7 @@ const ConfirmPopup = ({
   setState,
   className,
 }) => (
-  <>
+  <div className={`fixed top-6 left-0 h-full z-30 w-full ${!state && "pointer-events-none opacity-0"}`}>
     <div
       onClick={() => setState(false)}
       className={`shader
@@ -41,6 +41,6 @@ const ConfirmPopup = ({
         </button>
       </div>
     </div>
-  </>
+  </div>
 );
 export default ConfirmPopup;

@@ -137,6 +137,7 @@ const UserSchedule = () => {
     axios
       .request(config)
       .then((response) => {
+        console.log("request", response.data);
         setRequests(response.data);
         setFetching(false);
       })
@@ -389,30 +390,21 @@ const UserSchedule = () => {
           </div>
         )}
       </div>
-      <div
-        className={`shader duration-200
-    ${!openReview && "pointer-events-none opacity-0"}`}
-      >
-        <ReviewDoctor
-          updated={updated}
-          setUpdated={setUpdated}
-          openReview={openReview}
-          setOpenReview={setOpenReview}
-          requestId={requestToExecute?.id}
-          timeSlotId={timeSlotId}
-        />
-      </div>
+
+      <ReviewDoctor
+        updated={updated}
+        setUpdated={setUpdated}
+        openReview={openReview}
+        setOpenReview={setOpenReview}
+        requestId={requestToExecute?.id}
+        timeSlotId={timeSlotId}
+      />
       <div
         className={`fixed top-10 w-full duration-200 ${
           insidePage === "selectDoctor"
             ? "scale-100 opacity-100"
             : "pointer-events-none opacity-0"
         }`}
-      ></div>
-      <div
-        onClick={() => setOpenCreateRequest(false)}
-        className={`shader duration-200
-      ${!openCreateRequest ? "pointer-events-none opacity-0" : ""}`}
       ></div>
       <CreateRequest
         requests={requests}
@@ -421,29 +413,29 @@ const UserSchedule = () => {
         openCreateRequest={openCreateRequest}
         setOpenCreateRequest={setOpenCreateRequest}
       />
-      <ConfirmPopup
-        title={"Delete Request"}
-        description={"Are you sure to delete this request?"}
-        action={deleteRequest}
-        state={openRemoveRequest}
-        setState={setOpenRemoveRequest}
-      />
+
       {/* )} */}
       <div
-        className={`shader fixed left-0 z-50 flex w-full
-  flex-col font-kanit shadow-xl duration-300
-    ${openChooseDoctors ? "" : "pointer-events-none opacity-0"}`}
+        className={`fixed top-6 left-0 h-full w-full
+      ${openChooseDoctors ? "" : "pointer-events-none opacity-0"}`}
       >
         <div
-          className={`fixed top-1/2 left-1/2 w-11/12 -translate-y-1/2 -translate-x-1/2 rounded-lg
-          bg-white p-6 shadow-xl duration-200 ${
+          onClick={() => setOpenChooseDoctors(false)}
+          className={`shader
+    ${openChooseDoctors ? "" : "opacity-0"}`}
+        ></div>
+        <div
+          className={`popup w-11/12 ${
             openChooseDoctors ? "" : "scale-95 opacity-0"
           }`}
         >
-          <MdClose
-            className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
+          <button
+            className="absolute top-0 right-0 m-2 rounded-full p-2 text-2xl font-light text-slate-400 
+          opacity-50 duration-100  hover:bg-red-500 hover:text-slate-50"
             onClick={() => setOpenChooseDoctors(false)}
-          />
+          >
+            <MdClose />
+          </button>
           <p className="text-center text-3xl font-bold text-slate-600">
             REQUEST
           </p>
@@ -530,12 +522,15 @@ const UserSchedule = () => {
         </div>
       </div>
       {openDoctorDetail && (
-        <div className="shader top-6">
-          <div className="popup flex h-fit w-11/12 flex-col items-center">
-            <MdClose
-              className="absolute right-4 cursor-pointer text-2xl text-slate-500 duration-150 hover:text-slate-300"
+        <div className="shader top-6 z-30 ">
+          <div className="popup w-11/12">
+            <button
+              className=" absolute top-0 right-0 m-2 rounded-full p-2 text-2xl font-light text-slate-400 
+                          opacity-50 duration-100  hover:bg-red-500 hover:text-slate-50"
               onClick={() => setOpenDoctorDetail(false)}
-            />
+            >
+              <MdClose />
+            </button>
             {fetching ? (
               <div className="flex w-full items-center justify-center">
                 <ProgressSpinner
@@ -549,7 +544,7 @@ const UserSchedule = () => {
                 <div className="flex w-full flex-col text-slate-600">
                   <img
                     src={doctorDetail.profilePictureUrl}
-                    className="h-[150px] rounded-lg object-contain"
+                    className="mx-auto h-[150px] rounded-lg object-contain"
                     alt="doctor-profile"
                   />
                   <p className="text-center text-2xl">
@@ -603,7 +598,7 @@ const UserSchedule = () => {
                   <p className="mt-4 text-start text-xl text-slate-600">
                     Review
                   </p>
-                  <div className="no-scrollbar h-80 overflow-scroll">
+                  <div className="no-scrollbar h-52 overflow-scroll">
                     {doctorDetail.reviews.map((e) => (
                       <>
                         <div
@@ -653,14 +648,32 @@ const UserSchedule = () => {
           </div>
         </div>
       )}
-      <ConfirmPopup
-        title={"Confirm Choosing Therapist"}
-        description={"Would you like to proceed with this therapist?"}
-        action={chooseDoctor}
-        state={confirmChoosing}
-        setState={setConfirmChoosing}
-      />
-
+      <div
+        className={`fixed top-0 left-0 h-full w-full ${
+          !confirmChoosing && "pointer-events-none opacity-0"
+        }`}
+      >
+        <ConfirmPopup
+          title={"Confirm Choosing Therapist"}
+          description={"Would you like to proceed with this therapist?"}
+          action={chooseDoctor}
+          state={confirmChoosing}
+          setState={setConfirmChoosing}
+        />
+      </div>
+      <div
+        className={`fixed top-0 left-0 h-full w-full ${
+          !openRemoveRequest && "pointer-events-none opacity-0"
+        }`}
+      >
+        <ConfirmPopup
+          title={"Delete Request"}
+          description={"Are you sure to delete this request?"}
+          action={deleteRequest}
+          state={openRemoveRequest}
+          setState={setOpenRemoveRequest}
+        />
+      </div>
       <SendingPopup />
       <ResultPopup />
     </>
