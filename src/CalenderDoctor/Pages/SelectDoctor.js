@@ -48,6 +48,7 @@ const useGetdoctors = ({ date }) => {
       .then((response) => {
         setFetching(false);
         const _data = findFreeDoctor(response.data);
+        console.log('response.data ', response.data )
         console.log('_data', _data)
         setDoctors(_data);
       })
