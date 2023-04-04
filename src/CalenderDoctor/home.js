@@ -116,9 +116,9 @@ export const Home = () => {
 
   const dateTemplate = (date) => {
     const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
-    if (!datesArray.includes(_date.toLocaleDateString())) {
+    if (!datesArray.includes(_date.toLocaleDateString("en"))) {
       const _datesArray = [
-        ...new Set([...datesArray, _date.toLocaleDateString()]),
+        ...new Set([...datesArray, _date.toLocaleDateString("en")]),
       ];
       setDatesArray(_datesArray);
     }
