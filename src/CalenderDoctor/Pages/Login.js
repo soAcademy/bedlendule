@@ -56,7 +56,7 @@ const Login = ({ setPage }) => {
             let config = {
               method: "post",
               maxBodyLength: Infinity,
-              url: "http://localhost:5555/bedlendule/getUserDetailByUUID",
+              url: "https://bedlendule-backend.vercel.app//bedlendule/getUserDetailByUUID",
               headers: {
                 Authorization: response.data.access_token,
                 "Content-Type": "application/json",

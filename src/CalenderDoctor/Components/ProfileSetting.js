@@ -42,7 +42,7 @@ const ProfileSetting = () => {
     const config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: "http://localhost:5555/bedlendule/updateUser",
+      url: "https://bedlendule-backend.vercel.app/bedlendule/updateUser",
       headers: {
         authorization: token,
         "Content-Type": "application/json",
@@ -66,7 +66,7 @@ const ProfileSetting = () => {
       formData.append("image", file);
       const config = {
         method: "post",
-        url: "http://localhost:5555/uploadImg",
+        url: "https://bedlendule-backend.vercel.app/uploadImg",
         headers: {
           authorization: token,
           "Content-Type": "multipart/form-data",

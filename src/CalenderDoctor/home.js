@@ -93,7 +93,7 @@ export const Home = () => {
       let config = {
         method: "post",
         maxBodyLength: Infinity,
-        url: "http://localhost:5555/bedlendule/getUserDetailByUUID",
+        url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
         headers: {
           Authorization: accessToken,
           "Content-Type": "application/json",

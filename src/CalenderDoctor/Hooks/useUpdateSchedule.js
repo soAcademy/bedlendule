@@ -139,7 +139,7 @@ const useUpdateSchedule = ({
     let config = {
       method: 'post',
       maxBodyLength: Infinity,
-      url: 'http://localhost:5555/bedlendule/deleteSchedule?',
+      url: 'https://bedlendule-backend.vercel.app/bedlendule/deleteSchedule?',
       headers: { 
         'Authorization': localStorage.getItem('access-token'), 
         'Content-Type': 'application/json'
