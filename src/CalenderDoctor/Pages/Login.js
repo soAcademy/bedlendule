@@ -48,6 +48,7 @@ const Login = ({ setPage }) => {
         redirect("/");
         if (!localStorage.getItem("userprofile")) {
           const uuid = localStorage.getItem("uuid");
+          console.log("uuid", uuid);
           if (uuid) {
             let data = JSON.stringify({
               uuid: uuid,

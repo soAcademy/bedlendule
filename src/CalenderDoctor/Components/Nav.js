@@ -30,13 +30,13 @@ const Nav = () => {
       >
         <img
           className={`mx-auto mt-4 h-28 w-28 items-center rounded-full object-contain text-center text-white ${
-            !userProfile.profilePictureUrl && "bg-slate-300"
+            !userProfile?.profilePictureUrl && "bg-slate-300"
           }`}
-          src={userProfile.profilePictureUrl || null}
+          src={userProfile?.profilePictureUrl || null}
           alt=""
         />
         <p className="text-center border-b p-4 m-2">
-          {userProfile.firstName} {userProfile.lastName}
+          {userProfile?.firstName} {userProfile?.lastName}
         </p>
         <ul className="flex w-full flex-col space-y-2">
           <Link

@@ -1,30 +1,13 @@
-import axios from "axios";
+import useRedirect from "../Hooks/useRedirect";
 import DoctorSchedule from "./DoctorSchedule";
 import PatientSchedule from "./PatientSchedule";
-import { useState } from "react";
-import useRedirect from "../Hooks/useRedirect";
 const Schedule = () => {
-  const [type,setType] = useState()
-  const token = localStorage.getItem("access-token");
-  const {redirectToLogin} = useRedirect()
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    url: 'https://bedlendule-backend.vercel.app/bedlendule/verifySession',
-    headers: { 
-      'authorization': token
-    },
-  };
-  
-  axios.request(config)
-  .then((response) => {
-    response.data.type === "PATIENT" ? setType("PATIENT") : setType("DOCTOR")
-  })
-  .catch((error) => {
-    console.log(error);
-    redirectToLogin()
-  });
-  
+  const {redirect} = useRedirect()
+  const type = JSON.parse(localStorage.getItem("userprofile"))?.type 
+  if (!type) {
+    console.log('notype')
+    redirect('/login')
+  }
   return (
     <>
       {type === "PATIENT" && <PatientSchedule />}
