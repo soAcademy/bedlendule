@@ -18,7 +18,7 @@ const useGetdoctors = ({ date }) => {
   const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
 
   const findFreeDoctor = (allDoctors) => {
-    console.log("allDoctors",allDoctors)
+    console.log("allDoctors", allDoctors);
     const findRequestNull = allDoctors.map((allDoctors) =>
       allDoctors.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
@@ -52,7 +52,6 @@ const useGetdoctors = ({ date }) => {
         setFetching(false);
         const _data = findFreeDoctor(response.data);
         setDoctors(_data);
-       
       })
       .catch((error) => {
         console.log(error);
@@ -138,45 +137,61 @@ const SelectDoctor = () => {
             setOpenDoctorDetail(true);
           }}
         >
-          <div className="flex justify-between">
-            <div className="font-bol w-[60%] text-xl text-[#666CFF]">
-              {doctor?.doctor?.firstName}&nbsp; {doctor?.doctor?.lastName}
+          <div className="flex justify-between gap-2 ">
+            <div className=" my-auto mx-auto flex aspect-square w-1/3 overflow-hidden rounded-full border-2 border-green-400 object-cover md:w-[200px]">
+              <img
+                src={
+                  doctor?.doctor?.profilePictureUrl !== null
+                    ? doctor?.doctor?.profilePictureUrl
+                    : "https://www.pngkey.com/png/full/115-1150152_default-profile-picture-avatar-png-green.png"
+                }
+              />
             </div>
-
-            <Rating
-              onIcon={
-                <img
-                  src="/rating-icon-active.png"
-                  onError={(e) =>
-                    (e.target.src =
-                      "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+            <div className="my-auto  mx-auto flex w-2/3 flex-col space-y-2 pl-2">
+              <div className="font-bol w-full text-xl text-green-400">
+                {doctor?.doctor?.firstName}&nbsp; {doctor?.doctor?.lastName}
+              </div>
+              <div className=" ">
+                <Rating
+                  onIcon={
+                    <img
+                      src="/rating-icon-active.png"
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                      }
+                      alt="custom-active"
+                      width="12px"
+                      height="12px"
+                    />
                   }
-                  alt="custom-active"
-                  width="12px"
-                  height="12px"
-                />
-              }
-              offIcon={
-                <img
-                  src="/rating-icon-inactive.png"
-                  onError={(e) =>
-                    (e.target.src =
-                      "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                  offIcon={
+                    <img
+                      src="/rating-icon-inactive.png"
+                      onError={(e) =>
+                        (e.target.src =
+                          "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                      }
+                      alt="custom-inactive"
+                      width="12px"
+                      height="12px"
+                    />
                   }
-                  alt="custom-inactive"
-                  width="12px"
-                  height="12px"
+                  value={
+                    doctor?.doctor?.reviews?.reduce(
+                      (acc, r) => acc + r.score,
+                      0
+                    ) / doctor?.doctor?.reviews?.map((r) => r.score).length
+                  }
+                  start={5}
+                  cancel={false}
                 />
-              }
-              value={
-                doctor?.doctor?.reviews?.reduce((acc, r) => acc + r.score, 0) /
-                doctor?.doctor?.reviews?.map((r) => r.score).length
-              }
-              start={5}
-              cancel={false}
-            />
+              </div>
+              <div className=" h-[50px] w-[200px] overflow-hidden text-[#4C4E64]  md:w-full ">
+                &nbsp;{doctor.description}
+              </div>
+            </div>
           </div>
-          <div className="p-2 text-[#4C4E64]">{doctor.description}</div>
         </div>
       ))}
 

@@ -202,7 +202,7 @@ const SelectDoctorDetail = ({
       ></shader>
 
       <div
-        className={`absolute top-[10%]  right-[5%] z-30 flex  w-[90%] flex-col bg-white pt-4 shadow-lg duration-300 md:mt-[180px] 
+        className={`absolute top-[10%]  right-[5%] z-30 flex  w-[90%] flex-col bg-white pt-4 shadow-lg duration-300 md:my-auto
             ${
               openDoctorDetail
                 ? "scale-100 opacity-100"
