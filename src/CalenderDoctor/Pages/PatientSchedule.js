@@ -73,6 +73,7 @@ const UserSchedule = () => {
       .request(config)
       .then((response) => {
         setSending(false);
+        console.log("response", response);
         response.status === 200
           ? setSubmitSuccessPopUp(true)
           : setSubmitFailPopUp(true);
@@ -137,7 +138,6 @@ const UserSchedule = () => {
     axios
       .request(config)
       .then((response) => {
-        console.log('response.data', response.data)
         setRequests(response.data);
         setFetching(false);
       })
@@ -305,7 +305,11 @@ const UserSchedule = () => {
                         setOpenChooseDoctors(true);
                       }}
                       className={`button float-right my-auto h-fit p-2 text-xs text-white
-                        ${request.status !== "ACCEPTED" && "hidden"}`}
+                        ${
+                          (request.status !== "ACCEPTED" ||
+                            request.doctorTimeslot.length === 0) &&
+                          "hidden"
+                        }`}
                     >
                       CHOOSE DOCTOR
                     </button>
@@ -445,10 +449,15 @@ const UserSchedule = () => {
             </p>
             <p>
               <p>From</p>
-              {requestToExecute?.startTime.split("T")[1].slice(0, 5)}
+              {new Date(requestToExecute?.startTime)
+                .toLocaleTimeString("en-GB")
+                .slice(0, 5)}
             </p>
             <p>
-              <p>To</p> {requestToExecute?.finishTime.split("T")[1].slice(0, 5)}
+              <p>To</p>{" "}
+              {new Date(requestToExecute?.finishTime)
+                .toLocaleTimeString("en-GB")
+                .slice(0, 5)}
             </p>
           </div>
           <p>Description</p>
@@ -463,62 +472,65 @@ const UserSchedule = () => {
               Price : ฿{requestToExecute?.price}
             </div>
           </div>
-          {requestToExecute?.doctorTimeslot.map((e) => (
-            <div className="flex items-center justify-between">
-              <div
-                onClick={() => {
-                  setOpenDoctorDetail(true);
-                  setDoctorUUID(e.doctorUUID);
-                }}
-                className="my-2 min-h-[80px] w-3/4 cursor-pointer rounded-xl border border-[#cfe6eb] p-2 px-3 shadow-md"
-              >
-                <div className="flex justify-between">
-                  <p className="text-lg text-[#3f6fb6]">
-                    {e.firstName} {e.lastName}
-                  </p>
-                  <Rating
-                    onIcon={
-                      <img
-                        src="/rating-icon-active.png"
-                        onError={(e) =>
-                          (e.target.src =
-                            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                        }
-                        alt="custom-active"
-                        width="12px"
-                        height="12px"
-                      />
-                    }
-                    offIcon={
-                      <img
-                        src="/rating-icon-inactive.png"
-                        onError={(e) =>
-                          (e.target.src =
-                            "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                        }
-                        alt="custom-inactive"
-                        width="12px"
-                        height="12px"
-                      />
-                    }
-                    readOnly
-                    cancel={false}
-                    value={e.reviewScore}
-                  />
+          {requestToExecute?.doctorTimeslot.map((e) => {
+            console.log(e);
+            return (
+              <div className="flex items-center justify-between">
+                <div
+                  onClick={() => {
+                    setOpenDoctorDetail(true);
+                    setDoctorUUID(e.doctorUUID);
+                  }}
+                  className="my-2 min-h-[80px] w-3/4 cursor-pointer rounded-xl border border-[#cfe6eb] p-2 px-3 shadow-md"
+                >
+                  <div className="flex justify-between">
+                    <p className="text-lg text-[#3f6fb6]">
+                      {e.firstName} {e.lastName}
+                    </p>
+                    <Rating
+                      onIcon={
+                        <img
+                          src="/rating-icon-active.png"
+                          onError={(e) =>
+                            (e.target.src =
+                              "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                          }
+                          alt="custom-active"
+                          width="12px"
+                          height="12px"
+                        />
+                      }
+                      offIcon={
+                        <img
+                          src="/rating-icon-inactive.png"
+                          onError={(e) =>
+                            (e.target.src =
+                              "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                          }
+                          alt="custom-inactive"
+                          width="12px"
+                          height="12px"
+                        />
+                      }
+                      readOnly
+                      cancel={false}
+                      value={e.reviewScore}
+                    />
+                  </div>
+                  <p>{e.background}</p>
                 </div>
-                <p>{e.background}</p>
+                <button
+                  onClick={() => {
+                    setConfirmChoosing(true);
+                    setTimeSlotId(e.id);
+                  }}
+                  className="button h-fit p-1 px-2 text-sm"
+                >
+                  choose
+                </button>
               </div>
-              <button
-                onClick={() => {
-                  setConfirmChoosing(true);
-                  setTimeSlotId(e.id);
-                }}
-                className="button h-fit p-1 px-2 text-sm"
-              >
-                choose
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
       {openDoctorDetail && (
@@ -569,7 +581,7 @@ const UserSchedule = () => {
                                   timeslot.request?.status === "CHOSEN"
                               ).length,
                             0
-                          )}
+                          ) || 0}
                         </p>
                         <p className="text-sm text-slate-500">Cases Done</p>
                       </div>
@@ -583,7 +595,7 @@ const UserSchedule = () => {
                           {doctorDetail.reviews.reduce(
                             (acc, e) => acc + e.score,
                             0
-                          ) / doctorDetail.reviews.length}
+                          ) / doctorDetail.reviews.length || 0}
                         </p>
                         <p className="text-sm text-slate-500">Rate Given</p>
                       </div>

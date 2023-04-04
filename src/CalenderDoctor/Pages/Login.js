@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Checkbox } from "primereact/button";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
@@ -6,11 +6,13 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import axios from "axios";
 import { Toast } from "primereact/toast";
+import { FetchContext } from "../home";
 
 const Login = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [loginFail, setLoginFail] = useState();
   const [logginIn, setLogginIn] = useState(false);
+  const { fetch, setFetch } = useContext(FetchContext);
   const redirect = useNavigate();
   const toast = useRef(null);
   const show = () => {
@@ -42,9 +44,7 @@ const Login = () => {
     axios(config)
       .then((response) => {
         localStorage.setItem("access-token", response.data.access_token);
-        document.querySelector("#password").value = "";
         localStorage.setItem("uuid", response.data.uuid);
-        redirect("/");
         if (!localStorage.getItem("userprofile")) {
           let data = JSON.stringify({
             uuid: response.data.uuid,
@@ -68,15 +68,17 @@ const Login = () => {
                 "userprofile",
                 JSON.stringify(response.data)
               );
+              redirect("/");
+              document.querySelector("#password").value = "";
+              show();
+              setAuthenticated(true);
+              setLogginIn(false);
+              setFetch(!fetch);
             })
             .catch((error) => {
               console.log(error);
             });
         }
-        redirect("/");
-        show();
-        setAuthenticated(true);
-        setLogginIn(false);
       })
       .catch((error) => {
         document.querySelector("#password").value = "";
