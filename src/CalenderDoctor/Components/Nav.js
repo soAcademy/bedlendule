@@ -25,7 +25,7 @@ const Nav = () => {
         >
           <FaAlignJustify className="cursor-pointer" />
         </button>
-        <div className="fixed top-[-5%] right-3 float-right">
+        <div className="fixed right-3 float-right">
           <img className="h-[50px]" src="doctorLogo.png" alt="logo" />
         </div>
       </div>

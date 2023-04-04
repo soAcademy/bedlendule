@@ -41,6 +41,8 @@ const usePatientCalendarProps = () => {
   }, []);
 
   useEffect(() => {
+    console.log('datesArray', datesArray)
+    console.log('timeSlots', timeSlots)
     const _disabledDates = datesArray.filter((e) => !timeSlots.includes(e));
     setDisabledDates(_disabledDates);
   }, [timeSlots, datesArray]);
