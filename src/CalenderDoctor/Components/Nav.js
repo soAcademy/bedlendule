@@ -4,6 +4,7 @@ import React, { useState } from "react";
 const Nav = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const location = useLocation();
+  const userProfile = JSON.parse(localStorage.getItem("userprofile"));
   return (
     <div className="z-[9999] w-full">
       <div className="fixed top-0 z-50 flex h-[50px] w-full flex-row bg-[#C5E1A5] px-2 drop-shadow-md">
@@ -19,11 +20,24 @@ const Nav = () => {
           <img className="h-[50px]" src="doctorLogo.png" alt="logo" />
         </div>
       </div>
-      <backdrop onClick={()=>setIsSideBarOpen(false)} className={isSideBarOpen && `shader z-40`}></backdrop>
+      <backdrop
+        onClick={() => setIsSideBarOpen(false)}
+        className={isSideBarOpen && `shader z-40`}
+      ></backdrop>
       <section
         className={`fixed top-[50px] left-0 z-40 h-full w-2/3 bg-slate-50 py-6 px-3 shadow-xl duration-200
       ${!isSideBarOpen && "-translate-x-full"}`}
       >
+        <img
+          className={`mx-auto mt-4 h-28 w-28 items-center rounded-full object-contain text-center text-white ${
+            !userProfile?.profilePictureUrl && "bg-slate-300"
+          }`}
+          src={userProfile?.profilePictureUrl || null}
+          alt=""
+        />
+        <p className="text-center border-b p-4 m-2">
+          {userProfile?.firstName} {userProfile?.lastName}
+        </p>
         <ul className="flex w-full flex-col space-y-2">
           <Link
             to="login"
