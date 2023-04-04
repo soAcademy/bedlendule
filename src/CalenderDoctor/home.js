@@ -1,19 +1,12 @@
 import { useState, useEffect, createContext } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Nav from "./Components/Nav";
-import CreateRequest from "./Components/CreateRequest";
 import "primereact/resources/themes/saga-green/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import Landing from "./Pages/Landing";
 import Registration from "./Pages/Registration";
 import Login from "./Pages/Login";
-import PatientSchedule from "./Pages/PatientSchedule";
-import DoctorSchedule from "./Pages/DoctorSchedule";
-import { BsArrowLeft } from "react-icons/bs";
-import DoctorProfileUserSide from "./Components/RequestInfoUser";
-import ReviewDoctor from "./Components/ReviewDoctor";
-import RequestDetail from "./Components/RequestDetail";
 import SelectDoctor from "./Components/SelectDoctor";
 import axios from "axios";
 import SelectRequest from "./Components/SelectRequest";
@@ -30,8 +23,9 @@ export const Home = () => {
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
   const [page, setPage] = useState(); // landing
   const [type, setType] = useState(); //อย่าลืมเปลี่ยนเป็น doctor
-  window.onload = () => {
-    const accessToken = localStorage.getItem("access-token");
+
+  const accessToken = localStorage.getItem("access-token");
+  useEffect(() => {
     if (accessToken) {
       let config = {
         method: "post",
@@ -45,40 +39,79 @@ export const Home = () => {
       axios
         .request(config)
         .then((response) => {
-          console.log("onload");
           if (response.status === 200 && response.data.uuid) {
             localStorage.setItem("uuid", response.data.uuid);
+          } else if (
+            response.status === 200 &&
+            !response.data.uuid &&
+            window.location.href !== window.location.origin + "/login"
+          ) {
+            window.location = window.location.origin + "/login";
+            localStorage.removeItem("access-token");
+            localStorage.removeItem("userprofile");
+          } else {
+            window.location = window.location.origin + "/login";
+            localStorage.removeItem("access-token");
+            localStorage.removeItem("uuid");
+            localStorage.removeItem("userprofile");
           }
         })
         .catch((error) => {
           window.location = window.location.origin + "/login";
           localStorage.removeItem("access-token");
           localStorage.removeItem("uuid");
+          localStorage.removeItem("userprofile");
+          console.log(error);
+        });
+    } else {
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://bedlendule-backend.vercel.app/bedlendule/getPublicToken",
+        headers: {},
+      };
+
+      axios
+        .request(config)
+        .then((response) => {
+          localStorage.setItem("access-token", response.data.access_token);
+          localStorage.removeItem("uuid");
+          localStorage.removeItem("userprofile");
+        })
+        .catch((error) => {
           console.log(error);
         });
     }
-  };
-
-  if (!localStorage.getItem("access-token")) {
-    let config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getPublicToken",
-      headers: {},
-    };
-
-    axios
-      .request(config)
-      .then((response) => {
-        localStorage.setItem("access-token", response.data.access_token);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  }, []);
   useEffect(() => {
-    console.log("page", page);
-  }, [page]);
+    const uuid = localStorage.getItem("uuid");
+    if (uuid) {
+      let data = JSON.stringify({
+        uuid: uuid,
+      });
+
+      let config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+        headers: {
+          Authorization: accessToken,
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
+
+      axios
+        .request(config)
+        .then((response) => {
+          localStorage.setItem("userprofile", JSON.stringify(response.data));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, []);
+
   const dateTemplate = (date) => {
     const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
     if (!datesArray.includes(_date.toLocaleDateString())) {
@@ -157,20 +190,15 @@ export const Home = () => {
       >
         <div className="relative h-full w-full font-kanit">
           <BrowserRouter>
-            <Nav
-              setType={setType}
-              type={type}
-              page={page}
-              setPage={setPage}
-            />
+            <Nav setType={setType} type={type} page={page} setPage={setPage} />
 
             <div className="absolute top-[50px] w-full">
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="login" element={<Login />} />
-                <Route path ="setting" element={<ProfileSetting/>}/>
+                <Route path="setting" element={<ProfileSetting />} />
                 <Route path="signup" element={<Registration />} />
-                <Route path="schedule" element={<Schedule />}></Route>
+                <Route path="schedule" element={<Schedule />} />
                 <Route
                   exact
                   path="schedule/selectdoctor/:date"

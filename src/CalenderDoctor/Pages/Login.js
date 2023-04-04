@@ -14,10 +14,6 @@ const Login = ({ setPage }) => {
   const [logginIn, setLogginIn] = useState(false);
   const redirect = useNavigate();
   const toast = useRef(null);
-  // const uuid = localStorage.getItem("uuid");
-  // useEffect(() => {
-  //   uuid && redirect("/");
-  // }, [uuid]);
   const show = () => {
     toast.current.show({
       severity: "error",
@@ -39,18 +35,49 @@ const Login = ({ setPage }) => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/login",
       headers: {
         "Content-Type": "application/json",
-        "authorization": localStorage.getItem("access-token"),
+        authorization: localStorage.getItem("access-token"),
       },
       data: data,
     };
 
     axios(config)
       .then((response) => {
-        console.log('response789', response)
         localStorage.setItem("access-token", response.data.access_token);
         document.querySelector("#password").value = "";
         localStorage.setItem("uuid", response.data.uuid);
         redirect("/");
+        if (!localStorage.getItem("userprofile")) {
+          const uuid = localStorage.getItem("uuid");
+          console.log("uuid", uuid);
+          if (uuid) {
+            let data = JSON.stringify({
+              uuid: uuid,
+            });
+
+            let config = {
+              method: "post",
+              maxBodyLength: Infinity,
+              url: "https://bedlendule-backend.vercel.app//bedlendule/getUserDetailByUUID",
+              headers: {
+                Authorization: response.data.access_token,
+                "Content-Type": "application/json",
+              },
+              data: data,
+            };
+
+            axios
+              .request(config)
+              .then((response) => {
+                localStorage.setItem(
+                  "userprofile",
+                  JSON.stringify(response.data)
+                );
+              })
+              .catch((error) => {
+                console.log(error);
+              });
+          }
+        }
         show();
         setAuthenticated(true);
         setLogginIn(false);
