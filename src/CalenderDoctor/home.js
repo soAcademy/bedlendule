@@ -123,7 +123,7 @@ export const Home = () => {
       setDatesArray(_datesArray);
     }
     if (
-      timeSlots?.includes(_date.toLocaleDateString()) &&
+      timeSlots?.includes(_date.toLocaleDateString("en")) &&
       _date.getTime() >= new Date(new Date().toDateString()).getTime()
     ) {
       return date.day === new Date().getDate() ? (

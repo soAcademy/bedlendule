@@ -35,6 +35,7 @@ const useGetdoctors = ({ date }) => {
     setFetching(true);
     setSelectDate(new Date(date).toISOString());
     const data = JSON.stringify({ date: new Date(date).toISOString() });
+    console.log("select data>>",data)
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -49,7 +50,7 @@ const useGetdoctors = ({ date }) => {
       .then((response) => {
         setFetching(false);
         const _data = findFreeDoctor(response.data);
-        console.log('response.data ', response.data )
+        console.log('response.data>> ', response.data )
         console.log('_data', _data)
         setDoctors(_data);
       })
@@ -141,9 +142,8 @@ const SelectDoctor = () => {
             <div className=" my-auto mx-auto flex aspect-square w-1/3 overflow-hidden rounded-full border-2 border-green-400 object-cover md:w-[200px]">
               <img
                 src={
-                  doctor?.doctor?.profilePictureUrl !== null
-                    ? doctor?.doctor?.profilePictureUrl
-                    : "https://www.pngkey.com/png/full/115-1150152_default-profile-picture-avatar-png-green.png"
+                  doctor?.doctor?.profilePictureUrl   ||
+                     "https://www.pngkey.com/png/full/115-1150152_default-profile-picture-avatar-png-green.png"
                 }
               />
             </div>
