@@ -91,7 +91,7 @@ const Nav = () => {
           >
             SETTING
           </Link>
-          <Link
+          {/* <Link
             to={"faqs"}
             onClick={() => {
               setIsSideBarOpen(false);
@@ -104,7 +104,7 @@ const Nav = () => {
             `}
           >
             FAQS
-          </Link>
+          </Link> */}
           <Link
             to={"login"}
             onClick={() => {

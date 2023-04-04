@@ -25,7 +25,7 @@ const ProfileSetting = () => {
       failedAction: () => {},
     });
   const token = localStorage.getItem("access-token");
-
+  const type = JSON.parse(localStorage.getItem("userprofile"))?.type;
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     console.log("selectedFile", selectedFile);
@@ -174,7 +174,7 @@ const ProfileSetting = () => {
               </div>
             </label>
           )}
-          {/* {selectedImage === null && (
+          {selectedImage === null && (
             <label for="file-input">
               <img
                 alt="not found"
@@ -185,7 +185,7 @@ const ProfileSetting = () => {
                 <BiEditAlt className="absolute top-7 right-7" />
               </div>
             </label>
-          )} */}
+          )}
           <input
             id="file-input"
             type="file"
@@ -206,7 +206,11 @@ const ProfileSetting = () => {
               defaultValue={email}
             />
           </div>
-          <div className="flex flex-row space-x-5">
+          <div
+            className={`flex flex-row space-x-5 ${
+              type === "PATIENT" && "hidden"
+            }`}
+          >
             <div className="my-auto w-1/3">License ID</div>
             <input
               onChange={(e) => setLicenseId(e.target.value)}
@@ -232,18 +236,20 @@ const ProfileSetting = () => {
               defaultValue={contact}
             />
           </div>
-          <label for="background" className="mx-auto">
-            Background
-          </label>
-          <textarea
-            onChange={(e) => {}}
-            className="flex min-h-[120px] items-center rounded-lg border-2 border-slate-500 p-2"
-            maxLength={130}
-            name="background"
-            id="background"
-            placeholder="Background"
-            defaultValue={background}
-          />
+          <div className={`${type === "PATIENT" && "hidden"} w-full flex flex-col items-center`}>
+            <label for="background" className="mx-auto">
+              Background
+            </label>
+            <textarea
+              onChange={(e) => {}}
+              className={`w-full min-h-[120px] items-center rounded-lg border-2 border-slate-500 p-2 `}
+              maxLength={130}
+              name="background"
+              id="background"
+              placeholder="Background"
+              defaultValue={background}
+            />
+          </div>
           <button className="button mx-auto w-1/2 py-2 " type="submit">
             Submit
           </button>
