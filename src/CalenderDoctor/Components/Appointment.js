@@ -70,6 +70,7 @@ const Appointment = ({
   const redirect = useNavigate();
 
   const bookSlot = (chooseTimeSlot) => {
+    console.log("booking")
     const _result = {
       price: chooseTimeSlot[1]?.price,
       startTime: chooseTimeSlot[1]?.startTime,
@@ -120,11 +121,11 @@ const Appointment = ({
 
     return;
   };
-// console.log("doctorName",doctorName);
+  // console.log("doctorName",doctorName);
   return (
     <>
       <div className="fixed top-0 z-30 h-screen w-screen backdrop-blur-[2px]">
-        <div className="fixed top-1/2 left-1/2 w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-2 shadow-lg">
+        <div className="fixed top-1/2 left-1/2 w-[90%] -translate-x-1/2 -translate-y-1/2 rounded-lg border border-slate-200 bg-white p-2 shadow-lg">
           <div className="relative flex flex-col text-center">
             <div className=" my-2 text-2xl font-bold">APPPOINTMENT</div>
             <div
@@ -197,8 +198,8 @@ const Appointment = ({
         </div>
       </div>
       {processing && (
-        <div className="fixed top-0 z-40 flex h-screen w-screen  ">
-          <div className="relative mx-auto my-auto flex h-[15%] w-[60%] flex-col  rounded-lg bg-white  shadow-lg  ">
+        <div className="fixed top-0 z-40 flex h-screen w-screen ">
+          <div className="relative mx-auto my-auto flex h-[15%] w-10/12 flex-col rounded-lg border  border-slate-200 bg-white  shadow-lg ">
             <div className="w-full pt-4 text-center text-slate-600 ">
               {" "}
               {success === false ? (

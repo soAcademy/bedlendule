@@ -1,10 +1,20 @@
 import { FaAlignJustify } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import React, { useState } from "react";
+import { useContext } from "react";
+import { FetchContext } from "../home";
+import { useEffect } from "react";
 const Nav = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const location = useLocation();
-  const userProfile = JSON.parse(localStorage.getItem("userprofile"));
+  const { fetch } = useContext(FetchContext);
+  const [userProfile, setUserProfile] = useState();
+  useEffect(() => {
+    console.log("fetching")
+    const _newUserProfile = JSON.parse(localStorage.getItem("userprofile"))
+    setUserProfile(_newUserProfile)
+    console.log(JSON.parse(localStorage.getItem("userprofile")).profilePictureUrl)
+  }, [fetch]);
   return (
     <div className="z-[9999] w-full">
       <div className="fixed top-0 z-50 flex h-[50px] w-full flex-row bg-[#C5E1A5] px-2 drop-shadow-md">
@@ -35,7 +45,7 @@ const Nav = () => {
           src={userProfile?.profilePictureUrl || null}
           alt=""
         />
-        <p className="text-center border-b p-4 m-2">
+        <p className="m-2 border-b p-4 text-center">
           {userProfile?.firstName} {userProfile?.lastName}
         </p>
         <ul className="flex w-full flex-col space-y-2">
@@ -81,7 +91,7 @@ const Nav = () => {
           >
             SETTING
           </Link>
-          <Link
+          {/* <Link
             to={"faqs"}
             onClick={() => {
               setIsSideBarOpen(false);
@@ -94,7 +104,7 @@ const Nav = () => {
             `}
           >
             FAQS
-          </Link>
+          </Link> */}
           <Link
             to={"login"}
             onClick={() => {

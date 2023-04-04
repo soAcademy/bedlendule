@@ -115,7 +115,7 @@ const DoctorSchedule = () => {
       .catch((error) => {
         console.log(error);
         setFetching(false);
-        if (error.response.status === 401) {
+        if (error.response?.status === 401) {
           redirectToLogin();
         }
       });
@@ -460,9 +460,9 @@ const DoctorSchedule = () => {
             )
           );
         })}
-        {schedules.findIndex(
+        {schedules?.findIndex(
           (schedule) =>
-            new Date(schedule.timeslots.at(-1).startTime).getTime() >
+            new Date(schedule.timeslots.at(-1)?.startTime).getTime() >
             new Date().getTime()
         ) === -1 &&
           !fetching && (
