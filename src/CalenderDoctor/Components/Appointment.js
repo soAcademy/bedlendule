@@ -205,10 +205,10 @@ const Appointment = ({
               {success === false ? (
                 "Processing..."
               ) : (
-                <span className="">
-                  <p className="text-xl text-[#99B47B]">Success</p>
-                  <p>Your booking is succesfull</p>
-                </span>
+                <div className=" w-full ">
+                  <div className="text-xl text-[#99B47B]">Success</div>
+                  <div className="px-2">Your booking is succesfull</div>
+                </div>
               )}
             </div>
 

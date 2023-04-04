@@ -7,11 +7,11 @@ import "primeicons/primeicons.css";
 import Landing from "./Pages/Landing";
 import Registration from "./Pages/Registration";
 import Login from "./Pages/Login";
-import SelectDoctor from "./Components/SelectDoctor";
+import SelectDoctor from "./Pages/SelectDoctor";
 import axios from "axios";
-import SelectRequest from "./Components/SelectRequest";
+import SelectRequest from "./Pages/SelectRequest";
 import Schedule from "./Pages/Schedule";
-import ProfileSetting from "./Components/ProfileSetting";
+import ProfileSetting from "./Pages/ProfileSetting";
 
 export const ConfirmPopupContext = createContext();
 export const DisabledatesContext = createContext();

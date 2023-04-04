@@ -28,8 +28,10 @@ const ProfileSetting = () => {
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
+    console.log("selectedFile",selectedFile);
     setFile(selectedFile);
     const temporaryUrl = URL.createObjectURL(selectedFile);
+    console.log("temporaryUrl",temporaryUrl)
     setSelectedImage(temporaryUrl);
   };
 
@@ -42,7 +44,7 @@ const ProfileSetting = () => {
       background: input["background"].value,
       profilePictureUrl: imageUrl,
     });
-
+ console.log("data:",data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -77,6 +79,7 @@ const ProfileSetting = () => {
     setSending(true);
     if (file) {
       const formData = new FormData();
+      console.log("formData:",formData);
       formData.append("image", file);
       const config = {
         method: "post",
@@ -109,6 +112,7 @@ const ProfileSetting = () => {
       setSending(false);
     }
   };
+<<<<<<< HEAD:src/CalenderDoctor/Components/ProfileSetting.js
   useEffect(() => {
     let data = JSON.stringify({
       uuid: localStorage.getItem("uuid"),
@@ -143,6 +147,10 @@ const ProfileSetting = () => {
         }
       });
   }, [updated]);
+=======
+  console.log("file:",file);
+  console.log("selectedImage",selectedImage);
+>>>>>>> f0b0f2eb72539e12e948b1bd876ad777ba66d606:src/CalenderDoctor/Pages/ProfileSetting.js
 
   return (
     <form

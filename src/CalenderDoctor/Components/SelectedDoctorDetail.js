@@ -116,11 +116,11 @@ const SelectDoctorDetail = ({
   openDoctorDetail,
 }) => {
   const findFreeTimeSlot = (timeSlots) => {
-    // console.log("findFreeTimeSlot working...", timeSlots);
+    console.log("findFreeTimeSlot working...", timeSlots);
     const findRequestNull = timeSlots.map((r) =>
       r.timeslots.filter((timeslots) => timeslots.request === null)
     );
-    // console.log("findRequestNull", findRequestNull);
+    console.log("findRequestNull", findRequestNull);
 
     const filtertimeSlot = findRequestNull.map((r) =>
       r.filter((c) => {
@@ -134,7 +134,7 @@ const SelectDoctorDetail = ({
         );
       })
     );
-    // console.log("filtertimeSlot", filtertimeSlot);
+    console.log("filtertimeSlot", filtertimeSlot);
     const filterEmptyArray = filtertimeSlot.filter((r) => r.length > 0);
     // console.log("filteremptyArray", filterEmptyArray);
 
@@ -200,13 +200,14 @@ const SelectDoctorDetail = ({
         className={`shader
     ${!openDoctorDetail && "pointer-events-none opacity-0"}`}
       ></shader>
+
       <div
-        className={`popup flex w-full flex-col duration-300 
-    ${
-      openDoctorDetail
-        ? "scale-100 opacity-100"
-        : "pointer-events-none scale-95 opacity-0"
-    }`}
+        className={`absolute top-[10%]  right-[5%] z-30 flex  w-[90%] flex-col bg-white pt-4 shadow-lg duration-300 md:mt-[180px] 
+            ${
+              openDoctorDetail
+                ? "scale-100 opacity-100"
+                : "pointer-events-none scale-95 opacity-0"
+            }`}
       >
         <button
           className="absolute top-0 right-0 m-2 rounded-full p-2 text-2xl font-light text-slate-400 
@@ -250,7 +251,7 @@ const SelectDoctorDetail = ({
           <ul className="p-[20px] text-slate-600">
             <li className="">
               Email:
-              <span className="text-slate-700 ">
+              <span className="text-sm text-slate-700 ">
                 &nbsp;&nbsp;&nbsp;
                 {doctorDetail.email}
               </span>
