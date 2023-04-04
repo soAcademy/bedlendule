@@ -2,6 +2,11 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { BiEditAlt } from "react-icons/bi";
 import { enforceFormat, formatToPhone } from "../Functions/validateForm";
+import useSubmitResult from "../Hooks/useSubmitResult";
+import useSendingPopup from "../Hooks/useSendingPopup";
+import useRedirect from "../Hooks/useRedirect";
+import { useContext } from "react";
+import { FetchContext } from "../home";
 
 const ProfileSetting = () => {
   const [email, setEmail] = useState();
@@ -9,30 +14,29 @@ const ProfileSetting = () => {
   const [contact, setContact] = useState();
   const [background, setBackground] = useState();
   const [file, setFile] = useState(null);
-  const userProfile = JSON.parse(localStorage.getItem("userprofile"));
-  const [selectedImage, setSelectedImage] = useState(
-    userProfile?.profilePictureUrl
-  );
+  const [selectedImage, setSelectedImage] = useState();
+  const [updated, setUpdated] = useState(false);
+  const { fetch, setFetch } = useContext(FetchContext);
+  const { redirectToLogin } = useRedirect();
+  const { setSending, SendingPopup } = useSendingPopup();
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
+    useSubmitResult({
+      successAction: () => {},
+      failedAction: () => {},
+    });
   const token = localStorage.getItem("access-token");
-
-  useEffect(() => {
-    setSelectedImage(userProfile?.profilePictureUrl);
-    setEmail(userProfile?.email);
-    setLicenseId(userProfile?.licenseId);
-    setContact(userProfile?.phoneNumber);
-    setBackground(userProfile?.background);
-  }, [userProfile]);
-
-  const handleFileChange = async (event) => {
+  const type = JSON.parse(localStorage.getItem("userprofile"))?.type;
+  const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    console.log("selectedFile",selectedFile);
+    console.log("selectedFile", selectedFile);
     setFile(selectedFile);
     const temporaryUrl = URL.createObjectURL(selectedFile);
-    console.log("temporaryUrl",temporaryUrl)
+    console.log("temporaryUrl", temporaryUrl);
     setSelectedImage(temporaryUrl);
   };
 
   const updateProfile = (input, imageUrl) => {
+    setSending(true);
     const data = JSON.stringify({
       email: input["email"].value,
       phoneNumber: input["phoneNumber"].value,
@@ -40,7 +44,7 @@ const ProfileSetting = () => {
       background: input["background"].value,
       profilePictureUrl: imageUrl,
     });
- console.log("data:",data);
+    console.log("data:", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -55,17 +59,27 @@ const ProfileSetting = () => {
       .request(config)
       .then((response) => {
         console.log(JSON.stringify(response.data));
+        setUpdated(!updated);
+        setSending(false);
+        setSubmitSuccessPopUp(true);
       })
       .catch((error) => {
         console.log(error);
+        setUpdated(!updated);
+        setSending(false);
+        setSubmitFailPopUp(true);
+        if (error.response.status === 401) {
+          redirectToLogin();
+        }
       });
   };
 
   const handleSubmit = async (event, input) => {
     event.preventDefault();
+    setSending(true);
     if (file) {
       const formData = new FormData();
-      console.log("formData:",formData);
+      console.log("formData:", formData);
       formData.append("image", file);
       const config = {
         method: "post",
@@ -76,17 +90,62 @@ const ProfileSetting = () => {
         },
         data: formData,
       };
+      console.log(file);
       axios(config)
         .then(function (response) {
           updateProfile(input, response.data);
+          console.log(response.data);
         })
-        .catch(function (error) {});
+        .catch(function (error) {
+          console.log(error);
+          setSending(false);
+          setSubmitFailPopUp(true);
+          if (error.response.status === 401) {
+            redirectToLogin();
+          }
+        });
     } else {
-      updateProfile(input, userProfile.profilePictureUrl);
+      updateProfile(
+        input,
+        JSON.parse(localStorage.getItem("userprofile"))?.profilePictureUrl
+      );
+      setSending(false);
     }
   };
-  console.log("file:",file);
-  console.log("selectedImage",selectedImage);
+  useEffect(() => {
+    let data = JSON.stringify({
+      uuid: localStorage.getItem("uuid"),
+    });
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        localStorage.setItem("userprofile", JSON.stringify(response.data));
+        setFetch(!fetch);
+        setSelectedImage(response.data?.profilePictureUrl);
+        setEmail(response.data?.email);
+        setLicenseId(response.data?.licenseId);
+        setContact(response.data?.phoneNumber);
+        setBackground(response.data?.background);
+      })
+      .catch((error) => {
+        console.log(error);
+        setFetch(!fetch);
+        if (error.response.status === 401) {
+          redirectToLogin();
+        }
+      });
+  }, [updated]);
 
   return (
     <form
@@ -106,6 +165,7 @@ const ProfileSetting = () => {
             <label for="file-input">
               <img
                 alt="not found"
+                id="profile-image"
                 src={selectedImage}
                 className="mx-auto h-48 w-48 cursor-pointer rounded-full object-cover hover:opacity-80"
               />
@@ -146,7 +206,11 @@ const ProfileSetting = () => {
               defaultValue={email}
             />
           </div>
-          <div className="flex flex-row space-x-5">
+          <div
+            className={`flex flex-row space-x-5 ${
+              type === "PATIENT" && "hidden"
+            }`}
+          >
             <div className="my-auto w-1/3">License ID</div>
             <input
               onChange={(e) => setLicenseId(e.target.value)}
@@ -172,23 +236,27 @@ const ProfileSetting = () => {
               defaultValue={contact}
             />
           </div>
-          <label for="background" className="mx-auto">
-            Background
-          </label>
-          <textarea
-            onChange={(e) => {}}
-            className="flex min-h-[120px] items-center rounded-lg border-2 border-slate-500 p-2"
-            maxLength={130}
-            name="background"
-            id="background"
-            placeholder="Background"
-            defaultValue={background}
-          />
+          <div className={`${type === "PATIENT" && "hidden"} w-full flex flex-col items-center`}>
+            <label for="background" className="mx-auto">
+              Background
+            </label>
+            <textarea
+              onChange={(e) => {}}
+              className={`w-full min-h-[120px] items-center rounded-lg border-2 border-slate-500 p-2 `}
+              maxLength={130}
+              name="background"
+              id="background"
+              placeholder="Background"
+              defaultValue={background}
+            />
+          </div>
           <button className="button mx-auto w-1/2 py-2 " type="submit">
             Submit
           </button>
         </div>
       </div>
+      <SendingPopup />
+      <ResultPopup />
     </form>
   );
 };

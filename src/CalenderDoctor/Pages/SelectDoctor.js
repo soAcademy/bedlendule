@@ -18,7 +18,6 @@ const useGetdoctors = ({ date }) => {
   const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
 
   const findFreeDoctor = (allDoctors) => {
-    console.log("allDoctors", allDoctors);
     const findRequestNull = allDoctors.map((allDoctors) =>
       allDoctors.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
@@ -27,7 +26,6 @@ const useGetdoctors = ({ date }) => {
       .filter((r) => r >= 0);
 
     const freeDoctor = findIndexOfRequestNull.map((index) => allDoctors[index]);
-    console.log("freedoctor...", freeDoctor);
     return freeDoctor;
   };
 
@@ -36,7 +34,6 @@ const useGetdoctors = ({ date }) => {
     setFetching(true);
     setSelectDate(new Date(date).toISOString());
     const data = JSON.stringify({ date: new Date(date).toISOString() });
-    // console.log("data>>", data);
     const config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -51,6 +48,7 @@ const useGetdoctors = ({ date }) => {
       .then((response) => {
         setFetching(false);
         const _data = findFreeDoctor(response.data);
+        console.log('_data', _data)
         setDoctors(_data);
       })
       .catch((error) => {
@@ -87,7 +85,6 @@ const SelectDoctor = () => {
   const { disabledDates, dateTemplate } = useContext(DisabledatesContext);
   const redirect = useNavigate();
 
-  console.log("doctors", doctors);
   return (
     <>
       <button

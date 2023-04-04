@@ -20,31 +20,28 @@ const useChooseTimeSlot = ({
   const [timeSlots, setTimeSlots] = useState([]);
 
   useEffect(() => {
-    // console.log("scheduleBy UUID and Date...");
-    // console.log("scheduleBy fetch ", fetch);
-    setLoading(true);
-    const data = JSON.stringify({
-      uuid: selectedDoctor.doctor?.uuid,
-      date: selectDate,
-    });
-    console.log("dataForApi", data);
-    const config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByDateAndUUID",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
+    if (selectDate && selectedDoctor) {
+      setLoading(true);
+      const data = JSON.stringify({
+        uuid: selectedDoctor.doctor?.uuid,
+        date: selectDate,
+      });
+      const config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://bedlendule-backend.vercel.app/bedlendule/getScheduleByDateAndUUID",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        data: data,
+      };
 
-    axios(config).then((response) => {
-      console.log("UUID and Date response.data:", response.data);
-      console.log("selectDate", selectDate);
-      setLoading(false);
-      const _freetimeSlots = findFreeTimeSlot(response.data);
-      setTimeSlots(_freetimeSlots);
-    });
+      axios(config).then((response) => {
+        setLoading(false);
+        const _freetimeSlots = findFreeTimeSlot(response.data);
+        setTimeSlots(_freetimeSlots);
+      });
+    }
   }, [selectedDoctor, fetch]);
 
   return {
@@ -60,26 +57,28 @@ const useChooseTimeSlot = ({
 const useFetch = ({ selectedDoctor, setDoctorDetail, setDoctorName }) => {
   const [fetch, setFetch] = useState(false);
   useEffect(() => {
-    const _data = JSON.stringify({
-      uuid: selectedDoctor.doctor?.uuid,
-    });
+    if (selectedDoctor) {
+      const _data = JSON.stringify({
+        uuid: selectedDoctor.doctor?.uuid,
+      });
 
-    const config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: localStorage.getItem("access-token"),
-      },
-      data: _data,
-    };
+      const config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: localStorage.getItem("access-token"),
+        },
+        data: _data,
+      };
 
-    axios(config).then((response) => {
-      // console.log("getUserDetailByUUID:", response.data);
-      setDoctorDetail(response.data);
-      setDoctorName(selectedDoctor?.doctor);
-    });
+      axios(config).then((response) => {
+        // console.log("getUserDetailByUUID:", response.data);
+        setDoctorDetail(response.data);
+        setDoctorName(selectedDoctor?.doctor);
+      });
+    }
   }, [selectedDoctor, fetch]);
 
   return {
@@ -130,7 +129,8 @@ const SelectDoctorDetail = ({
 
         return (
           new Date(c.startTime) >= new Date(selectDate) &&
-          new Date(c.startTime) <= tomorrow
+          new Date(c.startTime) < tomorrow &&
+          new Date(c.startTime) > new Date()
         );
       })
     );
@@ -153,13 +153,10 @@ const SelectDoctorDetail = ({
         };
       }
     );
-    console.log("mapLocation", mapLocation);
 
     const result = filterEmptyArray.map((r, idx) => {
       return { ...[mapLocation[idx]], freeTimeslots: r };
     });
-
-    console.log("result", result);
 
     const finalResult = result.map((r) => {
       return {
@@ -194,7 +191,10 @@ const SelectDoctorDetail = ({
     selectedDoctor?.doctor?.reviews?.map((r) => r.score).length;
 
   return (
-    <>
+    <div
+      className={`fixed top-6 h-full w-full
+    ${!openDoctorDetail && "pointer-events-none opacity-0"}`}
+    >
       <shader
         onClick={() => setOpenDoctorDetail(false)}
         className={`shader
@@ -210,7 +210,7 @@ const SelectDoctorDetail = ({
             }`}
       >
         <button
-          className=" absolute top-0 right-0 m-2 rounded-full p-2 text-2xl font-light text-slate-400 
+          className="absolute top-0 right-0 m-2 rounded-full p-2 text-2xl font-light text-slate-400 
           opacity-50 duration-100  hover:bg-red-500 hover:text-slate-50"
           onClick={() => setOpenDoctorDetail(false)}
         >
@@ -232,7 +232,7 @@ const SelectDoctorDetail = ({
 
         <div className="mx-auto my-2  flex w-full items-center justify-center  ">
           {loading && (
-            <div className="absolute  ">
+            <div className="absolute">
               <ProgressSpinner
                 style={{ width: "50px", height: "50px" }}
                 strokeWidth="8"
@@ -245,7 +245,7 @@ const SelectDoctorDetail = ({
             alt="doctorURL"
           />
         </div>
-        <div className=" mx-auto my-5  rounded-lg border-2  border-slate-400 pt-2 text-left md:w-[50%] ">
+        <div className=" mx-auto my-5 w-fit rounded-lg border-2  border-slate-400 pt-2 text-left ">
           <div className="text-center text-xl">Details</div>
 
           <ul className="p-[20px] text-slate-600">
@@ -339,7 +339,7 @@ const SelectDoctorDetail = ({
           setOpenDoctorDetail={setOpenDoctorDetail}
         />
       )}
-    </>
+    </div>
   );
 };
 export default SelectDoctorDetail;

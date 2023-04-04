@@ -1,10 +1,19 @@
 import { FaAlignJustify } from "react-icons/fa";
 import { Link, useLocation } from "react-router-dom";
 import React, { useState } from "react";
+import { useContext } from "react";
+import { FetchContext } from "../home";
+import { useEffect } from "react";
 const Nav = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const location = useLocation();
-  const userProfile = JSON.parse(localStorage.getItem("userprofile"));
+  const { fetch,setFetch } = useContext(FetchContext);
+  const [userProfile, setUserProfile] = useState();
+  useEffect(() => {
+    console.log("fetching");
+    const _newUserProfile = JSON.parse(localStorage.getItem("userprofile"));
+    setUserProfile(_newUserProfile);
+  }, [fetch]);
   return (
     <div className="z-[9999] w-full">
       <div className="fixed top-0 z-50 flex h-[50px] w-full flex-row bg-[#C5E1A5] px-2 drop-shadow-md">
@@ -28,16 +37,21 @@ const Nav = () => {
         className={`fixed top-[50px] left-0 z-40 h-full w-2/3 bg-slate-50 py-6 px-3 shadow-xl duration-200
       ${!isSideBarOpen && "-translate-x-full"}`}
       >
-        <img
-          className={`mx-auto mt-4 h-28 w-28 items-center rounded-full object-contain text-center text-white ${
-            !userProfile?.profilePictureUrl && "bg-slate-300"
-          }`}
-          src={userProfile?.profilePictureUrl || null}
-          alt=""
-        />
-        <p className="text-center border-b p-4 m-2">
-          {userProfile?.firstName} {userProfile?.lastName}
-        </p>
+        {userProfile && (
+          <>
+            <img
+              className={`mx-auto mt-4 h-28 w-28 items-center rounded-full object-contain text-center text-white ${
+                !userProfile?.profilePictureUrl && "bg-slate-300"
+              }`}
+              src={userProfile?.profilePictureUrl || null}
+              alt=""
+            />
+            <p className="m-2 border-b p-4 text-center">
+              {userProfile?.firstName} {userProfile?.lastName}
+            </p>
+          </>
+        )}
+
         <ul className="flex w-full flex-col space-y-2">
           <Link
             to="login"
@@ -52,6 +66,20 @@ const Nav = () => {
             ${localStorage.getItem("uuid") && "hidden"}`}
           >
             LOGIN
+          </Link>
+          <Link
+            to="signup"
+            onClick={() => {
+              setIsSideBarOpen(false);
+            }}
+            className={`+ cursor-pointer rounded-lg p-2 hover:bg-slate-200 
+            ${
+              location.pathname === "/signup" &&
+              "pointer-events-none bg-slate-200"
+            }
+            ${localStorage.getItem("uuid") && "hidden"}`}
+          >
+            SIGN UP
           </Link>
           <Link
             to={"schedule"}
@@ -81,7 +109,7 @@ const Nav = () => {
           >
             SETTING
           </Link>
-          <Link
+          {/* <Link
             to={"faqs"}
             onClick={() => {
               setIsSideBarOpen(false);
@@ -94,7 +122,7 @@ const Nav = () => {
             `}
           >
             FAQS
-          </Link>
+          </Link> */}
           <Link
             to={"login"}
             onClick={() => {
@@ -102,6 +130,7 @@ const Nav = () => {
               localStorage.removeItem("uuid");
               localStorage.removeItem("userprofile");
               localStorage.removeItem("access-token");
+              setFetch(!fetch)
             }}
             className={`cursor-pointer rounded-lg p-2 hover:bg-slate-200
               ${!localStorage.getItem("uuid") && "hidden"}`}
