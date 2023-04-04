@@ -126,7 +126,13 @@ const SelectDoctorDetail = ({
       r.filter((c) => {
         let tomorrow = new Date(selectDate);
         tomorrow.setHours(tomorrow.getHours() + 24);
+        console.log("starTime:",new Date(c.startTime))
+        console.log("selectDate:",new Date(selectDate))
+        console.log("tomorrow:",tomorrow);
 
+        console.log( "statTime>= SelectTime",new Date(c.startTime) >= new Date(selectDate));
+        console.log( "statTime < SelectTime",new Date(c.startTime) < tomorrow);
+        console.log(  "statTime > SelectTime",new Date(c.startTime) > new Date())
         return (
           new Date(c.startTime) >= new Date(selectDate) &&
           new Date(c.startTime) < tomorrow &&
@@ -240,7 +246,7 @@ const SelectDoctorDetail = ({
             </div>
           )}
           <img
-            src={doctorDetail?.profilePictureUrl}
+            src={doctorDetail?.profilePictureUrl || "https://www.pngkey.com/png/full/115-1150152_default-profile-picture-avatar-png-green.png"}
             className="h-[200px] rounded-lg"
             alt="doctorURL"
           />
@@ -289,7 +295,7 @@ const SelectDoctorDetail = ({
                   </div>
                   <div className="mx-auto flex">
                     <div className="underline underline-offset-2 ">
-                      {r.startTime.substring(11, 16)}
+                      {new Date(r.startTime).toLocaleTimeString("en-GB").slice(0,5)}
                     </div>
                     <div className="px-1">
                       <GiAlarmClock className="text-base" />
@@ -302,7 +308,7 @@ const SelectDoctorDetail = ({
                   </div>
                   <div className="mx-auto flex">
                     <div className="underline underline-offset-2">
-                      {r.finishTime.substring(11, 16)}
+                      {new Date(r.finishTime).toLocaleTimeString("en-GB").slice(0,5)}
                     </div>
                     <div className="px-1">
                       <GiAlarmClock className="text-base" />
