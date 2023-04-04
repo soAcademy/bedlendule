@@ -21,11 +21,12 @@ const useDoctorCalendarProps = () => {
 
     axios(config)
       .then(function async(response) {
+        console.log("response", response);
         const timeSlotsNotAccepted = response.data.filter(
           (request) =>
             request.doctorTimeslot.findIndex(
               (timeslot) => timeslot.schedule.uuid === doctorUUID
-            ) === -1
+            ) === -1 && new Date(request.startTime) > new Date()
         );
         setTimeSlots(
           timeSlotsNotAccepted.map((e) =>

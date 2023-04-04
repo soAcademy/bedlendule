@@ -9,6 +9,7 @@ import { Toast } from "primereact/toast";
 import { FetchContext } from "../home";
 
 const Login = () => {
+  document.title = "Login | Bedlendule"
   const [authenticated, setAuthenticated] = useState(false);
   const [loginFail, setLoginFail] = useState();
   const [logginIn, setLogginIn] = useState(false);

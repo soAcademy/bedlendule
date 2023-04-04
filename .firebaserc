@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "bedlendule"
+  },
+  "targets": {
+    "bedlendule": {
+      "hosting": {
+        "bedlendule": [
+          "bedlendule"
+        ]
+      }
+    }
+  }
+}
