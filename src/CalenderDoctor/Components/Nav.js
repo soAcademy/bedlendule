@@ -73,6 +73,7 @@ const Nav = () => {
               setIsSideBarOpen(false);
             }}
             className={`cursor-pointer rounded-lg p-2 hover:bg-slate-200
+            ${!localStorage.getItem("uuid") && "hidden"}
             ${
               location.pathname === "/setting" &&
               "pointer-events-none bg-slate-200"
@@ -99,7 +100,7 @@ const Nav = () => {
             onClick={() => {
               setIsSideBarOpen(false);
               localStorage.removeItem("uuid");
-              localStorage.removeItem("type");
+              localStorage.removeItem("userprofile");
               localStorage.removeItem("access-token");
             }}
             className={`cursor-pointer rounded-lg p-2 hover:bg-slate-200

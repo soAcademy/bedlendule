@@ -6,9 +6,8 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import axios from "axios";
 import { Toast } from "primereact/toast";
-import { useEffect } from "react";
 
-const Login = ({ setPage }) => {
+const Login = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const [loginFail, setLoginFail] = useState();
   const [logginIn, setLogginIn] = useState(false);
@@ -47,36 +46,32 @@ const Login = ({ setPage }) => {
         localStorage.setItem("uuid", response.data.uuid);
         redirect("/");
         if (!localStorage.getItem("userprofile")) {
-          const uuid = localStorage.getItem("uuid");
-          console.log("uuid", uuid);
-          if (uuid) {
-            let data = JSON.stringify({
-              uuid: uuid,
+          let data = JSON.stringify({
+            uuid: response.data.uuid,
+          });
+
+          let config = {
+            method: "post",
+            maxBodyLength: Infinity,
+            url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+            headers: {
+              Authorization: response.data.access_token,
+              "Content-Type": "application/json",
+            },
+            data: data,
+          };
+
+          axios
+            .request(config)
+            .then((response) => {
+              localStorage.setItem(
+                "userprofile",
+                JSON.stringify(response.data)
+              );
+            })
+            .catch((error) => {
+              console.log(error);
             });
-
-            let config = {
-              method: "post",
-              maxBodyLength: Infinity,
-              url: "https://bedlendule-backend.vercel.app//bedlendule/getUserDetailByUUID",
-              headers: {
-                Authorization: response.data.access_token,
-                "Content-Type": "application/json",
-              },
-              data: data,
-            };
-
-            axios
-              .request(config)
-              .then((response) => {
-                localStorage.setItem(
-                  "userprofile",
-                  JSON.stringify(response.data)
-                );
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-          }
         }
         show();
         setAuthenticated(true);
