@@ -102,10 +102,11 @@ const DoctorSchedule = () => {
     axios
       .request(config)
       .then((response) => {
+        console.log("response",response.data)
         const _schedules = response.data.sort(
           (a, b) =>
-            new Date(a.timeslots.at(-1).startTime).getTime() -
-            new Date(b.timeslots.at(-1).startTime).getTime()
+            new Date(a.timeslots.at(-1)?.startTime).getTime() -
+            new Date(b.timeslots.at(-1)?.startTime).getTime()
         );
         console.log(_schedules);
         setFetching(false);
@@ -312,7 +313,7 @@ const DoctorSchedule = () => {
                     />
                     <div>
                       <p className="text-2xl font-bold text-[#4C4E64DE] ">
-                        {idx} {schedule.title}
+                        {schedule.title}
                       </p>
                       <p className="text-start text-[#4C4E64AD]">
                         {schedule.description}

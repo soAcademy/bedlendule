@@ -218,7 +218,7 @@ const CreateSchedule = ({
             className={`absolute top-0 mt-4 flex w-full flex-col space-y-2 rounded-lg text-slate-400
         ${openTimeSlotForm ? "opacity-100" : "pointer-events-none opacity-0"}`}
           >
-            <div className="mx-auto flex items-center space-x-2">
+            <div className="mx-auto flex h-fit items-center space-x-2">
               <DatePicker
                 disabled={datePickerDisabled}
                 date={date}
@@ -234,7 +234,7 @@ const CreateSchedule = ({
                 onChange={(e) => {
                   setPrice(e.target.value);
                 }}
-                className="mx-auto h-11 w-1/3 items-center rounded-md border-2 border-double text-center drop-shadow"
+                className="mx-auto h-[52px] w-1/3 items-center rounded-lg border-2  text-center drop-shadow"
               ></input>
             </div>
             <div className="mx-auto flex items-center justify-center space-x-2">
