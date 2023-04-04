@@ -4,10 +4,10 @@ import { CiCircleRemove } from "react-icons/ci";
 import { IoIosCloseCircle } from "react-icons/io";
 
 const ProfileSetting = () => {
-  const [username, setUsername] = useState();
+  const [background, setBackground] = useState();
   const [email, setEmail] = useState();
   const [licenseId, setLicenseId] = useState();
-  const [contact, setContact] = useState();
+  const [phoneNumber, setPhoneNumber] = useState();
   const [selectedImage, setSelectedImage] = useState(null);
 
   const getUserUUID = () => localStorage.getItem("uuid");
@@ -17,9 +17,10 @@ const ProfileSetting = () => {
     const _data = JSON.stringify({
       uuid: getUserUUID(),
       email: email,
-      phoneNumber: contact,
+      phoneNumber: phoneNumber,
       licenseId: licenseId,
-      profilePictureUrl: selectedImage.name,
+      profilePictureUrl: selectedImage?.name,
+      background:background
     });
     console.log("_data", _data);
   };
@@ -76,16 +77,7 @@ const ProfileSetting = () => {
                   <IoIosCloseCircle className="text-red-500" />
                 </button>
                 <div className="my-auto flex flex-col space-y-2  ">
-                  <div className="flex flex-row space-x-5">
-                    <div className="my-auto w-1/3">Username</div>
-                    <input
-                      onChange={(e) => setUsername(e.target.value)}
-                      type="text"
-                      className="flex h-[45px] w-3/5 items-center rounded-lg border-2 border-slate-500 p-2"
-                      id="username"
-                      placeholder="@Username"
-                    />
-                  </div>
+                
                   <div className="flex flex-row space-x-5">
                     <div className="my-auto w-1/3">Email</div>
                     <input
@@ -107,15 +99,25 @@ const ProfileSetting = () => {
                     />
                   </div>
                   <div className="flex flex-row space-x-5">
-                    <div className="my-auto w-1/3">Contact</div>
+                    <div className="my-auto w-1/3">PhoneNumber</div>
                     <input
-                      onChange={(e) => setContact(e.target.value)}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
                       type="tel"
                       className="flex h-[45px] w-3/5 items-center rounded-lg border-2 border-slate-500 p-2"
                       id="phoneNumber"
                       placeholder="099-xxx-xxxx"
                       minLength={10}
-                      maxlength={10}
+                      maxLength={10}
+                    />
+                  </div>
+                  <div className="flex flex-row space-x-5">
+                    <div className="my-auto w-1/3">Background</div>
+                    <textarea
+                      onChange={(e) => setBackground(e.target.value)}
+                      type="text"
+                      className="flex h-[80px] w-3/5 items-center rounded-lg border-2 border-slate-500 p-2"
+                      id="background"
+                      placeholder="Background"
                     />
                   </div>
 
