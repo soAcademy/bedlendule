@@ -113,15 +113,20 @@ const CreateSchedule = ({
   });
 
   return (
-    <>
+    <div
+      className={`fixed top-6 left-0 h-full w-full
+  ${openCreateSchedule ? "" : "pointer-events-none opacity-0"}`}
+    >
       <shader
         onClick={() => setOpenCreateSchedule(false)}
-        className={`shader
+        className={`shader 
     ${!openCreateSchedule && "pointer-events-none opacity-0"}`}
       ></shader>
       <div
-        className={`fixed top-24 left-0 z-30 h-screen w-full bg-white p-6 duration-300 ${
-          openCreateSchedule ? "" : "pointer-events-none translate-y-1/2 opacity-0"
+        className={`fixed top-24 left-0 z-20 h-screen w-full bg-white p-6 duration-300 ${
+          openCreateSchedule
+            ? ""
+            : "pointer-events-none translate-y-1/2 opacity-0"
         }`}
       >
         <div>
@@ -295,17 +300,17 @@ const CreateSchedule = ({
             The selected time is not available
           </p>
         </div>
-        <ConfirmPopup
-          title={"CREATE SCHEDULE"}
-          description={"Do you want to create schedule?"}
-          action={submitForm}
-          state={popupState}
-          setState={setPopupState}
-        />
-        <SendingPopup />
-        <ResultPopup />
       </div>
-    </>
+      <ConfirmPopup
+        title={"CREATE SCHEDULE"}
+        description={"Do you want to create schedule?"}
+        action={submitForm}
+        state={popupState}
+        setState={setPopupState}
+      />
+      <SendingPopup />
+      <ResultPopup />
+    </div>
   );
 };
 export default CreateSchedule;

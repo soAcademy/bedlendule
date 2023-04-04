@@ -287,7 +287,7 @@ const DoctorSchedule = () => {
                   })}
                 </div>
                 <div
-                onClick={()=>setOpenEdit(false)}
+                  onClick={() => setOpenEdit(false)}
                   className={`shader
       ${
         openEdit && scheduleToEdit.id === schedule.id
@@ -472,11 +472,6 @@ const DoctorSchedule = () => {
           )}
       </div>
 
-      <div
-        onClick={() => setOpenCreateSchedule(false)}
-        className={`shader duration-200
-        ${!openCreateSchedule ? "pointer-events-none opacity-0 " : ""}`}
-      ></div>
       <CreateSchedule
         timeSlots={timeSlots}
         updated={updated}

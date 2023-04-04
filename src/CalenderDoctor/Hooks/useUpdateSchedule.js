@@ -115,6 +115,7 @@ const useUpdateSchedule = ({
     axios
       .request(config)
       .then((response) => {
+        console.log(response)
         setRemovingTimeSlotIds([]);
         setUpdated(!updated);
         setSending(false);

@@ -6,11 +6,11 @@ const useSubmitResult = ({ successAction, failedAction }) => {
   const ResultPopup = () => (
     <>
       <div
-        className={`shader duration-200
+        className={`shader duration-200 z-20
     ${submitSuccessPopUp ? "scale-100" : "scale-0"}`}
       >
         <div
-          className={`popup duration-100
+          className={`popup duration-100 z-30
         ${submitSuccessPopUp ? "scale-100" : "scale-95"}`}
         >
           <div>
@@ -35,13 +35,11 @@ const useSubmitResult = ({ successAction, failedAction }) => {
         </div>
       </div>
       <div
-        className={`fixed top-0 left-0 right-0 z-50 h-full w-full 
-    bg-slate-300 bg-opacity-10 backdrop-blur-[2px]
+        className={`shader duration-200 z-20
     ${submitFailPopUp ? "scale-100" : "scale-0"}`}
       >
         <div
-          className={`relative top-1/3 mx-auto w-[80%] rounded-lg bg-white 
-  p-6 text-center shadow-md duration-200
+          className={`popup duration-100 z-30
   ${submitFailPopUp ? "scale-100" : "scale-95"}`}
         >
           <div>

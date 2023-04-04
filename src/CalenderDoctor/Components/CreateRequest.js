@@ -92,14 +92,17 @@ const CreateRequest = ({
   }, [requests, startTime, finishTime, date]);
 
   return (
-    <>
+    <div
+    className={`fixed top-6 left-0 h-full w-full
+${openCreateRequest ? "" : "pointer-events-none opacity-0"}`}
+  >
       <shader
         onClick={() => setOpenCreateRequest(false)}
-        className={`shader
+        className={`shader z-10
     ${!openCreateRequest && "pointer-events-none opacity-0"}`}
       ></shader>
       <div
-        className={`fixed top-24 left-0 z-30 h-screen w-full bg-white p-6 duration-200 ${
+        className={`fixed top-24 left-0 z-20 h-screen w-full bg-white p-6 duration-200 ${
           openCreateRequest ? "" : "translate-y-full"
         }`}
       >
@@ -214,18 +217,18 @@ const CreateRequest = ({
               CREATE REQUEST
             </button>
           </div>
-          <ConfirmPopup
-            title={"CREATE REQUEST"}
-            description={"Do you want to create request?"}
-            action={submitForm}
-            state={popupState}
-            setState={setPopupState}
-          />
         </form>
-        <SendingPopup />
-        <ResultPopup />
       </div>
-    </>
+      <ConfirmPopup
+        title={"CREATE REQUEST"}
+        description={"Do you want to create request?"}
+        action={submitForm}
+        state={popupState}
+        setState={setPopupState}
+      />
+      <SendingPopup />
+      <ResultPopup />
+    </div>
   );
 };
 export default CreateRequest;

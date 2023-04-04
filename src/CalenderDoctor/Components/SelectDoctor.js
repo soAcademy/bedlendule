@@ -48,9 +48,7 @@ const useGetdoctors = ({ date }) => {
     axios(config)
       .then((response) => {
         setFetching(false);
-        console.log(response.data)
         const _data = findFreeDoctor(response.data);
-        console.log(_data)
         setDoctors(_data);
       })
       .catch((error) => {
@@ -139,7 +137,7 @@ const SelectDoctor = () => {
         >
           <div className="flex justify-between">
             <div className="font-bol w-[60%] text-xl text-[#666CFF]">
-              {doctor.doctor.firstName}&nbsp; {doctor.doctor.lastName}
+              {doctor?.doctor?.firstName}&nbsp; {doctor?.doctor?.lastName}
             </div>
 
             <Rating
@@ -168,8 +166,8 @@ const SelectDoctor = () => {
                 />
               }
               value={
-                doctor.doctor.reviews.reduce((acc, r) => acc + r.score, 0) /
-                doctor.doctor.reviews.map((r) => r.score).length
+                doctor?.doctor?.reviews?.reduce((acc, r) => acc + r.score, 0) /
+                doctor?.doctor?.reviews?.map((r) => r.score).length
               }
               start={5}
               cancel={false}

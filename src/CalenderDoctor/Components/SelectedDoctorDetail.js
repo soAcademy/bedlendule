@@ -21,7 +21,7 @@ const useChooseTimeSlot = ({
 
   useEffect(() => {
     console.log("scheduleBy UUID and Date...");
-    console.log("scheduleBy fetch ", fetch);
+    // console.log("scheduleBy fetch ", fetch);
     setLoading(true);
     const data = JSON.stringify({
       uuid: selectedDoctor.doctor?.uuid,
@@ -39,6 +39,7 @@ const useChooseTimeSlot = ({
     };
 
     axios(config).then((response) => {
+      console.log("UUID and Date response.data:", response.data);
       setLoading(false);
       const _freetimeSlots = findFreeTimeSlot(response.data);
       setTimeSlots(_freetimeSlots);
@@ -74,8 +75,9 @@ const useFetch = ({ selectedDoctor, setDoctorDetail, setDoctorName }) => {
     };
 
     axios(config).then((response) => {
+      console.log("selectDoctor response.data555", response.data);
       setDoctorDetail(response.data);
-      setDoctorName(selectedDoctor.doctor);
+      setDoctorName(selectedDoctor?.doctor);
     });
   }, [selectedDoctor, fetch]);
 
@@ -118,7 +120,7 @@ const SelectDoctorDetail = ({
     const findRequestNull = timeSlots.map((r) =>
       r.timeslots.filter((timeslots) => timeslots.request === null)
     );
-    console.log("findRequestNull", findRequestNull);
+    // console.log("findRequestNull", findRequestNull);
 
     const filtertimeSlot = findRequestNull.map((r) =>
       r.filter((c) => {
@@ -132,10 +134,13 @@ const SelectDoctorDetail = ({
       })
     );
     // console.log("filtertimeSlot", filtertimeSlot);
+    const filterEmptyArray = filtertimeSlot.filter((r) => r.length > 0);
+    // console.log("filteremptyArray", filterEmptyArray);
 
     const IndexLocation = filtertimeSlot
       .map((r, idx) => (r.length !== 0 ? idx : -1))
       .filter((r) => r >= 0);
+    // console.log("IndexLocation", IndexLocation);
 
     const mapLocation = IndexLocation.map((index) => timeSlots[index]).map(
       (r) => {
@@ -147,10 +152,13 @@ const SelectDoctorDetail = ({
         };
       }
     );
+    console.log("mapLocation", mapLocation);
 
-    const result = filtertimeSlot.map((filtertimeSlot, idx) => {
-      return { ...[mapLocation[idx]], freeTimeslots: filtertimeSlot };
+    const result = filterEmptyArray.map((r, idx) => {
+      return { ...[mapLocation[idx]], freeTimeslots: r };
     });
+
+    console.log("result", result);
 
     const finalResult = result.map((r) => {
       return {
@@ -164,20 +172,22 @@ const SelectDoctorDetail = ({
     // console.log("finalResult", finalResult);
     return finalResult;
   };
-  const { doctorDetail, setDoctorDetail, doctorName, setDoctorName } = useDoctorInfo();
-  const { loading, setLoading, appointmentPopup, setAppointmentPopup } = useToggle();
+  const { doctorDetail, setDoctorDetail, doctorName, setDoctorName } =
+    useDoctorInfo();
+  const { loading, setLoading, appointmentPopup, setAppointmentPopup } =
+    useToggle();
   const { fetch, setFetch } = useFetch({
     selectedDoctor,
     setDoctorDetail,
     setDoctorName,
   });
-  const { chooseTimeSlot, setChooseTimeSlot, timeSlots,  } =
-    useChooseTimeSlot({
-      findFreeTimeSlot,
-      selectDate,
-      selectedDoctor,
-      setLoading,
-    });
+  const { chooseTimeSlot, setChooseTimeSlot, timeSlots } = useChooseTimeSlot({
+    findFreeTimeSlot,
+    selectDate,
+    selectedDoctor,
+    setLoading,
+  });
+  const redirect = useNavigate();
   const scoreFromReview =
     selectedDoctor?.doctor?.reviews?.reduce((acc, r) => acc + r.score, 0) /
     selectedDoctor?.doctor?.reviews?.map((r) => r.score).length;
@@ -318,7 +328,6 @@ const SelectDoctorDetail = ({
       </div>
 
       {appointmentPopup && (
-     
         <Appointment
           chooseTimeSlot={chooseTimeSlot}
           doctorName={doctorName}
@@ -327,9 +336,7 @@ const SelectDoctorDetail = ({
           setFetch={setFetch}
           fetch={fetch}
           setOpenDoctorDetail={setOpenDoctorDetail}
-          
         />
-      
       )}
     </>
   );

@@ -19,7 +19,7 @@ const ReviewDoctor = ({
   const [review, setReview] = useState();
   const [confirmReview, setConfirmReview] = useState(false);
   const { setSending, SendingPopup } = useSendingPopup();
-  const {redirectToLogin} = useRedirect()
+  const { redirectToLogin } = useRedirect();
   const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
     useSubmitResult({
       successAction: () => {
@@ -40,6 +40,7 @@ const ReviewDoctor = ({
   };
   const submitReview = () => {
     setSending(true);
+    console.log("sending");
     setConfirmReview(false);
     let data = JSON.stringify({
       requestId: requestId,
@@ -54,7 +55,7 @@ const ReviewDoctor = ({
       url: "https://bedlendule-backend.vercel.app/bedlendule/createReview",
       headers: {
         "Content-Type": "application/json",
-        'authorization': localStorage.getItem('access-token')
+        authorization: localStorage.getItem("access-token"),
       },
       data: data,
     };
@@ -72,15 +73,18 @@ const ReviewDoctor = ({
         setSending(false);
         setSubmitFailPopUp(true);
         if (error.response.status === 401) {
-          redirectToLogin()
+          redirectToLogin();
         }
       });
   };
 
   return (
-    <>
+    <div
+      className={`shader z-10 duration-200
+${!openReview && "pointer-events-none opacity-0"}`}
+    >
       <form
-        className={`popup w-11/12 ${
+        className={`popup z-20 w-11/12 ${
           openReview ? "scale-100 opacity-100" : "scale-95 opacity-0"
         } `}
         onSubmit={handleSubmit}
@@ -98,30 +102,30 @@ const ReviewDoctor = ({
         <div className="">
           <div className="flex text-center md:px-[200px]">
             <Rating
-            onIcon={
-              <img
-                src="/rating-icon-active.png"
-                onError={(e) =>
-                  (e.target.src =
-                    "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                }
-                alt="custom-active"
-                width="12px"
-                height="12px"
-              />
-            }
-            offIcon={
-              <img
-                src="/rating-icon-inactive.png"
-                onError={(e) =>
-                  (e.target.src =
-                    "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
-                }
-                alt="custom-inactive"
-                width="12px"
-                height="12px"
-              />
-            }
+              onIcon={
+                <img
+                  src="/rating-icon-active.png"
+                  onError={(e) =>
+                    (e.target.src =
+                      "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                  }
+                  alt="custom-active"
+                  width="12px"
+                  height="12px"
+                />
+              }
+              offIcon={
+                <img
+                  src="/rating-icon-inactive.png"
+                  onError={(e) =>
+                    (e.target.src =
+                      "https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png")
+                  }
+                  alt="custom-inactive"
+                  width="12px"
+                  height="12px"
+                />
+              }
               id="rating"
               className="mx-auto"
               value={score}
@@ -155,7 +159,7 @@ const ReviewDoctor = ({
       />
       <SendingPopup />
       <ResultPopup />
-    </>
+    </div>
   );
 };
 export default ReviewDoctor;

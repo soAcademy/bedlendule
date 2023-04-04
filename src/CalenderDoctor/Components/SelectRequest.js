@@ -49,11 +49,12 @@ const SelectRequest = () => {
       url: "https://bedlendule-backend.vercel.app/bedlendule/acceptRequest",
       headers: {
         "Content-Type": "application/json",
-        authorization: localStorage.getItem("access-token"),
+        'authorization': localStorage.getItem("access-token"),
       },
       data: data,
     };
     setSending(true);
+    console.log(data)
 
     axios
       .request(config)

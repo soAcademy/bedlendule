@@ -27,6 +27,7 @@ const Login = ({ setPage }) => {
   };
 
   const handleLogin = (e) => {
+    console.log("handleLogin working...");
     e.preventDefault();
     setLogginIn(true);
     let data = JSON.stringify({
@@ -45,7 +46,7 @@ const Login = ({ setPage }) => {
 
     axios(config)
       .then((response) => {
-        console.log('response', response)
+        console.log('response789', response)
         localStorage.setItem("access-token", response.data.access_token);
         document.querySelector("#password").value = "";
         localStorage.setItem("uuid", response.data.uuid);
