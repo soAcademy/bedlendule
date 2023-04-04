@@ -9,6 +9,7 @@ import { useContext } from "react";
 import { FetchContext } from "../home";
 
 const ProfileSetting = () => {
+  document.title = "Setting | Bedlendule"
   const [email, setEmail] = useState();
   const [licenseId, setLicenseId] = useState();
   const [contact, setContact] = useState();

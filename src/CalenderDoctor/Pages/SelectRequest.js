@@ -14,6 +14,7 @@ import { DisabledatesContext } from "../home";
 import useRedirect from "../Hooks/useRedirect";
 
 const SelectRequest = () => {
+  document.title = "Select Request | Bedlendule"
   useDoctorCalendarProps();
   const [requests, setRequests] = useState([]);
   const [fetching, setFetching] = useState(false);

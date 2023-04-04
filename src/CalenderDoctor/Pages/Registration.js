@@ -11,6 +11,7 @@ import useRedirect from "../Hooks/useRedirect";
 import useSubmitResult from "../Hooks/useSubmitResult";
 
 const Registration = () => {
+  document.title = "Sign up | Bedlendule"
   const { redirectToLogin } = useRedirect();
   const [sending, setSending] = useState();
   const [input, setInput] = useState({

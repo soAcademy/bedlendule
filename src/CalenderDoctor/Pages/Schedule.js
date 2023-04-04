@@ -2,6 +2,7 @@ import useRedirect from "../Hooks/useRedirect";
 import DoctorSchedule from "./DoctorSchedule";
 import PatientSchedule from "./PatientSchedule";
 const Schedule = () => {
+  document.title = "Schedule | Bedlendule"
   const {redirect} = useRedirect()
   const type = JSON.parse(localStorage.getItem("userprofile"))?.type 
   if (!type) {

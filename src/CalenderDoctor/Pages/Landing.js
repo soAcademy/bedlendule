@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import useRedirect from "../Hooks/useRedirect";
 const Landing = () => {
+  document.title = "Welcome | Bedlendule"
   const {redirectToLogin} = useRedirect();
   const uuid = localStorage.getItem("uuid");
   useEffect(() => {
