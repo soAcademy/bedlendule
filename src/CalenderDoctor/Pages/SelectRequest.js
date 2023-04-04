@@ -4,7 +4,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { MdClose, MdOutlinePayments } from "react-icons/md";
 import { IoIosReturnLeft } from "react-icons/io";
 import { Calendar } from "primereact/calendar";
-import ConfirmPopup from "./ConfirmPopup";
+import ConfirmPopup from "../Components/ConfirmPopup";
 import useSendingPopup from "../Hooks/useSendingPopup";
 import useSubmitResult from "../Hooks/useSubmitResult";
 import useDoctorCalendarProps from "../Hooks/useDoctorCalendarProps";
