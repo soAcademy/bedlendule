@@ -197,17 +197,17 @@ const Appointment = ({
         </div>
       </div>
       {processing && (
-        <div className="fixed top-0 z-40 flex h-screen w-screen ">
-          <div className="relative mx-auto my-auto flex h-[15%] w-[40%] flex-col  rounded-lg bg-white  shadow-lg ">
+        <div className="fixed top-0 z-40 flex h-screen w-screen  ">
+          <div className="relative mx-auto my-auto flex h-[15%] w-[60%] flex-col  rounded-lg bg-white  shadow-lg  ">
             <div className="w-full pt-4 text-center text-slate-600 ">
               {" "}
               {success === false ? (
                 "Processing..."
               ) : (
-                <span className="">
-                  <p className="text-xl text-[#99B47B]">Success</p>
-                  <p>Your booking is succesfull</p>
-                </span>
+                <div className=" w-full ">
+                  <div className="text-xl text-[#99B47B]">Success</div>
+                  <div className="px-2">Your booking is succesfull</div>
+                </div>
               )}
             </div>
 

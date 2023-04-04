@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { Rating } from "primereact/rating";
 import { ProgressSpinner } from "primereact/progressspinner";
-import SelectDoctorDetail from "./SelectedDoctorDetail";
+import SelectDoctorDetail from "../Components/SelectedDoctorDetail";
 import { IoIosReturnLeft } from "react-icons/io";
 import { Calendar } from "primereact/calendar";
 import { useNavigate, useParams } from "react-router-dom";
