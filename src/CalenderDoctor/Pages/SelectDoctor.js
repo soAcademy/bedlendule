@@ -71,6 +71,7 @@ const useGetdoctors = ({ date }) => {
 };
 
 const SelectDoctor = () => {
+  document.title = "Select Psychologist | Bedlendule"
   usePatientCalendarProps();
   const { date } = useParams();
   const {
