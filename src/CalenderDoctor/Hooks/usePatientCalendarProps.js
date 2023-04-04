@@ -28,7 +28,9 @@ const usePatientCalendarProps = () => {
         // console.log(response)
         const _timeslots = [
           ...new Set(
-            response.data.filter(data=>new Date(data.startTime) > new Date()).map((e) => new Date(e.startTime).toLocaleDateString("en"))
+            response.data
+              .filter((data) => new Date(data.startTime) > new Date())
+              .map((e) => new Date(e.startTime).toLocaleDateString("en"))
           ),
         ];
         setTimeSlots(_timeslots);
@@ -39,6 +41,8 @@ const usePatientCalendarProps = () => {
   }, []);
 
   useEffect(() => {
+    console.log('datesArray', datesArray)
+    console.log('timeSlots', timeSlots)
     const _disabledDates = datesArray.filter((e) => !timeSlots.includes(e));
     setDisabledDates(_disabledDates);
   }, [timeSlots, datesArray]);
