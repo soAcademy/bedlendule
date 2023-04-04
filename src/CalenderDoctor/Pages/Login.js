@@ -73,6 +73,7 @@ const Login = () => {
               console.log(error);
             });
         }
+        redirect("/");
         show();
         setAuthenticated(true);
         setLogginIn(false);

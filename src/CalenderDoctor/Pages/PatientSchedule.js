@@ -137,7 +137,7 @@ const UserSchedule = () => {
     axios
       .request(config)
       .then((response) => {
-        console.log("request", response.data);
+        console.log('response.data', response.data)
         setRequests(response.data);
         setFetching(false);
       })

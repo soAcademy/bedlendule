@@ -2,6 +2,11 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { BiEditAlt } from "react-icons/bi";
 import { enforceFormat, formatToPhone } from "../Functions/validateForm";
+import useSubmitResult from "../Hooks/useSubmitResult";
+import useSendingPopup from "../Hooks/useSendingPopup";
+import useRedirect from "../Hooks/useRedirect";
+import { useContext } from "react";
+import { FetchContext } from "../home";
 
 const ProfileSetting = () => {
   const [email, setEmail] = useState();
@@ -9,21 +14,19 @@ const ProfileSetting = () => {
   const [contact, setContact] = useState();
   const [background, setBackground] = useState();
   const [file, setFile] = useState(null);
-  const userProfile = JSON.parse(localStorage.getItem("userprofile"));
-  const [selectedImage, setSelectedImage] = useState(
-    userProfile?.profilePictureUrl
-  );
+  const [selectedImage, setSelectedImage] = useState();
+  const [updated, setUpdated] = useState(false);
+  const { fetch, setFetch } = useContext(FetchContext);
+  const { redirectToLogin } = useRedirect();
+  const { setSending, SendingPopup } = useSendingPopup();
+  const { ResultPopup, setSubmitFailPopUp, setSubmitSuccessPopUp } =
+    useSubmitResult({
+      successAction: () => {},
+      failedAction: () => {},
+    });
   const token = localStorage.getItem("access-token");
 
-  useEffect(() => {
-    setSelectedImage(userProfile?.profilePictureUrl);
-    setEmail(userProfile?.email);
-    setLicenseId(userProfile?.licenseId);
-    setContact(userProfile?.phoneNumber);
-    setBackground(userProfile?.background);
-  }, [userProfile]);
-
-  const handleFileChange = async (event) => {
+  const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
     const temporaryUrl = URL.createObjectURL(selectedFile);
@@ -31,6 +34,7 @@ const ProfileSetting = () => {
   };
 
   const updateProfile = (input, imageUrl) => {
+    setSending(true);
     const data = JSON.stringify({
       email: input["email"].value,
       phoneNumber: input["phoneNumber"].value,
@@ -53,14 +57,24 @@ const ProfileSetting = () => {
       .request(config)
       .then((response) => {
         console.log(JSON.stringify(response.data));
+        setUpdated(!updated);
+        setSending(false);
+        setSubmitSuccessPopUp(true);
       })
       .catch((error) => {
         console.log(error);
+        setUpdated(!updated);
+        setSending(false);
+        setSubmitFailPopUp(true);
+        if (error.response.status === 401) {
+          redirectToLogin();
+        }
       });
   };
 
   const handleSubmit = async (event, input) => {
     event.preventDefault();
+    setSending(true);
     if (file) {
       const formData = new FormData();
       formData.append("image", file);
@@ -73,15 +87,62 @@ const ProfileSetting = () => {
         },
         data: formData,
       };
+      console.log(file);
       axios(config)
         .then(function (response) {
           updateProfile(input, response.data);
+          console.log(response.data);
         })
-        .catch(function (error) {});
+        .catch(function (error) {
+          console.log(error);
+          setSending(false);
+          setSubmitFailPopUp(true);
+          if (error.response.status === 401) {
+            redirectToLogin();
+          }
+        });
     } else {
-      updateProfile(input, userProfile.profilePictureUrl);
+      updateProfile(
+        input,
+        JSON.parse(localStorage.getItem("userprofile"))?.profilePictureUrl
+      );
+      setSending(false);
     }
   };
+  useEffect(() => {
+    let data = JSON.stringify({
+      uuid: localStorage.getItem("uuid"),
+    });
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: "https://bedlendule-backend.vercel.app/bedlendule/getUserDetailByUUID",
+      headers: {
+        Authorization: token,
+        "Content-Type": "application/json",
+      },
+      data: data,
+    };
+
+    axios
+      .request(config)
+      .then((response) => {
+        localStorage.setItem("userprofile", JSON.stringify(response.data));
+        setFetch(!fetch);
+        setSelectedImage(response.data?.profilePictureUrl);
+        setEmail(response.data?.email);
+        setLicenseId(response.data?.licenseId);
+        setContact(response.data?.phoneNumber);
+        setBackground(response.data?.background);
+      })
+      .catch((error) => {
+        console.log(error);
+        setFetch(!fetch);
+        if (error.response.status === 401) {
+          redirectToLogin();
+        }
+      });
+  }, [updated]);
 
   return (
     <form
@@ -101,6 +162,7 @@ const ProfileSetting = () => {
             <label for="file-input">
               <img
                 alt="not found"
+                id="profile-image"
                 src={selectedImage}
                 className="mx-auto h-48 w-48 cursor-pointer rounded-full object-cover hover:opacity-80"
               />
@@ -109,7 +171,7 @@ const ProfileSetting = () => {
               </div>
             </label>
           )}
-          {selectedImage === null && (
+          {/* {selectedImage === null && (
             <label for="file-input">
               <img
                 alt="not found"
@@ -120,7 +182,7 @@ const ProfileSetting = () => {
                 <BiEditAlt className="absolute top-7 right-7" />
               </div>
             </label>
-          )}
+          )} */}
           <input
             id="file-input"
             type="file"
@@ -184,6 +246,8 @@ const ProfileSetting = () => {
           </button>
         </div>
       </div>
+      <SendingPopup />
+      <ResultPopup />
     </form>
   );
 };

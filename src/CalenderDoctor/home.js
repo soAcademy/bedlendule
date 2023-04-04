@@ -15,11 +15,13 @@ import ProfileSetting from "./Components/ProfileSetting";
 
 export const ConfirmPopupContext = createContext();
 export const DisabledatesContext = createContext();
+export const FetchContext = createContext();
 
 export const Home = () => {
   const [disabledDates, setDisabledDates] = useState([]);
   const [datesArray, setDatesArray] = useState([]);
   const [timeSlots, setTimeSlots] = useState([]);
+  const [fetch, setFetch] = useState(false);
   const [confirmPopupToggle, setConfirmPopupToggle] = useState(false);
   const [page, setPage] = useState(); // landing
   const [type, setType] = useState(); //อย่าลืมเปลี่ยนเป็น doctor
@@ -188,41 +190,48 @@ export const Home = () => {
           setDatesArray,
         }}
       >
-        <div className="relative h-full w-full font-kanit">
-          <BrowserRouter>
-            <Nav setType={setType} type={type} page={page} setPage={setPage} />
+        <FetchContext.Provider value={{ fetch, setFetch }}>
+          <div className="relative h-full w-full font-kanit">
+            <BrowserRouter>
+              <Nav
+                setType={setType}
+                type={type}
+                page={page}
+                setPage={setPage}
+              />
 
-            <div className="absolute top-[50px] w-full">
-              <Routes>
-                <Route path="/" element={<Landing />} />
-                <Route path="login" element={<Login />} />
-                <Route path="setting" element={<ProfileSetting />} />
-                <Route path="signup" element={<Registration />} />
-                <Route path="schedule" element={<Schedule />} />
-                <Route
-                  exact
-                  path="schedule/selectdoctor/:date"
-                  element={<SelectDoctor />}
-                />
-                <Route
-                  exact
-                  path="schedule/selectRequest/:date"
-                  element={<SelectRequest />}
-                />
-                <Route
-                  exact
-                  path="schedule/selectdoctor/"
-                  element={<SelectDoctor />}
-                />
-                <Route
-                  exact
-                  path="schedule/selectRequest/"
-                  element={<SelectRequest />}
-                />
-              </Routes>
-            </div>
-          </BrowserRouter>
-        </div>
+              <div className="absolute top-[50px] w-full">
+                <Routes>
+                  <Route path="/" element={<Landing />} />
+                  <Route path="login" element={<Login />} />
+                  <Route path="setting" element={<ProfileSetting />} />
+                  <Route path="signup" element={<Registration />} />
+                  <Route path="schedule" element={<Schedule />} />
+                  <Route
+                    exact
+                    path="schedule/selectdoctor/:date"
+                    element={<SelectDoctor />}
+                  />
+                  <Route
+                    exact
+                    path="schedule/selectRequest/:date"
+                    element={<SelectRequest />}
+                  />
+                  <Route
+                    exact
+                    path="schedule/selectdoctor/"
+                    element={<SelectDoctor />}
+                  />
+                  <Route
+                    exact
+                    path="schedule/selectRequest/"
+                    element={<SelectRequest />}
+                  />
+                </Routes>
+              </div>
+            </BrowserRouter>
+          </div>
+        </FetchContext.Provider>
       </DisabledatesContext.Provider>
     </ConfirmPopupContext.Provider>
   );
