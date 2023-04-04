@@ -18,6 +18,7 @@ const useGetdoctors = ({ date }) => {
   const [openDoctorDetail, setOpenDoctorDetail] = useState(false);
 
   const findFreeDoctor = (allDoctors) => {
+    console.log("allDoctors",allDoctors)
     const findRequestNull = allDoctors.map((allDoctors) =>
       allDoctors.timeslots.filter((timeslots) => timeslots.requestId === null)
     );
