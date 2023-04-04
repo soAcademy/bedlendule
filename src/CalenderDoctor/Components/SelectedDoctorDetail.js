@@ -277,7 +277,7 @@ const SelectDoctorDetail = ({
           {timeSlots?.map((c) =>
             c?.freetime.map((r) => (
               <ul
-                className="mx-auto my-4 flex w-[90%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
+                className="mx-auto my-4 flex w-[95%] cursor-pointer flex-row gap-2 hover:bg-[#C5E1A5] "
                 onClick={() => {
                   setChooseTimeSlot([c, r]);
                   setAppointmentPopup(true);
@@ -313,7 +313,7 @@ const SelectDoctorDetail = ({
                   <div className="absolute top-[-10px] rounded-lg bg-white px-1 text-slate-400">
                     Rate
                   </div>
-                  <div className=" mx-auto flex">
+                  <div className=" mx-auto flex w-full text-sm">
                     <div className="underline underline-offset-2">
                       {r.price} THB/Hour
                     </div>

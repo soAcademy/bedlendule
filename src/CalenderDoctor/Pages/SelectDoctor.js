@@ -10,6 +10,7 @@ import { useContext } from "react";
 import { DisabledatesContext } from "../home";
 import usePatientCalendarProps from "../Hooks/usePatientCalendarProps";
 
+
 const useGetdoctors = ({ date }) => {
   const [doctors, setDoctors] = useState([]);
   const [fetching, setFetching] = useState(false);
@@ -93,7 +94,7 @@ const SelectDoctor = () => {
       >
         <IoIosReturnLeft />
       </button>
-      <div className="headingColor relative mt-8 text-center text-3xl font-bold ">
+      <div className="headingColor relative mt-8 text-center text-3xl font-bold cursor-not-allowed ">
         SELECT DOCTOR
       </div>
       <div className="m-4">
