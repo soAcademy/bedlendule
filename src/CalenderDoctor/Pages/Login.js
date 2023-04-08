@@ -69,7 +69,7 @@ const Login = () => {
                 "userprofile",
                 JSON.stringify(response.data)
               );
-              redirect("/");
+              redirect("/home");
               document.querySelector("#password").value = "";
               show();
               setAuthenticated(true);

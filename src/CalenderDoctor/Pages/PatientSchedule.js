@@ -246,7 +246,7 @@ const UserSchedule = () => {
         )}
         {!fetching && (
           <div className="flex flex-col space-y-2 pl-4">
-            <div className="mt-5 font-bold">INCOMING SCHEDULE</div>
+            <div className="mt-5 font-bold">UPCOMING SCHEDULE</div>
             {requests
               .filter(
                 (request) =>
