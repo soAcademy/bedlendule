@@ -79,7 +79,7 @@ const SelectRequest = () => {
     setRequests([]);
     setFetching(true);
     if (date) {
-      const data = JSON.stringify({ date: new Date(date) });
+      const data = JSON.stringify({ date: new Date(date.replace(/-/g, "/")) });
       const config = {
         method: "post",
         maxBodyLength: Infinity,
