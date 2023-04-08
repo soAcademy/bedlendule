@@ -115,13 +115,14 @@ export const Home = () => {
   }, []);
 
   const dateTemplate = (date) => {
-    const _date = new Date([date.year, +date.month + 1, date.day].join("-"));
+    const _date = new Date(date.year, date.month, date.day);
     if (!datesArray.includes(_date.toLocaleDateString("en"))) {
       const _datesArray = [
         ...new Set([...datesArray, _date.toLocaleDateString("en")]),
       ];
       setDatesArray(_datesArray);
     }
+    
     if (
       timeSlots?.includes(_date.toLocaleDateString("en")) &&
       _date.getTime() >= new Date(new Date().toDateString()).getTime()
@@ -203,6 +204,7 @@ export const Home = () => {
               <div className="absolute top-[50px] w-full">
                 <Routes>
                   <Route path="/" element={<Landing />} />
+                  <Route path="/home" element={<Landing />} />
                   <Route path="login" element={<Login />} />
                   <Route path="setting" element={<ProfileSetting />} />
                   <Route path="signup" element={<Registration />} />

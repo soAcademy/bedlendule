@@ -115,6 +115,7 @@ const SelectDoctorDetail = ({
   selectDate,
   openDoctorDetail,
 }) => {
+  console.log('selectDate', selectDate)
   const findFreeTimeSlot = (timeSlots) => {
     console.log("findFreeTimeSlot working...", timeSlots);
     const findRequestNull = timeSlots.map((r) =>

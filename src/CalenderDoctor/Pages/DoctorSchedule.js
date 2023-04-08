@@ -181,7 +181,7 @@ const DoctorSchedule = () => {
         </div>
         {!fetching && (
           <div className="my-4 ml-4 font-bold text-slate-700 md:w-1/2">
-            INCOMING SCHEDULE
+            UPCOMING SCHEDULE
           </div>
         )}
         {fetching && (
@@ -468,7 +468,7 @@ const DoctorSchedule = () => {
         ) === -1 &&
           !fetching && (
             <div className="mx-auto my-4 pl-4 text-slate-700 md:w-1/2">
-              No incoming schedule
+              No upcoming schedule
             </div>
           )}
       </div>

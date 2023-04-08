@@ -33,8 +33,10 @@ const useGetdoctors = ({ date }) => {
   useEffect(() => {
     setDoctors([]);
     setFetching(true);
-    setSelectDate(new Date(date).toISOString());
-    const data = JSON.stringify({ date: new Date(date).toISOString() });
+    setSelectDate(new Date(date.replace(/-/g, "/")).toISOString());
+    console.log('date.replace(/-/g, "/")', date.replace(/-/g, "/"))
+    
+    const data = JSON.stringify({ date: new Date(date.replace(/-/g, "/")).toISOString() });
     console.log("select data>>",data)
     const config = {
       method: "post",
