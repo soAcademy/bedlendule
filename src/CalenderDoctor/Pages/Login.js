@@ -9,8 +9,12 @@ import { Toast } from "primereact/toast";
 import { FetchContext } from "../home";
 
 const Login = () => {
-  document.title = "Login | Bedlendule"
-  const [authenticated, setAuthenticated] = useState(false);
+  document.title = "Login | Bedlendule";
+  const [loginAttempt, setLoginAttempt] = useState({
+    remaining: Number,
+    resetAfter: Number,
+  });
+  const [attemptExceeded, setAttemptExceeded] = useState(false);
   const [loginFail, setLoginFail] = useState();
   const [logginIn, setLogginIn] = useState(false);
   const { fetch, setFetch } = useContext(FetchContext);
@@ -72,7 +76,7 @@ const Login = () => {
               redirect("/home");
               document.querySelector("#password").value = "";
               show();
-              setAuthenticated(true);
+              setAttemptExceeded(false);
               setLogginIn(false);
               setFetch(!fetch);
             })
@@ -85,11 +89,20 @@ const Login = () => {
         document.querySelector("#password").value = "";
         console.log(error);
         show();
-        setAuthenticated(false);
-        setLoginFail(true);
         setLogginIn(false);
         if (error.response.status === 401) {
-          window.location.reload();
+          setLoginFail(true);
+          // window.location.reload();
+        } else if (error.response.status === 429) {
+          setAttemptExceeded(true);
+          setLoginAttempt({
+            remaining: error.response.headers["x-ratelimit-remaining"],
+            resetAfter: Math.ceil(
+              (error.response.headers["x-ratelimit-reset"] -
+                new Date().getTime() / 1000) /
+                60
+            ),
+          });
         }
       });
   };
@@ -171,13 +184,21 @@ const Login = () => {
               </Link>
             </p>
           </div>
-          <p
-            className={`text-center text-red-500 opacity-0 ${
-              loginFail && "opacity-100"
-            }`}
-          >
-            Username or password is incorrect
-          </p>
+          {loginFail && (
+            <p className={`text-center text-red-500 animate-pulse`}>
+              Username or password is incorrect
+            </p>
+          )}
+          {attemptExceeded && (
+            <>
+              <p className={`px-5 text-center text-red-500 animate-pulse`}>
+                Too many attempts.
+              </p>
+              <p className={`px-5 text-center text-red-500 animate-pulse`}>
+                Please try again later after {loginAttempt.resetAfter} minutes
+              </p>
+            </>
+          )}
         </div>
       </div>
     </>
