@@ -12,7 +12,7 @@ const Login = () => {
   document.title = "Login | Bedlendule";
   const [loginAttempt, setLoginAttempt] = useState({
     remaining: Number,
-    resetAfter: Number,
+    retryAfter: Number,
   });
   const [attemptExceeded, setAttemptExceeded] = useState(false);
   const [loginFail, setLoginFail] = useState();
@@ -31,6 +31,8 @@ const Login = () => {
   const handleLogin = (e) => {
     console.log("handleLogin working...");
     e.preventDefault();
+    setAttemptExceeded(false);
+    setLoginFail(false);
     setLogginIn(true);
     let data = JSON.stringify({
       username: e.target["username"].value.toLowerCase(),
@@ -38,6 +40,7 @@ const Login = () => {
     });
     let config = {
       method: "post",
+      // url: "http://localhost:5555/bedlendule/login",
       url: "https://bedlendule-backend.vercel.app/bedlendule/login",
       headers: {
         "Content-Type": "application/json",
@@ -76,7 +79,6 @@ const Login = () => {
               redirect("/home");
               document.querySelector("#password").value = "";
               show();
-              setAttemptExceeded(false);
               setLogginIn(false);
               setFetch(!fetch);
             })
@@ -92,16 +94,17 @@ const Login = () => {
         setLogginIn(false);
         if (error.response.status === 401) {
           setLoginFail(true);
+          console.log('error', error)
           // window.location.reload();
         } else if (error.response.status === 429) {
+          console.log(
+            'error.response.headers["retry-after"]',
+            error.response.headers["retry-after"]
+          );
           setAttemptExceeded(true);
           setLoginAttempt({
             remaining: error.response.headers["x-ratelimit-remaining"],
-            resetAfter: Math.ceil(
-              (error.response.headers["x-ratelimit-reset"] -
-                new Date().getTime() / 1000) /
-                60
-            ),
+            retryAfter: Math.ceil(+error.response.headers["retry-after"] / 60),
           });
         }
       });
@@ -185,17 +188,17 @@ const Login = () => {
             </p>
           </div>
           {loginFail && (
-            <p className={`text-center text-red-500 animate-pulse`}>
+            <p className={`animate-pulse text-center text-red-500`}>
               Username or password is incorrect
             </p>
           )}
           {attemptExceeded && (
             <>
-              <p className={`px-5 text-center text-red-500 animate-pulse`}>
+              <p className={`animate-pulse px-5 text-center text-red-500`}>
                 Too many attempts.
               </p>
-              <p className={`px-5 text-center text-red-500 animate-pulse`}>
-                Please try again later after {loginAttempt.resetAfter} minutes
+              <p className={`animate-pulse px-5 text-center text-red-500`}>
+                Please try again after {loginAttempt.retryAfter} minutes
               </p>
             </>
           )}
