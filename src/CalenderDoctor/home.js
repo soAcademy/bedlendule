@@ -41,6 +41,7 @@ export const Home = () => {
       axios
         .request(config)
         .then((response) => {
+          console.log("response", response);
           if (response.status === 200 && response.data.uuid) {
             localStorage.setItem("uuid", response.data.uuid);
           } else if (
@@ -51,7 +52,10 @@ export const Home = () => {
             window.location = window.location.origin + "/login";
             localStorage.removeItem("access-token");
             localStorage.removeItem("userprofile");
-          } else {
+          } else if (
+            window.location.href !==
+            window.location.origin + "/login"
+          ) {
             window.location = window.location.origin + "/login";
             localStorage.removeItem("access-token");
             localStorage.removeItem("uuid");
@@ -122,7 +126,7 @@ export const Home = () => {
       ];
       setDatesArray(_datesArray);
     }
-    
+
     if (
       timeSlots?.includes(_date.toLocaleDateString("en")) &&
       _date.getTime() >= new Date(new Date().toDateString()).getTime()
