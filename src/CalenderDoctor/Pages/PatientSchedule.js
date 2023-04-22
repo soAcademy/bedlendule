@@ -138,6 +138,7 @@ const UserSchedule = () => {
     axios
       .request(config)
       .then((response) => {
+        console.log(response.data);
         setRequests(response.data);
         setFetching(false);
       })
@@ -343,7 +344,7 @@ const UserSchedule = () => {
                   >
                     <div className="flex justify-between">
                       <div className="w-2/3">
-                        <div className="font-bold">{request.title}</div>
+                        <p className="font-bold">{request.title}</p>
                         <div className="font-bold">
                           <div className="my-auto flex items-center text-center text-sm">
                             <HiLocationMarker className="text-blue-500" />
@@ -380,6 +381,10 @@ const UserSchedule = () => {
                         </button>
                       )}
                     </div>
+                    <p className="text-end">
+                      {request.doctorTimeslot[0]?.firstName}{" "}
+                      {request.doctorTimeslot[0]?.lastName}
+                    </p>
                   </div>
                 ))}
               {requests.filter(
