@@ -51,6 +51,8 @@ const Login = () => {
 
     axios(config)
       .then((response) => {
+        console.log("logged");
+        console.log("response", response);
         localStorage.setItem("access-token", response.data.access_token);
         localStorage.setItem("uuid", response.data.uuid);
         if (!localStorage.getItem("userprofile")) {
@@ -89,13 +91,14 @@ const Login = () => {
       })
       .catch((error) => {
         document.querySelector("#password").value = "";
-        console.log(error);
         show();
         setLogginIn(false);
         if (error.response.status === 401) {
           setLoginFail(true);
-          console.log('error', error)
-          // window.location.reload();
+          console.log("error", error);
+          if (error.response.data.name === "TokenExpiredError") {
+            window.location.reload();
+          }
         } else if (error.response.status === 429) {
           console.log(
             'error.response.headers["retry-after"]',
@@ -109,6 +112,10 @@ const Login = () => {
         }
       });
   };
+
+  if (localStorage.getItem("userprofile") && localStorage.getItem("uuid")) {
+    window.location = window.location.origin;
+  }
 
   if (!localStorage.getItem("access-token")) {
     let config = {

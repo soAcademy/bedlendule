@@ -205,7 +205,7 @@ export const Home = () => {
                 setPage={setPage}
               />
 
-              <div className="absolute top-[50px] w-full">
+              <div className="absolute top-[50px] w-full h-full">
                 <Routes>
                   <Route path="/" element={<Landing />} />
                   <Route path="/home" element={<Landing />} />
